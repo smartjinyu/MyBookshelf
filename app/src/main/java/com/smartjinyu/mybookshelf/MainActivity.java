@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .add(R.id.fragment_container,new bookListFragment())
+                .add(R.id.fragment_container,new BookListFragment())
                 .commit();
+
+
 
 
     }
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+
     }
 
     private void selectDrawerItem(MenuItem menuItem){
@@ -81,11 +85,12 @@ public class MainActivity extends AppCompatActivity {
         Class fragmentClass;
         switch (menuItem.getItemId()){
             case R.id.nav_first_fragment:
-                fragmentClass = bookListFragment.class;
+                fragmentClass = BookListFragment.class;
                 break;
             default:
-                fragmentClass = bookListFragment.class;
+                fragmentClass = BookListFragment.class;
         }
+
         try{
             fragment = (Fragment) fragmentClass.newInstance();
         }catch (Exception e){

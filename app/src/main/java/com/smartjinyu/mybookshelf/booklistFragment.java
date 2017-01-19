@@ -13,10 +13,11 @@ import com.github.clans.fab.FloatingActionMenu;
 
 /**
  * Created by smartjinyu on 2017/1/19.
+ * The book list fragment
  */
 
-public class bookListFragment extends Fragment {
-    private static String TAG = "bookListFragment";
+public class BookListFragment extends Fragment {
+    private static String TAG = "BookListFragment";
 
     private FloatingActionMenu actionAdd;
     private FloatingActionButton fab1;

@@ -2,4 +2,8 @@
     <string name="app_name">MyBookshelf</string>
     <string name="drawer_open">Open Navigation Drawer</string>
     <string name="drawer_close">Close Navigation Drawer</string>
+    <!--Fab Menu-->
+    <string name="fab_menu_1">Add Book</string>
+    <string name="fab_menu_2">Batch Add</string>
+
 </resources>

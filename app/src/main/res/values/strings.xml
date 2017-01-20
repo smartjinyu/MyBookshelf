@@ -6,4 +6,10 @@
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
 
+    <!--Single Scanner Activity-->
+    <string name="single_scan_toolbar">Scan Barcode of Book</string>
+    <string name="menu_single_add_flash_off">Flash[OFF]</string>
+    <string name="menu_single_add_flash_on">Flash[ON]</string>
+
+
 </resources>

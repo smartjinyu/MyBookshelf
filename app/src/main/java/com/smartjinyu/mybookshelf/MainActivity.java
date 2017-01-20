@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         menuItem.setChecked(true);
-        setTitle(menuItem.getTitle());//set toolbar title
+        setTitle(menuItem.getTitle());//set main_toolbar title
         mDrawer.closeDrawers();
 
     }

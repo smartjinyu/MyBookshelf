@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -49,6 +50,8 @@ public class BookListFragment extends Fragment {
         switch (v.getId()) {
             case R.id.fab_menu_item_1:
                 Log.i(TAG,"fab menu item 1 clicked");
+                Intent i = SingleAddScanActivity.newIntent(getActivity());
+                startActivity(i);
                 actionAdd.close(true);
                 break;
             case R.id.fab_menu_item_2:

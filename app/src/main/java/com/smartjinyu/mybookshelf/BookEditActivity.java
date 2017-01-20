@@ -12,7 +12,7 @@ import android.util.Log;
  */
 
 public class BookEditActivity extends AppCompatActivity{
-    private static String TAG = "BookEditActivity";
+    private static final String TAG = "BookEditActivity";
     private static String mode ="startMode";
 
     public static Intent newIntent(Context context,int startMode){

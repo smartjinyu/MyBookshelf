@@ -28,7 +28,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 
 public class SingleAddScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
-    private static String TAG = "SingleAddScanActivity";
+    private static final String TAG = "SingleAddScanActivity";
 
     private static final int CAMERA_PERMISSION = 1;
 
@@ -36,6 +36,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
     private static final String FLASH_STATE = "FLASH_STATE";
     private ZXingScannerView mScannerView;
     private boolean mFlash;
+    private Toolbar mToolbar;
 
     public static Intent newIntent(Context context){
         /** startMode is a number of 0,1,2
@@ -64,7 +65,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         }
         setContentView(R.layout.activity_single_add_scan);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.singleScanToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.singleScanToolbar);
         mToolbar.setTitle(R.string.single_scan_toolbar);
         setSupportActionBar(mToolbar);
         final ActionBar ab = getSupportActionBar();
@@ -75,7 +76,8 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.singleScanFrame);
         mScannerView = new ZXingScannerView(this);
         contentFrame.addView(mScannerView);
-        mScannerView.startCamera();
+        mScannerView.setResultHandler(this);
+        mScannerView.setAutoFocus(true);
 
     }
 
@@ -103,7 +105,10 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
     public void onResume() {
         super.onResume();
         mScannerView.setResultHandler(this);
+        mScannerView.setAutoFocus(true);
         mScannerView.setFlash(mFlash);
+        mScannerView.startCamera();
+
     }
 
     @Override
@@ -140,11 +145,18 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
     public void handleResult(Result rawResult){
         Toast.makeText(this, "Contents = " + rawResult.getText() +
                 ", Format = " + rawResult.getBarcodeFormat().toString(), Toast.LENGTH_SHORT).show();
+        Log.i(TAG,"ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
+
+        mToolbar.setTitle(rawResult.getText());
+
+        DoubanFetcher fetcher = new DoubanFetcher();
+        fetcher.getBookInfo(getApplicationContext(),rawResult.getText());
+
+
 
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
-        // * I don't know why this is the case but I don't have the time to figure out.
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -154,6 +166,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         }, 2000);
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
         switch (requestCode) {

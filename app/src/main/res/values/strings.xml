@@ -11,5 +11,19 @@
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>
 
+    <string name="fetcher_response_unmatched">Get book details failed. Please check your In Barcode.</string>
+
+    <!--BookEditActivity-->
+    <string name="book_title_label">Book Info</string>
+    <string name="book_cover_image_view_hint">BookCover</string>
+    <string name="book_cover_text_view">Cover</string>
+    <string name="book_title_text_view">Title:</string>
+    <string name="book_author_text_view">Author:</string>
+    <string name="book_translator_text_view">Translator:</string>
+    <string name="book_publisher_text_view">Publisher:</string>
+    <string name="book_pubdate_text_view">PubDate:</string>
+    <string name="book_isbn_text_view">ISBN:</string>
+
+
 
 </resources>

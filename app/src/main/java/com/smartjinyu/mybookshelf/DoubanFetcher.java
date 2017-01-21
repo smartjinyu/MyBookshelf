@@ -28,10 +28,9 @@ public class DoubanFetcher extends BookFetcher{
     private static final String TAG = "DoubanFetcher";
 
     private Book mBook;
-    private boolean success = false;
 
     @Override
-    public Book getBookInfo(final Context context, final String isbn){
+    public void getBookInfo(final Context context, final String isbn){
         mContext = context;
         Retrofit mRetrofit;
         mRetrofit = new Retrofit.Builder()
@@ -48,10 +47,10 @@ public class DoubanFetcher extends BookFetcher{
                 if(response.code() == 200) {
                     Log.i(TAG, "GET Douban information successfully, id = " + response.body().getId()
                             +", title = " + response.body().getTitle());
-                    success = true;
                     mBook = new Book();
                     mBook.setTitle(response.body().getTitle());
                     mBook.setId(Long.parseLong(response.body().getId(),10));
+                    mBook.setIsbn(isbn);
                     if(response.body().getAuthor().size()!=0){
                         mBook.setAuthors(response.body().getAuthor());
                     }else{
@@ -63,7 +62,7 @@ public class DoubanFetcher extends BookFetcher{
                         mBook.setTranslators(null);
                     }
                     mBook.setPublisher(response.body().getPublisher());
-                    DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM");
                     Date pubDate = new Date();
                     try {
                         pubDate = df.parse(response.body().getPubdate());
@@ -71,10 +70,13 @@ public class DoubanFetcher extends BookFetcher{
                         Log.e(TAG,"Parse Date Exception"+pe);
                     }
                     mBook.setPubtime(pubDate);
+
+                    String imageURL = response.body().getImages().getLarge();
+                    getAndSaveImg(imageURL,mBook.getId());
+                    //TODO
                 }else{
-                    Log.i(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
-                    Toast.makeText(context,R.string.fetcher_response_unmatched,Toast.LENGTH_LONG).show();
-                    success = false;
+                    Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
+                    //TODO
                 }
 
             }
@@ -82,16 +84,9 @@ public class DoubanFetcher extends BookFetcher{
             @Override
             public void onFailure(Call<DouBanJson> call, Throwable t) {
                 Log.w(TAG,"GET Douban information failed, " + t.toString());
-                Toast.makeText(context,R.string.fetcher_response_unmatched,Toast.LENGTH_LONG).show();
-                success = false;
+                //TODO
             }
         });
-
-        if(success){
-            return mBook;
-        }else{
-            return null;
-        }
 
 
 

@@ -10,6 +10,7 @@
     <string name="single_scan_toolbar">Scan Barcode of Book</string>
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>
+    <string name="camera_permission_denied">Please grant Camera permission to scan Barcode.</string>
 
     <string name="fetcher_response_unmatched">Get book details failed. Please check your In Barcode.</string>
 

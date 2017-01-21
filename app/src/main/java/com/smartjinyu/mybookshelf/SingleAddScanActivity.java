@@ -172,7 +172,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         switch (requestCode) {
             case CAMERA_PERMISSION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Please grant camera permission to use the QR Scanner", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,R.string.camera_permission_denied, Toast.LENGTH_SHORT).show();
                     Log.e(TAG,"Camera Permission Denied");
                     finish();
                 }

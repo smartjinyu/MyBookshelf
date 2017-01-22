@@ -1,15 +1,18 @@
 package com.smartjinyu.mybookshelf;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.DateFormat;
-import java.text.FieldPosition;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +30,6 @@ import retrofit2.http.Path;
 public class DoubanFetcher extends BookFetcher{
     private static final String TAG = "DoubanFetcher";
 
-    private Book mBook;
 
     @Override
     public void getBookInfo(final Context context, final String isbn){
@@ -49,7 +51,7 @@ public class DoubanFetcher extends BookFetcher{
                             +", title = " + response.body().getTitle());
                     mBook = new Book();
                     mBook.setTitle(response.body().getTitle());
-                    mBook.setId(Long.parseLong(response.body().getId(),10));
+                    //mBook.setId(Long.parseLong(response.body().getId(),10));
                     mBook.setIsbn(isbn);
                     if(response.body().getAuthor().size()!=0){
                         mBook.setAuthors(response.body().getAuthor());
@@ -61,6 +63,15 @@ public class DoubanFetcher extends BookFetcher{
                     }else{
                         mBook.setTranslators(null);
                     }
+
+                    if(mBook.getWebIds() == null){
+                        mBook.setWebIds(new HashMap<String, String>());
+                    }
+                    mBook.getWebIds().put("douban",response.body().getId());
+
+                    mBook.setAddTime(Calendar.getInstance());
+
+
                     mBook.setPublisher(response.body().getPublisher());
                     DateFormat df = new SimpleDateFormat("yyyy-MM");
                     Date pubDate = new Date();
@@ -72,7 +83,7 @@ public class DoubanFetcher extends BookFetcher{
                     mBook.setPubtime(pubDate);
 
                     String imageURL = response.body().getImages().getLarge();
-                    getAndSaveImg(imageURL,mBook.getId());
+                    getAndSaveImg(imageURL);
                     //TODO
                 }else{
                     Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);

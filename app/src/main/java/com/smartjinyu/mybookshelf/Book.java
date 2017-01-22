@@ -1,11 +1,10 @@
 package com.smartjinyu.mybookshelf;
 
-import android.icu.text.DateTimePatternGenerator;
-
-import java.io.File;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by smartjinyu on 2017/1/19.
@@ -14,44 +13,51 @@ import java.util.Random;
 
 public class Book {
     private String title;
-    private Long id; // A unique id to identify each book
+    private UUID id; // A unique id to identify each book
     private List<String> authors;
     private List<String> translators;
+    private Map<String,String> WebIds;
+    // "douban"
     private String publisher;
     private Date pubtime;
-    private Date addTime;// Time the book add to bookshelf
+    private Calendar addTime;// Time the book add to bookshelf
     private String isbn;
     private boolean hasCover;
 
     public Book(){
-        id = getRandomId();
-        hasCover = false;
+        id = UUID.randomUUID();
+    }
+    public Book(UUID uuid){
+        id = uuid;
     }
 
-    public static Long getRandomId(){
-        Date date = new Date();
-        long Ldate  = date.getTime();
-        // generate a random int between 0 and 10000
-        Random r = new Random();
-        int salt = r.nextInt(10000 + 1);
-        Ldate += salt;
-        return Ldate;
+
+
+    public String getCoverPhotoFileName(){
+        return "Cover_"+id.toString()+".jpg";
     }
 
-    public Date getAddTime() {
+    public Calendar getAddTime() {
         return addTime;
     }
 
-    public void setAddTime(Date addTime) {
+    public void setAddTime(Calendar addTime) {
         this.addTime = addTime;
     }
 
+    public Map<String, String> getWebIds() {
+        return WebIds;
+    }
 
-    public Long getId() {
+    public void setWebIds(Map<String, String> webIds) {
+        WebIds = webIds;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

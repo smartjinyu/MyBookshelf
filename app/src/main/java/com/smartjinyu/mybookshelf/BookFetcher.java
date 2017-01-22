@@ -27,13 +27,16 @@ import retrofit2.http.Url;
 
 public abstract class BookFetcher {
     private static final String TAG = "BookFetcher";
-    Context mContext;
+    protected Context mContext;
+
+    protected Book mBook;
+
 
     protected abstract void getBookInfo(Context context,String isbn);
 
     private int result;
 
-    protected void getAndSaveImg(String url,final Long id){
+    protected void getAndSaveImg(String url){
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://smartjinyu.com/")//no use here, will use dynamic url for request
@@ -44,7 +47,7 @@ public abstract class BookFetcher {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.i(TAG,"Get download image response, code = " + response.code());
-                if(!saveImgToDisk(response.body(),id)){
+                if(!saveImgToDisk(response.body())){
                     //TODO
                     //REFRESH THE IMAGE
                 }
@@ -66,14 +69,14 @@ public abstract class BookFetcher {
         Call<ResponseBody> downloadFileWithDynamicUrlSync(@Url String fileUrl);
     }
 
-    private boolean saveImgToDisk(ResponseBody responseBody,Long id){
+    private boolean saveImgToDisk(ResponseBody responseBody){
         try{
             Log.d(TAG,"Begin to save cover to external storage");
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
             inputStream = responseBody.byteStream();
-            outputStream = new FileOutputStream(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) +"/Cover_"+id.toString()+".jpg");
+            outputStream = new FileOutputStream(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName());
             try {
                 int c;
                 while ((c = inputStream.read()) != -1) {
@@ -97,6 +100,7 @@ public abstract class BookFetcher {
             return false;
         }
         Log.i(TAG,"Save image successfully.");
+        mBook.setHasCover(true);
         return true;
     }
 

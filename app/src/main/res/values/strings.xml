@@ -24,12 +24,18 @@
     <string name="book_publisher_text_view">Publisher:</string>
     <string name="book_pubdate_text_view">PubDate:</string>
     <string name="book_isbn_text_view">ISBN:</string>
+    <string name="book_title_edit_text_hint">Title of the Book</string>
+    <string name="book_author_edit_text_hint">Separate multiple by Space</string>
+    <string name="book_translator_edit_text_hint">Separate multiple by Space</string>
+    <string name="book_publisher_edit_text_hint">Publisher of the Book</string>
+    <string name="book_isbn_edit_text_hint">ISBN of the Book</string>
     <string name="separator_text_view1">Details</string>
     <string name="reading_status_image_view">Reading Status</string>
     <string name="book_shelf_image_view">Bookshelf</string>
     <string name="note_edit_text_hint">Notes</string>
     <string name="label_image_view">Label</string>
     <string name="website_edit_text_hint">Website</string>
+    <string name="tool_bar_navigation_description">Discard</string>
 
 
 

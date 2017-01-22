@@ -2,6 +2,7 @@ package com.smartjinyu.mybookshelf;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public abstract class BookFetcher {
     protected Context mContext;
 
     protected Book mBook;
+    protected Handler mHandler;
 
 
     protected abstract void getBookInfo(Context context,String isbn);

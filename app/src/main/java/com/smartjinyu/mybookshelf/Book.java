@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -11,11 +12,11 @@ import java.util.UUID;
  * This class represents a simple book.
  */
 
-public class Book {
+public class Book implements Serializable{
     private String title;
     private UUID id; // A unique id to identify each book
     private List<String> authors;
-    private List<String> translators;
+    private List<String> translators;//set null if no translator
     private Map<String,String> WebIds;
     // "douban"
     private String publisher;

@@ -1,6 +1,9 @@
 package com.smartjinyu.mybookshelf;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -34,6 +37,7 @@ public class DoubanFetcher extends BookFetcher{
     @Override
     public void getBookInfo(final Context context, final String isbn){
         mContext = context;
+        mHandler = new Handler(Looper.getMainLooper());
         Retrofit mRetrofit;
         mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://api.douban.com/v2/book/")
@@ -84,7 +88,13 @@ public class DoubanFetcher extends BookFetcher{
 
                     String imageURL = response.body().getImages().getLarge();
                     getAndSaveImg(imageURL);
-                    //TODO
+                    mHandler.post(new Runnable() {//on the main thread
+                        @Override
+                        public void run() {
+                            Intent i = BookEditActivity.newIntent(mContext,mBook);
+                            mContext.startActivity(i);
+                        }
+                    });
                 }else{
                     Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
                     //TODO

@@ -36,6 +36,22 @@
     <string name="label_image_view">Label</string>
     <string name="website_edit_text_hint">Website</string>
     <string name="tool_bar_navigation_description">Discard</string>
+    <string-array name="reading_status_array">
+        <item>Select Reading Status</item>
+        <item>Unread</item>
+        <item>Reading</item>
+        <item>Read</item>
+    </string-array>
+    <string name="custom_spinner_item">Custom</string>
+    <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
+    <string name="custom_book_shelf_dialog_title">Custom BookShelf</string>
+    <string name="custom_book_shelf_dialog_ok">OK</string>
+    <string name="custom_book_shelf_dialog_cancel">CANCEL</string>
+
+
+
+    <!--BookShelfLab-->
+    <string name="default_book_shelf_name">Default BookShelf</string>
 
 
 

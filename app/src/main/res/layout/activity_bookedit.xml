@@ -37,6 +37,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginTop="10dp"
                 android:scaleType="center"
                 android:contentDescription="@string/reading_status_image_view"
                 android:src="@drawable/ic_assignment"/>
@@ -45,8 +46,10 @@
                 android:id="@+id/reading_status_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:spinnerMode="dropdown"/>
+                android:layout_marginStart="16dp"
+                android:spinnerMode="dropdown"
+                android:backgroundTint="@color/colorSecondaryText"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
         </LinearLayout>
 
@@ -54,11 +57,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginTop="8dp"
                 android:scaleType="center"
                 android:contentDescription="@string/book_shelf_image_view"
                 android:src="@drawable/ic_view_list"/>
@@ -67,8 +70,11 @@
                 android:id="@+id/book_shelf_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:spinnerMode="dropdown"/>
+                android:layout_marginStart="16dp"
+                android:spinnerMode="dropdown"
+                android:backgroundTint="@color/colorSecondaryText"
+
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
         </LinearLayout>
 
@@ -76,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="24dp"
@@ -120,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="24dp"

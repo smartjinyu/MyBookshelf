@@ -86,12 +86,15 @@ public class DoubanFetcher extends BookFetcher{
                     }
                     mBook.setPubtime(pubDate);
 
-                    String imageURL = response.body().getImages().getLarge();
-                    getAndSaveImg(imageURL);
+                    final String imageURL = response.body().getImages().getLarge();
+                    //getAndSaveImg(imageURL);
                     mHandler.post(new Runnable() {//on the main thread
                         @Override
                         public void run() {
-                            Intent i = BookEditActivity.newIntent(mContext,mBook);
+                            Intent i = new Intent(mContext,BookEditActivity.class);
+                            i.putExtra(BookEditActivity.BOOK,mBook);
+                            i.putExtra(BookEditActivity.downloadCover,true);
+                            i.putExtra(BookEditActivity.imageURL,imageURL);
                             mContext.startActivity(i);
                         }
                     });

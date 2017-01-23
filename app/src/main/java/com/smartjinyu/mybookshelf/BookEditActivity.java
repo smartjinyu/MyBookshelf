@@ -2,13 +2,17 @@ package com.smartjinyu.mybookshelf;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 /**
@@ -18,7 +22,10 @@ import android.widget.LinearLayout;
 
 public class BookEditActivity extends AppCompatActivity{
     private static final String TAG = "BookEditActivity";
-    private static String BOOK ="BOOKTOEDIT";
+
+    public static String BOOK ="BOOKTOEDIT";
+    public static String downloadCover = "DOWNLOADCOVER";
+    public static String imageURL = "IMAGEURL";
 
     private Book mBook;
 
@@ -29,14 +36,10 @@ public class BookEditActivity extends AppCompatActivity{
     private EditText publisherEditText;
     private EditText pubdateEditText;
     private EditText isbnEditText;
+    private ImageView coverImageView;
 
     private LinearLayout translator_layout;
 
-    public static Intent newIntent(Context context,Book book){
-        Intent intent = new Intent(context,BookEditActivity.class);
-        intent.putExtra(BOOK,book);
-        return intent;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -58,6 +61,12 @@ public class BookEditActivity extends AppCompatActivity{
             }
         });
 
+        coverImageView = (ImageView) findViewById(R.id.book_cover_image_view);
+        if(i.getBooleanExtra(downloadCover,false)){
+            CoverDownloader coverDownloader = new CoverDownloader(this,mBook);
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
+            coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL),path);
+        }
         setBookInfo();
     }
 
@@ -93,13 +102,15 @@ public class BookEditActivity extends AppCompatActivity{
         publisherEditText.setText(mBook.getPublisher());
         //pubDATE
         isbnEditText.setText(mBook.getIsbn());
+    }
 
-
-
-
-
-
-
+    public void setBookCover(){
+        if(coverImageView!=null && mBook.isHasCover()){
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
+            //Bitmap bitmap = PictureUtils.getScaledBitmap(path,coverImageView.getWidth(),coverImageView.getHeight());
+            Bitmap bitmap1 = BitmapFactory.decodeFile(path);
+            coverImageView.setImageBitmap(bitmap1);
+        }
     }
 
 }

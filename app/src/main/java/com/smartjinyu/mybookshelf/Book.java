@@ -26,12 +26,20 @@ public class Book implements Serializable{
     private Calendar addTime;// Time the book add to bookshelf
     private String isbn;
     private boolean hasCover;
+    private int readingStatus;
+    /**
+     * 0 represents not set
+     * 1 represents unread
+     * 2 represents reading
+     * 3 represents read
+     */
     private UUID bookshelfID;
 
     public Book(){
         id = UUID.randomUUID();
         bookshelfID = UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe");
         //default bookshelf id
+        readingStatus = 0;
     }
     public Book(UUID uuid){
         id = uuid;
@@ -129,5 +137,13 @@ public class Book implements Serializable{
 
     public void setBookshelfID(UUID bookshelfID) {
         this.bookshelfID = bookshelfID;
+    }
+
+    public int getReadingStatus() {
+        return readingStatus;
+    }
+
+    public void setReadingStatus(int readingStatus) {
+        this.readingStatus = readingStatus;
     }
 }

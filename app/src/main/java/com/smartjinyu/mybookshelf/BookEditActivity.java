@@ -86,10 +86,7 @@ public class BookEditActivity extends AppCompatActivity{
         setBookInfo();
 
         readingStatusSpinner = (Spinner) findViewById(R.id.reading_status_spinner);
-        ArrayAdapter<CharSequence> readingStatusArrayAdapter = ArrayAdapter.createFromResource(
-                this,R.array.reading_status_array,R.layout.spinner_item);
-        readingStatusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        readingStatusSpinner.setAdapter(readingStatusArrayAdapter);
+        setReadingStatus();
 
         bookshelfSpinner = (Spinner) findViewById(R.id.book_shelf_spinner);
         setBookShelf();
@@ -174,6 +171,7 @@ public class BookEditActivity extends AppCompatActivity{
                             bookShelf.setTitle(editText.getText().toString());
                             bookShelfLab.addBookShelf(bookShelf);
                             mBook.setBookshelfID(bookShelf.getId());
+                            Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());
                             setBookShelf();
                         }
                     });
@@ -219,7 +217,7 @@ public class BookEditActivity extends AppCompatActivity{
                         }
                     });
                 }else{
-                    Log.i(TAG,selectedBS.getTitle());
+                    Log.i(TAG,"set bookshelf " + selectedBS.getTitle());
                     curBookshelfPos = pos;
                     mBook.setBookshelfID(selectedBS.getId());
                 }
@@ -232,6 +230,26 @@ public class BookEditActivity extends AppCompatActivity{
 
 
 
+    }
+
+    private void setReadingStatus(){
+        ArrayAdapter<CharSequence> readingStatusArrayAdapter = ArrayAdapter.createFromResource(
+                this,R.array.reading_status_array,R.layout.spinner_item);
+        readingStatusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        readingStatusSpinner.setAdapter(readingStatusArrayAdapter);
+        readingStatusSpinner.setSelection(mBook.getReadingStatus());
+        readingStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mBook.setReadingStatus(i);
+                Log.i(TAG,"Click and set Reading status " + i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     public void setBookCover(){

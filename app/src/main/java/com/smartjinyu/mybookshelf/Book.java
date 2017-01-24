@@ -1,5 +1,7 @@
 package com.smartjinyu.mybookshelf;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,9 +26,12 @@ public class Book implements Serializable{
     private Calendar addTime;// Time the book add to bookshelf
     private String isbn;
     private boolean hasCover;
+    private UUID bookshelfID;
 
     public Book(){
         id = UUID.randomUUID();
+        bookshelfID = UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe");
+        //default bookshelf id
     }
     public Book(UUID uuid){
         id = uuid;
@@ -116,5 +121,13 @@ public class Book implements Serializable{
 
     public void setHasCover(boolean hasCover) {
         this.hasCover = hasCover;
+    }
+
+    public UUID getBookshelfID() {
+        return bookshelfID;
+    }
+
+    public void setBookshelfID(UUID bookshelfID) {
+        this.bookshelfID = bookshelfID;
     }
 }

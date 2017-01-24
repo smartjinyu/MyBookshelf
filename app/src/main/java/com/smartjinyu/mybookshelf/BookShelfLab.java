@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -50,14 +51,24 @@ public class BookShelfLab {
             sBookShelf = gson.fromJson(toLoad,type);
             Log.i(TAG,"JSON to Load = " + toLoad);
         }else{
-            BookShelf bookShelf = new BookShelf();
+            BookShelf bookShelf = new BookShelf(
+                    UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe"));
             bookShelf.setTitle(mContext.getResources().getString(R.string.default_book_shelf_name));
             addBookShelf(bookShelf);
         }
     }
 
-    public List<BookShelf> getBookShelves(){
+    public final List<BookShelf> getBookShelves(){
         return sBookShelf;
+    }
+
+    public final BookShelf getBookShelf(UUID id){
+        for(BookShelf bookShelf : sBookShelf){
+            if(bookShelf.getId() == id){
+                return bookShelf;
+            }
+        }
+        return null;
     }
 
 

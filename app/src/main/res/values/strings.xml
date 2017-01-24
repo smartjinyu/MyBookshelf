@@ -42,11 +42,9 @@
         <item>Reading</item>
         <item>Read</item>
     </string-array>
-    <string name="custom_spinner_item">Custom</string>
+    <string name="custom_spinner_item">Add New</string>
     <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
     <string name="custom_book_shelf_dialog_title">Custom BookShelf</string>
-    <string name="custom_book_shelf_dialog_ok">OK</string>
-    <string name="custom_book_shelf_dialog_cancel">CANCEL</string>
 
 
 

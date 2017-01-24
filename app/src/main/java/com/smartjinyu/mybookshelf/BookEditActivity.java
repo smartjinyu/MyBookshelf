@@ -1,15 +1,11 @@
 package com.smartjinyu.mybookshelf;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.icu.text.StringPrepParseException;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -137,44 +133,55 @@ public class BookEditActivity extends AppCompatActivity{
         isbnEditText.setText(mBook.getIsbn());
     }
 
+    private int curBookshelfPos;
     private void setBookShelf(){
-        //todo get books bookshelf;
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
-        List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-        ArrayList<String> names = new ArrayList<>();
-        for(int i = 0;i<bookShelves.size();i++){
-            names.add(bookShelves.get(i).getTitle());
+        final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
+        List<BookShelf> spinnerBookshelf = new ArrayList<>();
+        for(BookShelf bookShelftemp : bookShelves){
+            spinnerBookshelf.add(bookShelftemp);
         }
-        names.add(getResources().getString(R.string.custom_spinner_item));
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.spinner_item,names);
+        final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
+                this,R.layout.spinner_item,spinnerBookshelf);
+        //overload toString method in BookShelf
+        BookShelf customShelf = new BookShelf();
+        customShelf.setTitle(getResources().getString(R.string.custom_spinner_item));
+        //customShelf is only used to add an item to spinner, it will never add to bookshelfList
+        arrayAdapter.add(customShelf);
+
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bookshelfSpinner.setAdapter(arrayAdapter);
+
+        BookShelf curBookshelf = bookShelfLab.getBookShelf(mBook.getBookshelfID());
+        curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
+        bookshelfSpinner.setSelection(curBookshelfPos);
         bookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                String selected = bookshelfSpinner.getSelectedItem().toString();
-                if(selected.equals(getResources().getString(R.string.custom_spinner_item))){
+                BookShelf selectedBS = (BookShelf) bookshelfSpinner.getSelectedItem();
+                String selectedName = selectedBS.toString();
+                if(selectedName.equals(getResources().getString(R.string.custom_spinner_item))){
                     Log.i(TAG,"Custom Bookshelf clicked");
                     AlertDialog.Builder builder = new AlertDialog.Builder(mBookEditActivity);
                     final EditText editText = new EditText(mBookEditActivity);
                     editText.setHint(R.string.custom_book_shelf_dialog_edit_text);
                     builder.setTitle(R.string.custom_book_shelf_dialog_title);
                     builder.setView(editText);
-                    builder.setPositiveButton(R.string.custom_book_shelf_dialog_ok, new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             BookShelf bookShelf = new BookShelf();
                             bookShelf.setTitle(editText.getText().toString());
                             bookShelfLab.addBookShelf(bookShelf);
-                            //todo setbooksbookself selected
+                            mBook.setBookshelfID(bookShelf.getId());
+                            setBookShelf();
                         }
                     });
 
-                    builder.setNegativeButton(R.string.custom_book_shelf_dialog_cancel, new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //todo select previous
+                            bookshelfSpinner.setSelection(curBookshelfPos);
                         }
                     });
                     final AlertDialog alertDialog = builder.create();
@@ -205,11 +212,16 @@ public class BookEditActivity extends AppCompatActivity{
                         @Override
                         public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
                             if(i == KeyEvent.KEYCODE_BACK){
-                                //todo
+                                bookshelfSpinner.setSelection(curBookshelfPos);
+                                dialogInterface.dismiss();
                             }
                             return true;
                         }
                     });
+                }else{
+                    Log.i(TAG,selectedBS.getTitle());
+                    curBookshelfPos = pos;
+                    mBook.setBookshelfID(selectedBS.getId());
                 }
             }
 

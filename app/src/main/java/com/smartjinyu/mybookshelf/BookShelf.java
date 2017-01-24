@@ -14,6 +14,14 @@ public class BookShelf {
     public BookShelf(){
         id = UUID.randomUUID();
     }
+    public BookShelf(UUID uuid){
+        id = uuid;
+    }
+
+    @Override
+    public String toString(){
+        return title;
+    }
 
     public UUID getId() {
         return id;

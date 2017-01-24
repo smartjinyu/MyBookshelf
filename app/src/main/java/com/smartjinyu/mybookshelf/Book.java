@@ -3,6 +3,7 @@ package com.smartjinyu.mybookshelf;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,9 @@ public class Book implements Serializable{
      * 3 represents read
      */
     private UUID bookshelfID;
+    private String notes;
+    private String website;
+    private List<UUID> labelID;
 
     public Book(){
         id = UUID.randomUUID();
@@ -146,4 +150,45 @@ public class Book implements Serializable{
     public void setReadingStatus(int readingStatus) {
         this.readingStatus = readingStatus;
     }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public List<UUID> getLabelID() {
+        return labelID;
+    }
+
+    public void addLabel(Label label){
+        if(labelID == null){
+            labelID = new ArrayList<>();
+        }
+        labelID.add(label.getId());
+    }
+    public void addLabel(UUID labelid){
+        if(labelID == null){
+            labelID = new ArrayList<>();
+        }
+        labelID.add(labelid);
+    }
+    public void removeLabel(UUID labelid){
+        if(labelID!=null){
+            labelID.remove(labelid);
+        }
+    }
+
+
+
 }

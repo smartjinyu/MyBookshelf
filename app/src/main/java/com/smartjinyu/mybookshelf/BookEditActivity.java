@@ -51,6 +51,8 @@ public class BookEditActivity extends AppCompatActivity{
     private ImageView coverImageView;
     private Spinner readingStatusSpinner;
     private Spinner bookshelfSpinner;
+    private EditText notesEditText;
+    private EditText websiteEditText;
 
     private LinearLayout translator_layout;
 
@@ -91,6 +93,17 @@ public class BookEditActivity extends AppCompatActivity{
         bookshelfSpinner = (Spinner) findViewById(R.id.book_shelf_spinner);
         setBookShelf();
 
+        notesEditText = (EditText) findViewById(R.id.book_notes_edit_text);
+        if(mBook.getNotes()!=null){
+            notesEditText.setText(mBook.getNotes());
+        }
+
+        websiteEditText = (EditText) findViewById(R.id.book_website_edit_text);
+        if(mBook.getWebsite()!=null){
+            websiteEditText.setText(mBook.getWebsite());
+        }
+
+
 
 
     }
@@ -127,6 +140,7 @@ public class BookEditActivity extends AppCompatActivity{
 
         publisherEditText.setText(mBook.getPublisher());
         //pubDATE
+
         isbnEditText.setText(mBook.getIsbn());
     }
 
@@ -134,9 +148,9 @@ public class BookEditActivity extends AppCompatActivity{
     private void setBookShelf(){
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-        List<BookShelf> spinnerBookshelf = new ArrayList<>();
-        for(BookShelf bookShelftemp : bookShelves){
-            spinnerBookshelf.add(bookShelftemp);
+        List<BookShelf> spinnerBookshelf = new ArrayList<>();//avoid change list bookshelves
+        for(BookShelf bookShelfTemp : bookShelves){
+            spinnerBookshelf.add(bookShelfTemp);
         }
         final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
                 this,R.layout.spinner_item,spinnerBookshelf);

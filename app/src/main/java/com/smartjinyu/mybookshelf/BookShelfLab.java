@@ -78,12 +78,21 @@ public class BookShelfLab {
             sBookShelf = new ArrayList<BookShelf>();
         }
         sBookShelf.add(bookShelf);
+        saveBookShelf();
+    }
+
+    private void saveBookShelf(){
         Gson gson = new Gson();
         String toSave = gson.toJson(sBookShelf);
         Log.i(TAG,"JSON to Save = " + toSave);
         BookShelfPreference.edit()
                 .putString(PreferenceName,toSave)
                 .apply();
+    }
+
+    public void removeBookShelf(BookShelf bookShelf){
+        sBookShelf.remove(bookShelf);
+        saveBookShelf();
     }
 
 

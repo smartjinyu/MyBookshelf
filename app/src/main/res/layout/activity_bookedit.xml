@@ -93,7 +93,7 @@
                 android:src="@drawable/ic_chat"/>
 
             <EditText
-                android:id="@+id/book_notes_exit_text"
+                android:id="@+id/book_notes_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -126,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="24dp"
@@ -137,7 +137,7 @@
                 android:src="@drawable/ic_earth"/>
 
             <EditText
-                android:id="@+id/book_website_exit_text"
+                android:id="@+id/book_website_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

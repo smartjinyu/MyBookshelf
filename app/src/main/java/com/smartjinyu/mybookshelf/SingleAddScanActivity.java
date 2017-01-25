@@ -100,6 +100,9 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         return super.onCreateOptionsMenu(menu);
 
     }
+    public void resumeCamera(){
+        mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
+    }
 
     @Override
     public void onResume() {
@@ -143,20 +146,16 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
 
     @Override
     public void handleResult(Result rawResult){
-        Toast.makeText(this, "Contents = " + rawResult.getText() +
-                ", Format = " + rawResult.getBarcodeFormat().toString(), Toast.LENGTH_SHORT).show();
         Log.i(TAG,"ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
 
-        mToolbar.setTitle(rawResult.getText());
-
         DoubanFetcher fetcher = new DoubanFetcher();
-        fetcher.getBookInfo(getApplicationContext(),rawResult.getText());
-
+        fetcher.getBookInfo(this,rawResult.getText());
 
 
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
+        /*
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -164,7 +163,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
                 mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
             }
         }, 2000);
-
+        */
     }
 
     @Override

@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
@@ -124,13 +125,18 @@ public class BookEditActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_book_edit_save:
-                int month = Integer.parseInt(pubmonthEditText.getText().toString());
-                if(month>12 || month <1){
+                int month;
+                if(pubmonthEditText.getText().toString().length()== 0){
+                    month = -1;
+                }else {
+                    month = Integer.parseInt(pubmonthEditText.getText().toString());
+                }
+                if((month>12 || month <1)&&(month!=-1)){
                     Toast.makeText(this,R.string.month_invalid,Toast.LENGTH_LONG).show();
                     pubmonthEditText.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(pubmonthEditText,InputMethodManager.SHOW_IMPLICIT);
-                }else {
+                } else {
                     mBook.setTitle(titleEditText.getText().toString());
                     //authors
                     String authors = authorEditText.getText().toString();
@@ -158,9 +164,14 @@ public class BookEditActivity extends AppCompatActivity{
                     //
                     mBook.setPublisher(publisherEditText.getText().toString());
                     //pubDate
-                    int year = Integer.parseInt(pubyearEditText.getText().toString());
+                    int year;
+                    if(pubyearEditText.getText().toString().length() == 0){
+                        year = - 9999;
+                    }else {
+                        year = Integer.parseInt(pubyearEditText.getText().toString());
+                    }
                     Calendar calendar = Calendar.getInstance();
-                    calendar.set(year, month, 1);
+                    calendar.set(year, month-1, 1);
                     mBook.setPubTime(calendar);
                     //
                     mBook.setIsbn(isbnEditText.getText().toString());
@@ -209,15 +220,17 @@ public class BookEditActivity extends AppCompatActivity{
         }
 
         publisherEditText.setText(mBook.getPublisher());
-        int year = mBook.getPubTime().get(Calendar.YEAR);
-        int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
-        StringBuilder month = new StringBuilder();
-        if(mon < 10){
-            month.append("0");
+        if(mBook.getPubTime()!=null){
+            int year = mBook.getPubTime().get(Calendar.YEAR);
+            int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
+            StringBuilder month = new StringBuilder();
+            if(mon < 10){
+                month.append("0");
+            }
+            month.append(String.valueOf(mon));
+            pubyearEditText.setText(String.valueOf(year));
+            pubmonthEditText.setText(month);
         }
-        month.append(String.valueOf(mon));
-        pubyearEditText.setText(String.valueOf(year));
-        pubmonthEditText.setText(month);
 
 
         isbnEditText.setText(mBook.getIsbn());
@@ -264,6 +277,13 @@ public class BookEditActivity extends AppCompatActivity{
                                     mBook.setBookshelfID(bookShelf.getId());
                                     Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());
                                     setBookShelf();
+                                }
+                            })
+                            .negativeText(android.R.string.cancel)
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    bookshelfSpinner.setSelection(curBookshelfPos);
                                 }
                             })
                             .dismissListener(new DialogInterface.OnDismissListener() {

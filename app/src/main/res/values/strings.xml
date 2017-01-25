@@ -11,8 +11,18 @@
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>
     <string name="camera_permission_denied">Please grant Camera permission to scan Barcode.</string>
+    <string name="isbn_unmatched_dialog_title">Get Information Failed</string>
+    <string name="isbn_unmatched_dialog_content">Your Book\'s ISBN is %1$s,
+        we failed to get details from web services. Please check ISBN.\n
+        Do you want to add it any way or rescan the Barcode?</string>
+    <string name="isbn_unmatched_dialog_positive">Add it Anyway</string>
+    <string name="isbn_unmatched_dialog_negative">Rescan</string>
+    <string name="request_failed_dialog_content">Your Book\'s ISBN is %1$s,
+        we failed to connect to web services. Please check network.\n
+        Do you want to add it any way or rescan the Barcode?</string>
 
-    <string name="fetcher_response_unmatched">Get book details failed. Please check your In Barcode.</string>
+
+
 
     <!--BookEditActivity-->
     <string name="book_edit_activity_title">Edit Book Details</string>

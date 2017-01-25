@@ -23,7 +23,7 @@ public class Book implements Serializable{
     private Map<String,String> WebIds;
     // "douban"
     private String publisher;
-    private Date pubtime;
+    private Calendar pubtime;
     private Calendar addTime;// Time the book add to bookshelf
     private String isbn;
     private boolean hasCover;
@@ -95,11 +95,11 @@ public class Book implements Serializable{
         this.publisher = publisher;
     }
 
-    public Date getPubtime() {
+    public Calendar getPubtime() {
         return pubtime;
     }
 
-    public void setPubtime(Date pubtime) {
+    public void setPubtime(Calendar pubtime) {
         this.pubtime = pubtime;
     }
 

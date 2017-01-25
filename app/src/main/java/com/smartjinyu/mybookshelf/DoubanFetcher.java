@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,17 +78,22 @@ public class DoubanFetcher extends BookFetcher{
 
 
                     mBook.setPublisher(response.body().getPublisher());
-                    DateFormat df = new SimpleDateFormat("yyyy-MM");
-                    Date pubDate = new Date();
-                    try {
-                        pubDate = df.parse(response.body().getPubdate());
-                    }catch (ParseException pe){
-                        Log.e(TAG,"Parse Date Exception"+pe);
-                    }
-                    mBook.setPubtime(pubDate);
 
+                    String rawDate = response.body().getPubdate();
+                    Log.i(TAG,"Date raw = " + rawDate);
+                    int firstSplit  = rawDate.indexOf("-");
+                    int lastSplit = rawDate.lastIndexOf("-");
+                    String year = rawDate.substring(0,firstSplit);
+                    // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
+                    if(firstSplit == lastSplit){
+                        lastSplit = rawDate.length();
+                    }
+                    String month = rawDate.substring(firstSplit+1,lastSplit);
+                    Log.i(TAG,"first = " + firstSplit + ", second = " + lastSplit + ", month = " + month + ", year = " + year);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,1);
+                    mBook.setPubtime(calendar);
                     final String imageURL = response.body().getImages().getLarge();
-                    //getAndSaveImg(imageURL);
                     mHandler.post(new Runnable() {//on the main thread
                         @Override
                         public void run() {

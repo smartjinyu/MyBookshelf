@@ -15,6 +15,8 @@
     <string name="fetcher_response_unmatched">Get book details failed. Please check your In Barcode.</string>
 
     <!--BookEditActivity-->
+    <string name="book_edit_activity_title">Edit Book</string>
+    <string name="book_edit_menu_save">Save</string>
     <string name="book_title_label">Book Info</string>
     <string name="book_cover_image_view_hint">BookCover</string>
     <string name="book_cover_text_view">Cover</string>
@@ -29,6 +31,8 @@
     <string name="book_translator_edit_text_hint">Separate multiple by Space</string>
     <string name="book_publisher_edit_text_hint">Publisher of the Book</string>
     <string name="book_isbn_edit_text_hint">ISBN of the Book</string>
+    <string name="book_pubyear_edit_text_hint">Year</string>
+    <string name="book_pubmonth_edit_text_hint">Mon</string>
     <string name="separator_text_view1">Details</string>
     <string name="reading_status_image_view">Reading Status</string>
     <string name="book_shelf_image_view">Bookshelf</string>

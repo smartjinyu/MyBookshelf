@@ -6,23 +6,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -46,7 +48,8 @@ public class BookEditActivity extends AppCompatActivity{
     private EditText authorEditText;
     private EditText translatorEditText;
     private EditText publisherEditText;
-    private EditText pubdateEditText;
+    private EditText pubyearEditText;
+    private EditText pubmonthEditText;
     private EditText isbnEditText;
     private ImageView coverImageView;
     private Spinner readingStatusSpinner;
@@ -69,13 +72,14 @@ public class BookEditActivity extends AppCompatActivity{
         mBookEditActivity = this;
 
         mToolbar = (Toolbar) findViewById(R.id.bookedit_toolbar);
+        mToolbar.setTitle(R.string.book_edit_activity_title);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_close);
         mToolbar.setNavigationContentDescription(R.string.tool_bar_navigation_description);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //todo
+                finish();
             }
         });
 
@@ -103,9 +107,24 @@ public class BookEditActivity extends AppCompatActivity{
             websiteEditText.setText(mBook.getWebsite());
         }
 
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_bookedit,menu);
+        return true;
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_book_edit_save:
+                //// TODO: 2017/1/25
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setBookInfo(){
@@ -113,7 +132,8 @@ public class BookEditActivity extends AppCompatActivity{
         authorEditText = (EditText) findViewById(R.id.book_author_edit_text);
         translatorEditText = (EditText) findViewById(R.id.book_translator_edit_text);
         publisherEditText = (EditText) findViewById(R.id.book_publisher_edit_text);
-        pubdateEditText = (EditText) findViewById(R.id.book_pubdate_edit_text);
+        pubyearEditText = (EditText) findViewById(R.id.book_pubyear_edit_text);
+        pubmonthEditText = (EditText) findViewById(R.id.book_pubmonth_edit_text);
         isbnEditText = (EditText) findViewById(R.id.book_isbn_edit_text);
         translator_layout = (LinearLayout) findViewById(R.id.translator_layout);
 
@@ -127,6 +147,7 @@ public class BookEditActivity extends AppCompatActivity{
             }
             authorEditText.setText(stringBuilder1.toString());
         }
+
         if(mBook.getTranslators()!=null){
             translator_layout.setVisibility(View.VISIBLE);
             StringBuilder stringBuilder2 = new StringBuilder();
@@ -135,11 +156,19 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder2.append(" ");
             }
             translatorEditText.setText(stringBuilder2.toString());
-            translatorEditText.setText(mBook.getAuthors().toString());
         }
 
         publisherEditText.setText(mBook.getPublisher());
-        //pubDATE
+        int year = mBook.getPubtime().get(Calendar.YEAR);
+        int mon = mBook.getPubtime().get(Calendar.MONTH) + 1;
+        StringBuilder month = new StringBuilder();
+        if(mon < 10){
+            month.append("0");
+        }
+        month.append(String.valueOf(mon));
+        pubyearEditText.setText(String.valueOf(year));
+        pubmonthEditText.setText(month);
+
 
         isbnEditText.setText(mBook.getIsbn());
     }
@@ -173,6 +202,30 @@ public class BookEditActivity extends AppCompatActivity{
                 String selectedName = selectedBS.toString();
                 if(selectedName.equals(getResources().getString(R.string.custom_spinner_item))){
                     Log.i(TAG,"Custom Bookshelf clicked");
+                    MaterialDialog inputDialog = new MaterialDialog.Builder(mBookEditActivity)
+                            .title(R.string.custom_book_shelf_dialog_title)
+                            .inputRange(1,10)
+                            .input(R.string.custom_book_shelf_dialog_edit_text,0,new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                    BookShelf bookShelf = new BookShelf();
+                                    bookShelf.setTitle(input.toString());
+                                    bookShelfLab.addBookShelf(bookShelf);
+                                    mBook.setBookshelfID(bookShelf.getId());
+                                    Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());
+                                    setBookShelf();
+                                }
+                            })
+                            .dismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    bookshelfSpinner.setSelection(curBookshelfPos);
+                                }
+                            })
+                            .show();
+
+
+                    /* Default Dialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(mBookEditActivity);
                     final EditText editText = new EditText(mBookEditActivity);
                     editText.setHint(R.string.custom_book_shelf_dialog_edit_text);
@@ -230,6 +283,7 @@ public class BookEditActivity extends AppCompatActivity{
                             return true;
                         }
                     });
+                    */
                 }else{
                     Log.i(TAG,"set bookshelf " + selectedBS.getTitle());
                     curBookshelfPos = pos;

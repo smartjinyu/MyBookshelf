@@ -25,7 +25,7 @@ public class LabelLab {
     private SharedPreferences LabelPreference;
     private Context mContext;
 
-    private static List<Label> sLabel;
+    private  List<Label> sLabel;
 
 
     public static LabelLab get(Context context){

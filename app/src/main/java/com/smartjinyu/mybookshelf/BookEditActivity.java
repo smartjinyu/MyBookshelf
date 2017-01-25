@@ -166,6 +166,8 @@ public class BookEditActivity extends AppCompatActivity{
                     mBook.setIsbn(isbnEditText.getText().toString());
                     mBook.setNotes(notesEditText.getText().toString());
                     mBook.setWebsite(notesEditText.getText().toString());
+                    BookLab bookLab = BookLab.get(this);
+                    bookLab.addBook(mBook);
                     finish();
                 }
             default:

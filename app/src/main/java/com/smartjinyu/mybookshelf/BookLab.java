@@ -2,11 +2,18 @@ package com.smartjinyu.mybookshelf;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
+import com.smartjinyu.mybookshelf.database.BookCursorWrapper;
 import com.smartjinyu.mybookshelf.database.BookDBSchema;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by smartjinyu on 2017/1/25.
@@ -19,7 +26,7 @@ public class BookLab {
     private Context mContext;
     private static BookLab sBookLab;
     private SQLiteDatabase mDatabase;
-
+    private List<Book> mBooks;
     public static BookLab get(Context context){
         if(sBookLab == null){
             sBookLab = new BookLab(context);
@@ -30,11 +37,11 @@ public class BookLab {
     public BookLab(Context context){
         mContext = context.getApplicationContext();
         mDatabase = new BookBaseHelper(context).getWritableDatabase();
+        loadBooks();
     }
 
     private static ContentValues getContentValues(Book book){
         ContentValues values = new ContentValues();
-
         values.put(BookDBSchema.BookTable.Cols.TITLE,book.getTitle());
         values.put(BookDBSchema.BookTable.Cols.UUID,book.getId().toString());
         //authors
@@ -60,8 +67,66 @@ public class BookLab {
         //label id
         String labelID = gson.toJson(book.getLabelID());
         values.put(BookDBSchema.BookTable.Cols.LABEL_ID,labelID);
-
         return values;
     }
+
+    private BookCursorWrapper queryBooks(String whereClause,String[] whereArgs){
+        Cursor cursor = mDatabase.query(
+                BookDBSchema.BookTable.NAME,//TableName
+                null,//columns, null select all columns
+                whereClause,//where
+                whereArgs,//whereArgs
+                null,//groupBy
+                null,//having
+                null//limit
+        );
+        return new BookCursorWrapper(cursor);
+
+    }
+    private void loadBooks(){
+        mBooks = new ArrayList<>();
+        BookCursorWrapper cursor = queryBooks(null,null);
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                mBooks.add(cursor.getBook());
+                cursor.moveToNext();
+            }
+        }finally {
+            cursor.close();
+        }
+    }
+
+    public Book getBook(UUID id){
+        BookCursorWrapper cursor = queryBooks(BookDBSchema.BookTable.Cols.UUID + "= ?",
+                new String[]{id.toString()});
+        try{
+            if(cursor.getCount() == 0){
+                return null;
+            }
+            cursor.moveToFirst();
+            return cursor.getBook();
+        }finally {
+            cursor.close();
+        }
+    }
+
+    public List<Book> getBooks(){
+        return mBooks;
+    }
+
+    public void addBook(Book book){
+        ContentValues values = getContentValues(book);
+        mBooks.add(book);
+        mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
+    }
+
+    public void deleteBook(Book book){
+        String uuidString = book.getId().toString();
+        mBooks.remove(book);
+        mDatabase.delete(BookDBSchema.BookTable.NAME,BookDBSchema.BookTable.Cols.UUID + " = ?",
+                new String[]{uuidString});
+    }
+
 
 }

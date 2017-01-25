@@ -4,19 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.io.FileInputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,26 +64,20 @@ public class DoubanFetcher extends BookFetcher{
                         mBook.setWebIds(new HashMap<String, String>());
                     }
                     mBook.getWebIds().put("douban",response.body().getId());
-
                     mBook.setAddTime(Calendar.getInstance());
-
 
                     mBook.setPublisher(response.body().getPublisher());
 
                     String rawDate = response.body().getPubdate();
                     Log.i(TAG,"Date raw = " + rawDate);
-                    int firstSplit  = rawDate.indexOf("-");
-                    int lastSplit = rawDate.lastIndexOf("-");
-                    String year = rawDate.substring(0,firstSplit);
+                    String[] date = rawDate.split("-");
+                    String year = date[0];
                     // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
-                    if(firstSplit == lastSplit){
-                        lastSplit = rawDate.length();
-                    }
-                    String month = rawDate.substring(firstSplit+1,lastSplit);
-                    Log.i(TAG,"first = " + firstSplit + ", second = " + lastSplit + ", month = " + month + ", year = " + year);
+                    String month = date[1];
+                    Log.i(TAG,"Get PubDate Year = " + year + ", month = " + month);
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,1);
-                    mBook.setPubtime(calendar);
+                    mBook.setPubTime(calendar);
                     final String imageURL = response.body().getImages().getLarge();
                     mHandler.post(new Runnable() {//on the main thread
                         @Override

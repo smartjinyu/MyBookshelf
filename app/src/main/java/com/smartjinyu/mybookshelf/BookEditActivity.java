@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,16 +15,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -56,7 +60,6 @@ public class BookEditActivity extends AppCompatActivity{
     private Spinner bookshelfSpinner;
     private EditText notesEditText;
     private EditText websiteEditText;
-
     private LinearLayout translator_layout;
 
 
@@ -82,6 +85,7 @@ public class BookEditActivity extends AppCompatActivity{
                 finish();
             }
         });
+
 
         coverImageView = (ImageView) findViewById(R.id.book_cover_image_view);
         if(i.getBooleanExtra(downloadCover,false)){
@@ -120,8 +124,50 @@ public class BookEditActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_book_edit_save:
-                //// TODO: 2017/1/25
-                finish();
+                int month = Integer.parseInt(pubmonthEditText.getText().toString());
+                if(month>12 || month <1){
+                    Toast.makeText(this,R.string.month_invalid,Toast.LENGTH_LONG).show();
+                    pubmonthEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(pubmonthEditText,InputMethodManager.SHOW_IMPLICIT);
+                }else {
+                    mBook.setTitle(titleEditText.getText().toString());
+                    //authors
+                    String authors = authorEditText.getText().toString();
+                    String[] authorArray;
+                    if(authors.contains("、")){
+                        authorArray = authors.split("、");
+                    }else {
+                        authorArray = authors.split(" ");
+                    }
+                    List<String> authorList = new ArrayList<>(Arrays.asList(authorArray));
+                    mBook.setAuthors(authorList);
+                    //
+                    //translators
+                    if(translator_layout.getVisibility()!= View.GONE){
+                        String translators = translatorEditText.getText().toString();
+                        String[] translatorArray;
+                        if(translators.contains("、")){
+                            translatorArray = translators.split("、");
+                        }else {
+                            translatorArray = translators.split(" ");
+                        }
+                        List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
+                        mBook.setTranslators(translatorList);
+                    }
+                    //
+                    mBook.setPublisher(publisherEditText.getText().toString());
+                    //pubDate
+                    int year = Integer.parseInt(pubyearEditText.getText().toString());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(year, month, 1);
+                    mBook.setPubTime(calendar);
+                    //
+                    mBook.setIsbn(isbnEditText.getText().toString());
+                    mBook.setNotes(notesEditText.getText().toString());
+                    mBook.setWebsite(notesEditText.getText().toString());
+                    finish();
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -145,7 +191,8 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder1.append(author);
                 stringBuilder1.append(" ");
             }
-            authorEditText.setText(stringBuilder1.toString());
+            String authors = stringBuilder1.toString();
+            authorEditText.setText(authors.substring(0,authors.length()-1));
         }
 
         if(mBook.getTranslators()!=null){
@@ -155,12 +202,13 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder2.append(translator);
                 stringBuilder2.append(" ");
             }
-            translatorEditText.setText(stringBuilder2.toString());
+            String translators = stringBuilder2.toString();
+            translatorEditText.setText(translators.substring(0,translators.length()-1));
         }
 
         publisherEditText.setText(mBook.getPublisher());
-        int year = mBook.getPubtime().get(Calendar.YEAR);
-        int mon = mBook.getPubtime().get(Calendar.MONTH) + 1;
+        int year = mBook.getPubTime().get(Calendar.YEAR);
+        int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
         StringBuilder month = new StringBuilder();
         if(mon < 10){
             month.append("0");

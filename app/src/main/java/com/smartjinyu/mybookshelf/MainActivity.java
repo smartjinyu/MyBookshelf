@@ -43,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.fragment_container,new BookListFragment())
                 .commit();
 
-
-
-
     }
 
     @Override
@@ -103,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         menuItem.setChecked(true);
-        setTitle(menuItem.getTitle());//set main_toolbar title
+        setTitle(menuItem.getTitle());//set toolbar_main title
         mDrawer.closeDrawers();
 
     }

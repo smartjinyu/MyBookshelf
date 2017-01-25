@@ -1,11 +1,8 @@
 package com.smartjinyu.mybookshelf;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +20,7 @@ public class Book implements Serializable{
     private Map<String,String> WebIds;
     // "douban"
     private String publisher;
-    private Calendar pubtime;
+    private Calendar pubTime;
     private Calendar addTime;// Time the book add to bookshelf
     private String isbn;
     private boolean hasCover;
@@ -34,6 +31,7 @@ public class Book implements Serializable{
      * 2 represents reading
      * 3 represents read
      */
+
     private UUID bookshelfID;
     private String notes;
     private String website;
@@ -95,12 +93,12 @@ public class Book implements Serializable{
         this.publisher = publisher;
     }
 
-    public Calendar getPubtime() {
-        return pubtime;
+    public Calendar getPubTime() {
+        return pubTime;
     }
 
-    public void setPubtime(Calendar pubtime) {
-        this.pubtime = pubtime;
+    public void setPubTime(Calendar pubTime) {
+        this.pubTime = pubTime;
     }
 
     public String getTitle() {
@@ -189,6 +187,7 @@ public class Book implements Serializable{
         }
     }
 
-
-
+    public void setLabelID(List<UUID> labelID) {
+        this.labelID = labelID;
+    }
 }

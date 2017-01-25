@@ -15,7 +15,7 @@
     <string name="fetcher_response_unmatched">Get book details failed. Please check your In Barcode.</string>
 
     <!--BookEditActivity-->
-    <string name="book_edit_activity_title">Edit Book</string>
+    <string name="book_edit_activity_title">Edit Book Details</string>
     <string name="book_edit_menu_save">Save</string>
     <string name="book_title_label">Book Info</string>
     <string name="book_cover_image_view_hint">BookCover</string>
@@ -49,6 +49,7 @@
     <string name="custom_spinner_item">Add New</string>
     <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
     <string name="custom_book_shelf_dialog_title">Custom BookShelf</string>
+    <string name="month_invalid">Month should be a number between 1 and 12!</string>
 
 
 

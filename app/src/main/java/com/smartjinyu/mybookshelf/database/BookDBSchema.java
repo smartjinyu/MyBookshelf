@@ -16,10 +16,15 @@ public class BookDBSchema {
             public static final String TRANSLATORS = "translators";
             public static final String WEBIDS = "webids";
             public static final String PUBLISHER = "publisher";
-            public static final String PUBTIME = "pubtime";
-            public static final String ADDTIME = "addtime";
+            public static final String PUB_TIME = "pubtime";
+            public static final String ADD_TIME = "addtime";
             public static final String ISBN = "isbn";
-            public static final String hasCover = "hasCover";
+            public static final String HAS_COVER = "hascover";
+            public static final String READING_STATUS = "readingstatus";
+            public static final String BOOKSHELF_ID = "bookshelfID";
+            public static final String NOTES = "notes";
+            public static final String WEBSITE = "website";
+            public static final String LABEL_ID = "labelID";
         }
     }
 }

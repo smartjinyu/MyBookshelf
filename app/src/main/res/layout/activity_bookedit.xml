@@ -1,153 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:focusable="true"
-              android:focusableInTouchMode="true">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/bookedit_toolbar"
-        android:layout_height="wrap_content"
+    <include layout="@layout/toolbar_bookedit"/>
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:background="?attr/colorPrimaryDark">
-    </android.support.v7.widget.Toolbar>
+        android:layout_height="match_parent">
 
-    <include layout="@layout/view_cover_and_info"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/separator_text_view1"
-            style="?android:listSeparatorTextViewStyle"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="10dp"
-                android:scaleType="center"
-                android:contentDescription="@string/reading_status_image_view"
-                android:src="@drawable/ic_assignment"/>
-
-            <Spinner
-                android:id="@+id/reading_status_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:spinnerMode="dropdown"
-                android:backgroundTint="@color/colorSecondaryText"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="center"
-                android:contentDescription="@string/book_shelf_image_view"
-                android:src="@drawable/ic_view_list"/>
-
-            <Spinner
-                android:id="@+id/book_shelf_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:spinnerMode="dropdown"
-                android:backgroundTint="@color/colorSecondaryText"
-
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="center"
-                android:contentDescription="@string/note_edit_text_hint"
-                android:src="@drawable/ic_chat"/>
-
-            <EditText
-                android:id="@+id/book_notes_edit_text"
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:focusable="true"
+                      android:focusableInTouchMode="true">
+            <include layout="@layout/view_cover_and_info"/>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:textSize="18sp"
-                android:hint="@string/note_edit_text_hint"/>
+                android:orientation="vertical"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/separator_text_view1"
+                    style="?android:listSeparatorTextViewStyle"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/reading_status_image_view"
+                        android:src="@drawable/ic_assignment"/>
+
+                    <Spinner
+                        android:id="@+id/reading_status_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/colorSecondaryText"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="8dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/book_shelf_image_view"
+                        android:src="@drawable/ic_view_list"/>
+
+                    <Spinner
+                        android:id="@+id/book_shelf_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/colorSecondaryText"
+
+                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="8dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/note_edit_text_hint"
+                        android:src="@drawable/ic_chat"/>
+
+                    <EditText
+                        android:id="@+id/book_notes_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textSize="18sp"
+                        android:hint="@string/note_edit_text_hint"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/label_image_view"
+                        android:src="@drawable/ic_label"/>
+
+                    <Spinner
+                        android:id="@+id/label_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:spinnerMode="dropdown"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="8dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/website_edit_text_hint"
+                        android:src="@drawable/ic_earth"/>
+
+                    <EditText
+                        android:id="@+id/book_website_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textSize="18sp"
+                        android:hint="@string/website_edit_text_hint"/>
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="center"
-                android:contentDescription="@string/label_image_view"
-                android:src="@drawable/ic_label"/>
-
-            <Spinner
-                android:id="@+id/label_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:spinnerMode="dropdown"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="center"
-                android:contentDescription="@string/website_edit_text_hint"
-                android:src="@drawable/ic_earth"/>
-
-            <EditText
-                android:id="@+id/book_website_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:textSize="18sp"
-                android:hint="@string/website_edit_text_hint"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

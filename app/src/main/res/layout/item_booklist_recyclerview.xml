@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="72dp"
+              android:padding="6dp"
+              android:clickable="true">
+    <ImageView
+        android:id="@+id/list_cover_image_view"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="center"
+        android:padding="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/book_cover_default"
+        android:contentDescription="@string/book_cover_image_view_hint"/>
+
+    <TextView
+        android:id="@+id/list_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:gravity="center_vertical"
+        android:textSize="14sp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_alignTop="@id/list_cover_image_view"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="4dp"
+        android:paddingBottom="5dp"
+        android:text="我是天才"/>
+    <TextView
+        android:id="@+id/list_author_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:textSize="12sp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_alignTop="@id/list_cover_image_view"
+        android:layout_toEndOf="@+id/list_title_text_view"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="16dp"
+        android:text="大金鱼 著"/>
+
+    <TextView
+        android:id="@+id/list_publisher_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:textSize="12sp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_below="@id/list_title_text_view"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="16dp"
+        android:text="机械工业出版社"/>
+
+
+    <TextView
+        android:id="@+id/list_pubtime_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="10sp"
+        android:text="2010-10"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_below="@id/list_title_text_view"
+        android:layout_alignEnd="@id/list_author_text_view" />
+
+
+</RelativeLayout>

@@ -26,7 +26,6 @@ public class BookLab {
     private Context mContext;
     private static BookLab sBookLab;
     private SQLiteDatabase mDatabase;
-    private List<Book> mBooks;
     public static BookLab get(Context context){
         if(sBookLab == null){
             sBookLab = new BookLab(context);
@@ -37,7 +36,6 @@ public class BookLab {
     public BookLab(Context context){
         mContext = context.getApplicationContext();
         mDatabase = new BookBaseHelper(context).getWritableDatabase();
-        loadBooks();
     }
 
     private static ContentValues getContentValues(Book book){
@@ -83,19 +81,6 @@ public class BookLab {
         return new BookCursorWrapper(cursor);
 
     }
-    private void loadBooks(){
-        mBooks = new ArrayList<>();
-        BookCursorWrapper cursor = queryBooks(null,null);
-        try{
-            cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
-                mBooks.add(cursor.getBook());
-                cursor.moveToNext();
-            }
-        }finally {
-            cursor.close();
-        }
-    }
 
     public Book getBook(UUID id){
         BookCursorWrapper cursor = queryBooks(BookDBSchema.BookTable.Cols.UUID + "= ?",
@@ -112,18 +97,28 @@ public class BookLab {
     }
 
     public List<Book> getBooks(){
+        List<Book> mBooks = new ArrayList<>();
+        BookCursorWrapper cursor = queryBooks(null,null);
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                mBooks.add(cursor.getBook());
+                cursor.moveToNext();
+            }
+        }finally {
+            cursor.close();
+        }
         return mBooks;
+
     }
 
     public void addBook(Book book){
         ContentValues values = getContentValues(book);
-        mBooks.add(book);
         mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
     }
 
     public void deleteBook(Book book){
         String uuidString = book.getId().toString();
-        mBooks.remove(book);
         mDatabase.delete(BookDBSchema.BookTable.NAME,BookDBSchema.BookTable.Cols.UUID + " = ?",
                 new String[]{uuidString});
     }

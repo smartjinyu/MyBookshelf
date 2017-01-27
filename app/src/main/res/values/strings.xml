@@ -2,9 +2,10 @@
     <string name="app_name">BookShelf</string>
     <string name="drawer_open">Open Navigation Drawer</string>
     <string name="drawer_close">Close Navigation Drawer</string>
-    <!--Fab Menu-->
+    <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
+    <string name="pubdate_unset">Unset</string>
 
     <!--Single Scanner Activity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>

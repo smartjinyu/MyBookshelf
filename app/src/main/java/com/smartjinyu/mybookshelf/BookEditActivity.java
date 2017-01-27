@@ -127,7 +127,7 @@ public class BookEditActivity extends AppCompatActivity{
             case R.id.menu_book_edit_save:
                 int month;
                 if(pubmonthEditText.getText().toString().length()== 0){
-                    month = -1;
+                    month = -1;//default month
                 }else {
                     month = Integer.parseInt(pubmonthEditText.getText().toString());
                 }
@@ -166,7 +166,7 @@ public class BookEditActivity extends AppCompatActivity{
                     //pubDate
                     int year;
                     if(pubyearEditText.getText().toString().length() == 0){
-                        year = - 9999;
+                        year = - 9999;//default month
                     }else {
                         year = Integer.parseInt(pubyearEditText.getText().toString());
                     }
@@ -204,6 +204,7 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder1.append(author);
                 stringBuilder1.append(" ");
             }
+            stringBuilder1.deleteCharAt(stringBuilder1.length()-1);
             String authors = stringBuilder1.toString();
             authorEditText.setText(authors.substring(0,authors.length()-1));
         }
@@ -215,6 +216,7 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder2.append(translator);
                 stringBuilder2.append(" ");
             }
+            stringBuilder2.deleteCharAt(stringBuilder2.length()-1);
             String translators = stringBuilder2.toString();
             translatorEditText.setText(translators.substring(0,translators.length()-1));
         }

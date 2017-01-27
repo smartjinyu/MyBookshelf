@@ -51,7 +51,7 @@ public class BookListFragment extends Fragment {
     private void updateUI(){
         BookLab bookLab = BookLab.get(getActivity());
         List<Book> books = bookLab.getBooks();
-        if(mAdapter!=null){
+        if(mAdapter==null){
             mAdapter = new BookAdapter(books);
             mRecyclerView.setAdapter(mAdapter);
         }else{
@@ -59,7 +59,7 @@ public class BookListFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         }
     }
-    
+
     @Override
     public void onResume(){
         super.onResume();
@@ -81,6 +81,7 @@ public class BookListFragment extends Fragment {
             implements View.OnClickListener{
 
         private ImageView mCoverImageView;
+        private TextView mTitleTextView;
         private TextView mAuthorTextView;
         private TextView mPublisherTextView;
         private TextView mPubtimeTextView;
@@ -88,7 +89,8 @@ public class BookListFragment extends Fragment {
         public BookHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
-            mCoverImageView = (ImageView) itemView.findViewById(R.id.book_cover_image_view);
+            mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
             mAuthorTextView = (TextView) itemView.findViewById(R.id.list_author_text_view);
             mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
             mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
@@ -100,6 +102,8 @@ public class BookListFragment extends Fragment {
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
                 mCoverImageView.setImageBitmap(bitmap);
             }
+            mTitleTextView.setText(book.getTitle());
+
             StringBuilder authors = new StringBuilder();
             for(String author : book.getAuthors()){
                 authors.append(author);

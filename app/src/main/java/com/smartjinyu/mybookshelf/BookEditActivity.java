@@ -205,8 +205,7 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder1.append(" ");
             }
             stringBuilder1.deleteCharAt(stringBuilder1.length()-1);
-            String authors = stringBuilder1.toString();
-            authorEditText.setText(authors.substring(0,authors.length()-1));
+            authorEditText.setText(stringBuilder1);
         }
 
         if(mBook.getTranslators()!=null){
@@ -217,8 +216,7 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder2.append(" ");
             }
             stringBuilder2.deleteCharAt(stringBuilder2.length()-1);
-            String translators = stringBuilder2.toString();
-            translatorEditText.setText(translators.substring(0,translators.length()-1));
+            translatorEditText.setText(stringBuilder2);
         }
 
         publisherEditText.setText(mBook.getPublisher());

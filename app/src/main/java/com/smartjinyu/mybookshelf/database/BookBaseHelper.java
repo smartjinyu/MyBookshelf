@@ -27,8 +27,8 @@ public class BookBaseHelper extends SQLiteOpenHelper {
                 BookDBSchema.BookTable.Cols.PUBLISHER + ","+
                 BookDBSchema.BookTable.Cols.PUB_TIME + ","+
                 BookDBSchema.BookTable.Cols.ADD_TIME + ","+
-                BookDBSchema.BookTable.Cols.ISBN + ", integer"+
-                BookDBSchema.BookTable.Cols.HAS_COVER + ", integer "+
+                BookDBSchema.BookTable.Cols.ISBN + ","+
+                BookDBSchema.BookTable.Cols.HAS_COVER + ","+
                 BookDBSchema.BookTable.Cols.READING_STATUS + "," +
                 BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "," +
                 BookDBSchema.BookTable.Cols.NOTES + "," +

@@ -29,19 +29,22 @@
                     android:text="@string/separator_text_view1"
                     style="?android:listSeparatorTextViewStyle"/>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <ImageView
+                        android:id="@+id/book_edit_readingstatus_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginTop="10dp"
                         android:scaleType="center"
                         android:contentDescription="@string/reading_status_image_view"
-                        android:src="@drawable/ic_assignment"/>
+                        android:src="@drawable/ic_assignment"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"/>
+
 
                     <Spinner
                         android:id="@+id/reading_status_spinner"
@@ -50,22 +53,27 @@
                         android:layout_marginStart="16dp"
                         android:spinnerMode="dropdown"
                         android:backgroundTint="@color/colorSecondaryText"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/book_edit_readingstatus_image_view"/>
 
-                </LinearLayout>
+                </RelativeLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:orientation="horizontal">
                     <ImageView
+                        android:id="@+id/book_edit_bookshelf_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginTop="8dp"
                         android:scaleType="center"
                         android:contentDescription="@string/book_shelf_image_view"
-                        android:src="@drawable/ic_view_list"/>
+                        android:src="@drawable/ic_view_list"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"/>
+
 
                     <Spinner
                         android:id="@+id/book_shelf_spinner"
@@ -74,77 +82,96 @@
                         android:layout_marginStart="16dp"
                         android:spinnerMode="dropdown"
                         android:backgroundTint="@color/colorSecondaryText"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@id/book_edit_bookshelf_image_view"/>
 
-                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                </RelativeLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="4dp">
                     <ImageView
+                        android:id="@+id/book_edit_note_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginTop="8dp"
                         android:scaleType="center"
                         android:contentDescription="@string/note_edit_text_hint"
-                        android:src="@drawable/ic_chat"/>
+                        android:src="@drawable/ic_chat"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"/>
 
                     <EditText
                         android:id="@+id/book_notes_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="16sp"
                         android:layout_marginStart="16dp"
-                        android:textSize="18sp"
-                        android:hint="@string/note_edit_text_hint"/>
-                </LinearLayout>
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:hint="@string/note_edit_text_hint"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/book_edit_note_image_view"/>
+                </RelativeLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="4dp">
                     <ImageView
+                        android:id="@+id/book_edit_label_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="center"
                         android:contentDescription="@string/label_image_view"
-                        android:src="@drawable/ic_label"/>
+                        android:src="@drawable/ic_label"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"/>
 
                     <Spinner
                         android:id="@+id/label_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:spinnerMode="dropdown"/>
-                </LinearLayout>
+                        android:layout_marginStart="19dp"
+                        android:spinnerMode="dropdown"
+                        android:layout_alignTop="@+id/book_edit_label_image_view"
+                        android:layout_alignParentTop="true"/>
 
-                <LinearLayout
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="4dp">
                     <ImageView
+                        android:id="@+id/book_edit_website_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginTop="8dp"
                         android:scaleType="center"
                         android:contentDescription="@string/website_edit_text_hint"
-                        android:src="@drawable/ic_earth"/>
+                        android:src="@drawable/ic_earth"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"/>
 
                     <EditText
                         android:id="@+id/book_website_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:textSize="18sp"
-                        android:hint="@string/website_edit_text_hint"/>
-                </LinearLayout>
+                        android:textSize="16sp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:hint="@string/website_edit_text_hint"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/book_edit_website_image_view"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
         </LinearLayout>

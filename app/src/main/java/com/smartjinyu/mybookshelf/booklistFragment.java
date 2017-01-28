@@ -145,7 +145,7 @@ public class BookListFragment extends Fragment {
                 multiSelectList.remove(index);
             }
             if(multiSelectList.size()>0){
-                String title = String.format(getResources().getString(R.string.multi_title),multiSelectList.size());
+                String title = getResources().getQuantityString(R.plurals.multi_title,multiSelectList.size(),multiSelectList.size());
                 mActionMode.setTitle(title);
             }else{
                 mActionMode.finish();
@@ -178,11 +178,6 @@ public class BookListFragment extends Fragment {
         }
 
         public void bindBook(Book book){
-            if(book.isHasCover()){
-                String path = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
-                Bitmap src = BitmapFactory.decodeFile(path);
-                mCoverImageView.setImageBitmap(src);
-            }
             mTitleTextView.setText(book.getTitle());
 
             StringBuilder authors = new StringBuilder();
@@ -205,12 +200,16 @@ public class BookListFragment extends Fragment {
                 pubDate.append(month+1);
             }
             mPubtimeTextView.setText(pubDate);
-            if(multiSelectList.contains(book)){
-                Log.d(TAG,"RelativeLayout Color Changed to pressed");
+            if(multiSelectList.contains(book)){//set select
                 mRelativeLayout.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.recycler_item_selected));
-            }else{
-                Log.d(TAG,"RelativeLayout Color Changed to normal");
+                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_check_circle));
+            }else{//back to normal
                 mRelativeLayout.setBackgroundColor(Color.WHITE);
+                if(book.isHasCover()){
+                    String path = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
+                    Bitmap src = BitmapFactory.decodeFile(path);
+                    mCoverImageView.setImageBitmap(src);
+                }
             }
 
         }
@@ -272,6 +271,7 @@ public class BookListFragment extends Fragment {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_multiselect,menu);
             mActionAddButton.hideMenuButton(true);
+            mActionAddButton.setVisibility(View.GONE);
             return true;
         }
 
@@ -282,8 +282,27 @@ public class BookListFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            //todo
-            return false;
+            switch (item.getItemId()){
+                case R.id.menu_item_select_all:
+                    multiSelectList = mBooks;
+                    String title = getResources().getQuantityString(R.plurals.multi_title,multiSelectList.size(),multiSelectList.size());
+                    mActionMode.setTitle(title);
+                    mAdapter.notifyDataSetChanged();
+                    break;
+                case R.id.menu_item_delete:
+                    if(multiSelectList.size()!=0){
+                        for(Book book:multiSelectList){
+                            BookLab bookLab = BookLab.get(getContext());
+                            bookLab.deleteBook(book);
+                        }
+                        updateUI();
+                        mActionMode.finish();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
 
         @Override
@@ -291,6 +310,7 @@ public class BookListFragment extends Fragment {
             mActionMode = null;
             isMultiSelect = false;
             multiSelectList = new ArrayList<>();
+            mActionAddButton.setVisibility(View.VISIBLE);
             mActionAddButton.showMenuButton(true);
             mAdapter.notifyDataSetChanged();
         }

@@ -6,19 +6,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.zxing.Result;
+
+import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -95,13 +101,21 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
 
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
+        menuItem = menu.add(Menu.NONE,R.id.menu_simple_add_manually,0,R.string.menu_single_add_manually);
+        MenuItemCompat.setShowAsAction(menuItem,MenuItemCompat.SHOW_AS_ACTION_NEVER);
+
+
 
 
         return super.onCreateOptionsMenu(menu);
 
     }
     public void resumeCamera(){
-        mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
+        //mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
+        mScannerView.setResultHandler(this);
+        mScannerView.setAutoFocus(true);
+        mScannerView.setFlash(mFlash);
+        mScannerView.startCamera();
     }
 
     @Override
@@ -138,18 +152,89 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
                     item.setIcon(R.drawable.ic_flash_off);}
                 mScannerView.setFlash(mFlash);
                 return true;
+            case R.id.menu_simple_add_manually:
+                mScannerView.stopCamera();
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                        .title(R.string.input_isbn_manually_title)
+                        .content(R.string.input_isbn_manually_content)
+                        .positiveText(R.string.input_isbn_manually_positive)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                addBook(dialog.getInputEditText().getText().toString());
+                            }
+                        })
+                        .negativeText(android.R.string.cancel)
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                resumeCamera();
+                            }
+                        })
+                        .alwaysCallInputCallback()
+                        .inputType(InputType.TYPE_CLASS_NUMBER)
+                        .input(R.string.input_isbn_manually_edit_text,0, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                int length = dialog.getInputEditText().getText().length();
+                                if(length == 10 || length == 13){
+                                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                                }else{
+                                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                                }
+                            }
+                        })
+                        .show();
 
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void addBook(final String isbn){
+        final Context context = this;
+        mScannerView.stopCamera();
+        BookLab bookLab = BookLab.get(this);
+        List<Book> mBooks = bookLab.getBooks();
+        boolean isExist = false;
+        for(Book book:mBooks){
+            if (book.getIsbn().equals(isbn)){
+                isExist = true;
+                break;
+            }
+        }
+
+        if(isExist){//The book is already in the list
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title(R.string.book_duplicate_dialog_title)
+                    .content(R.string.book_duplicate_dialog_content)
+                    .positiveText(R.string.book_duplicate_dialog_positive)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            DoubanFetcher fetcher = new DoubanFetcher();
+                            fetcher.getBookInfo(context,isbn);
+                        }
+                    })
+                    .negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }else{
+            DoubanFetcher fetcher = new DoubanFetcher();
+            fetcher.getBookInfo(this,isbn);
+        }
+    }
+
+
 
     @Override
     public void handleResult(Result rawResult){
         Log.i(TAG,"ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
-
-        DoubanFetcher fetcher = new DoubanFetcher();
-        fetcher.getBookInfo(this,rawResult.getText());
+        addBook(rawResult.getText());
 
 
         // Note:

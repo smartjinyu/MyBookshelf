@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by smartjinyu on 2017/1/19.
@@ -179,6 +180,10 @@ public class BookEditActivity extends AppCompatActivity{
                     mBook.setWebsite(notesEditText.getText().toString());
                     BookLab bookLab = BookLab.get(this);
                     bookLab.addBook(mBook);
+                    for(int i=0;i<30;i++){//only for debug
+                        bookLab.addBook(mBook);
+                        //todo
+                    }
                     finish();
                 }
             default:

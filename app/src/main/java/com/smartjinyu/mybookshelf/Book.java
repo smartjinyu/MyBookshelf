@@ -73,10 +73,6 @@ public class Book implements Serializable{
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getIsbn() {
         return isbn;
     }

@@ -7,5 +7,6 @@
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>
     <color name="actionbar_opacity">#33000000</color>
+    <color name="recycler_item_selected">#ebf2ff</color>
 
 </resources>

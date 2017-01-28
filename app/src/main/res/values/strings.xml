@@ -6,6 +6,8 @@
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
     <string name="pubdate_unset">Unset</string>
+    <string name="multi_menu_item_delete">Delete</string>
+    <string name="multi_title">Select %1$d Books</string>
 
     <!--Single Scanner Activity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>

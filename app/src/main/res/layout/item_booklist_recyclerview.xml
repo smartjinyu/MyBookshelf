@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/list_item_relative_layout"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="72dp"
               android:padding="6dp"
               android:clickable="true">
+
     <ImageView
         android:id="@+id/list_cover_image_view"
-        android:layout_width="35dp"
+        android:layout_width="45dp"
         android:layout_height="45dp"
-        android:scaleType="fitXY"
         android:padding="0dp"
         android:layout_marginStart="16dp"
         android:layout_centerVertical="true"
@@ -45,7 +46,7 @@
         android:layout_alignTop="@id/list_cover_image_view"
         android:layout_toEndOf="@+id/list_title_text_view"
         android:layout_marginTop="2dp"
-        android:layout_marginStart="2dp"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="16dp"
         android:text="大金鱼 著"/>
 

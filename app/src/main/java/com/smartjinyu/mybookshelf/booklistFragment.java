@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,12 +45,14 @@ public class BookListFragment extends Fragment {
     private FloatingActionMenu mActionAddButton;
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
+    private CoordinatorLayout mCoordinatorLayout;
 
     private BookAdapter mAdapter;
     private ActionMode mActionMode;
 
     private boolean isMultiSelect = false;
-    private List<Book> multiSelectList = new ArrayList<>();;
+    private List<Book> multiSelectList = new ArrayList<>();
+    private List<Book> UndoBooks = new ArrayList<>();// used to undo deleting
     private List<Book> mBooks;
 
 
@@ -57,7 +61,7 @@ public class BookListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_booklist,container,false);
+        View view = inflater.inflate(R.layout.fragment_book_list,container,false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.booklist_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
@@ -92,6 +96,8 @@ public class BookListFragment extends Fragment {
         fab2.setOnClickListener(mOnClickListener);
         mActionAddButton.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(),R.anim.show_from_bottom));
         mActionAddButton.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getActivity(),R.anim.hide_to_bottom));
+
+        mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.book_list_fragment_coordinator_layout);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             // hide/display float action button automatically
             @Override
@@ -214,7 +220,8 @@ public class BookListFragment extends Fragment {
             }else{//back to normal
                 mRelativeLayout.setBackgroundColor(Color.WHITE);
                 if(book.isHasCover()){
-                    String path = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
+                    String path = getActivity().
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
                     Bitmap src = BitmapFactory.decodeFile(path);
                     mCoverImageView.setImageBitmap(src);
                 }
@@ -258,7 +265,7 @@ public class BookListFragment extends Fragment {
         switch (v.getId()) {
             case R.id.fab_menu_item_1:
                 Log.i(TAG,"fab menu item 1 clicked");
-                Intent i = SingleAddScanActivity.newIntent(getActivity());
+                Intent i = SingleAddActivity.newIntent(getActivity());
                 startActivity(i);
                 mActionAddButton.close(true);
                 break;
@@ -272,6 +279,7 @@ public class BookListFragment extends Fragment {
     }
     };
 
+    private boolean showFAM = true;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -280,6 +288,7 @@ public class BookListFragment extends Fragment {
             inflater.inflate(R.menu.menu_multiselect,menu);
             mActionAddButton.hideMenuButton(true);
             mActionAddButton.setVisibility(View.GONE);
+            showFAM=true;
             return true;
         }
 
@@ -299,11 +308,45 @@ public class BookListFragment extends Fragment {
                     break;
                 case R.id.menu_item_delete:
                     if(multiSelectList.size()!=0){
+                        final BookLab bookLab = BookLab.get(getContext());
+                        UndoBooks = new ArrayList<>();
                         for(Book book:multiSelectList){
-                            BookLab bookLab = BookLab.get(getContext());
                             bookLab.deleteBook(book);
+                            UndoBooks.add(book);
                         }
+                        Snackbar snackbar;
+                        if(UndoBooks.size() == 1){
+                            snackbar = Snackbar.make(
+                                    mCoordinatorLayout,
+                                    R.string.book_deleted_snack_bar_0,
+                                    Snackbar.LENGTH_LONG);
+                        }else{
+                            snackbar = Snackbar.make(
+                                    mCoordinatorLayout,
+                                    R.string.book_deleted_snack_bar_1,
+                                    Snackbar.LENGTH_LONG);
+                        }
+                        snackbar.setAction(R.string.book_deleted_snack_bar_undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                for(Book book: UndoBooks){
+                                    bookLab.addBook(book);
+                                }
+                                UndoBooks = new ArrayList<>();
+                                updateUI();
+                            }
+                        });
+                        snackbar.addCallback(new Snackbar.Callback(){
+                            @Override
+                            public void onDismissed(Snackbar snackbar,int event){
+                                mActionAddButton.showMenuButton(true);
+                                mActionAddButton.setVisibility(View.VISIBLE);
+                            }
+                        });
+                        showFAM = false;
+                        // for that the FAM won't move up when a snackbar shows, just hide it currently
                         updateUI();
+                        snackbar.show();
                         mActionMode.finish();
                     }
                     break;
@@ -318,8 +361,10 @@ public class BookListFragment extends Fragment {
             mActionMode = null;
             isMultiSelect = false;
             multiSelectList = new ArrayList<>();
-            mActionAddButton.setVisibility(View.VISIBLE);
-            mActionAddButton.showMenuButton(true);
+            if(showFAM){
+                mActionAddButton.setVisibility(View.VISIBLE);
+                mActionAddButton.showMenuButton(true);
+            }
             mAdapter.notifyDataSetChanged();
         }
     };

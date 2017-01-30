@@ -2,6 +2,7 @@
     <string name="app_name">BookShelf</string>
     <string name="drawer_open">Open Navigation Drawer</string>
     <string name="drawer_close">Close Navigation Drawer</string>
+
     <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
@@ -13,8 +14,11 @@
         <item quantity="other">Select %1$d Books</item>
     </plurals>
     <string name="author_suffix"> 著</string>
+    <string name="book_deleted_snack_bar_0">Book Deleted</string>
+    <string name="book_deleted_snack_bar_1">Books Deleted</string>
+    <string name="book_deleted_snack_bar_undo">Undo</string>
 
-    <!--Single Add Scan Activity-->
+    <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>

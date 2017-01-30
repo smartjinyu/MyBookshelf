@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,8 +32,8 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  * Scan barcode of a single book
  */
 
-public class SingleAddScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
-    private static final String TAG = "SingleAddScanActivity";
+public class SingleAddActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+    private static final String TAG = "SingleAddActivity";
 
     private static final int CAMERA_PERMISSION = 1;
 
@@ -50,7 +49,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
          * 1: start with camera in single book mode
          * 2: start with camera in batch mode
          */
-        Intent intent = new Intent(context,SingleAddScanActivity.class);
+        Intent intent = new Intent(context,SingleAddActivity.class);
         return intent;
     }
 
@@ -111,7 +110,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
 
     }
     public void resumeCamera(){
-        //mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
+        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
         mScannerView.setResultHandler(this);
         mScannerView.setAutoFocus(true);
         mScannerView.setFlash(mFlash);
@@ -245,7 +244,7 @@ public class SingleAddScanActivity extends AppCompatActivity implements ZXingSca
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mScannerView.resumeCameraPreview(SingleAddScanActivity.this);
+                mScannerView.resumeCameraPreview(SingleAddActivity.this);
             }
         }, 2000);
         */

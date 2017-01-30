@@ -123,13 +123,13 @@ public class DoubanFetcher extends BookFetcher{
                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    ((SingleAddScanActivity)mContext).resumeCamera();
+                                    ((SingleAddActivity)mContext).resumeCamera();
                                 }
                             })
                             .dismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
-                                    ((SingleAddScanActivity)mContext).resumeCamera();
+                                    ((SingleAddActivity)mContext).resumeCamera();
                                 }
                             })
                             .show();
@@ -165,13 +165,13 @@ public class DoubanFetcher extends BookFetcher{
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                ((SingleAddScanActivity)mContext).resumeCamera();
+                                ((SingleAddActivity)mContext).resumeCamera();
                             }
                         })
                         .dismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialogInterface) {
-                                ((SingleAddScanActivity)mContext).resumeCamera();
+                                ((SingleAddActivity)mContext).resumeCamera();
                             }
                         })
                         .show();

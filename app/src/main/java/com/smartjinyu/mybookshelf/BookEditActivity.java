@@ -189,10 +189,10 @@ public class BookEditActivity extends AppCompatActivity{
                     mBook.setWebsite(notesEditText.getText().toString());
                     BookLab bookLab = BookLab.get(this);
                     bookLab.addBook(mBook);
-                    for(int i=0;i<30;i++){//only for debug
-                        bookLab.addBook(mBook);
-                        //todo
-                    }
+                    //todo
+//                    for(int i=0;i<30;i++){//only for debug
+//                        bookLab.addBook(mBook);
+//                    }
                     finish();
                 }
             default:

@@ -3,7 +3,6 @@ package com.smartjinyu.mybookshelf;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -14,8 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.klinker.android.sliding.SlidingActivity;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.List;
@@ -179,7 +176,7 @@ public class BookDetailActivity extends SlidingActivity {
             int month = calendar.get(Calendar.MONTH) + 1;
             StringBuilder pubtime = new StringBuilder();
             pubtime.append(year);
-            pubtime.append("-");
+            pubtime.append(" - ");
             pubtime.append(month);
             pubtimeTextView.setText(pubtime);
             pubtimeRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {

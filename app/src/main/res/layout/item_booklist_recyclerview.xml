@@ -6,7 +6,6 @@
               android:layout_height="72dp"
               android:padding="6dp"
               android:clickable="true">
-
     <ImageView
         android:id="@+id/list_cover_image_view"
         android:layout_width="45dp"
@@ -24,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:textColor="@color/colorPrimaryText"
@@ -33,6 +32,8 @@
         android:layout_marginEnd="4dp"
         android:paddingBottom="5dp"
         android:text="我是天才"/>
+
+    <!--
     <TextView
         android:id="@+id/list_author_text_view"
         android:layout_width="match_parent"
@@ -49,6 +50,9 @@
         android:layout_marginStart="0dp"
         android:layout_marginEnd="16dp"
         android:text="大金鱼 著"/>
+
+-->
+
 
     <TextView
         android:id="@+id/list_publisher_text_view"
@@ -76,7 +80,6 @@
         android:text="2010-10"
         android:textColor="@color/colorSecondaryText"
         android:layout_below="@id/list_title_text_view"
-        android:layout_alignEnd="@id/list_author_text_view" />
-
+        android:layout_alignEnd="@id/list_publisher_text_view" />
 
 </RelativeLayout>

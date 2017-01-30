@@ -54,6 +54,7 @@ public class BookShelfLab {
             BookShelf bookShelf = new BookShelf(
                     UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe"));
             bookShelf.setTitle(mContext.getResources().getString(R.string.default_book_shelf_name));
+            saveBookShelf();
             addBookShelf(bookShelf);
         }
     }
@@ -64,7 +65,7 @@ public class BookShelfLab {
 
     public final BookShelf getBookShelf(UUID id){
         for(BookShelf bookShelf : sBookShelf){
-            if(bookShelf.getId() == id){
+            if(bookShelf.getId().equals(id)){
                 return bookShelf;
             }
         }

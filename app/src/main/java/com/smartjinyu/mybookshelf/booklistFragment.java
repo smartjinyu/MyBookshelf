@@ -114,7 +114,9 @@ public class BookListFragment extends Fragment {
                 if(isMultiSelect){
                     multiSelect(position);
                 }else{
-                    //todo single select
+                    Intent i = new Intent(getActivity(),BookDetailActivity.class);
+                    i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position));
+                    startActivity(i);
                 }
             }
 
@@ -162,7 +164,6 @@ public class BookListFragment extends Fragment {
 
         private ImageView mCoverImageView;
         private TextView mTitleTextView;
-        private TextView mAuthorTextView;
         private TextView mPublisherTextView;
         private TextView mPubtimeTextView;
         private RelativeLayout mRelativeLayout;
@@ -171,7 +172,6 @@ public class BookListFragment extends Fragment {
             super(itemView);
             mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
-            mAuthorTextView = (TextView) itemView.findViewById(R.id.list_author_text_view);
             mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
             mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
             mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
@@ -180,19 +180,27 @@ public class BookListFragment extends Fragment {
         public void bindBook(Book book){
             mTitleTextView.setText(book.getTitle());
 
-            StringBuilder authors = new StringBuilder();
+            StringBuilder authorAndPub = new StringBuilder();
             for(String author : book.getAuthors()){
-                authors.append(author);
-                authors.append(",");
+                authorAndPub.append(author);
+                authorAndPub.append(",");
             }
-            authors.deleteCharAt(authors.length()-1);
-            mAuthorTextView.setText(authors);
-            mPublisherTextView.setText(book.getPublisher());
+            authorAndPub.deleteCharAt(authorAndPub.length()-1);
+
+            if(book.getPublisher().length()!=0){
+                if(authorAndPub.length()!=0){
+                    authorAndPub.append(" ");
+                    authorAndPub.append(getResources().getString(R.string.author_suffix));
+                    authorAndPub.append(",   ");
+                }
+                authorAndPub.append(book.getPublisher());
+            }
+            mPublisherTextView.setText(authorAndPub);
             Calendar calendar = book.getPubTime();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             StringBuilder pubDate = new StringBuilder();
-            if(year == -9999 || month == -1){
+            if(year == 9999){
                 pubDate.append(getResources().getString(R.string.pubdate_unset));
             }else{
                 pubDate.append(year);

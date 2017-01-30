@@ -61,7 +61,7 @@ public class LabelLab {
 
     public final Label getLabel(UUID id){
         for(Label label :sLabel){
-            if(label.getId() == id){
+            if(label.getId().equals(id)){
                 return label;
             }
         }

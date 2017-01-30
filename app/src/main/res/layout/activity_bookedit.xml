@@ -41,7 +41,7 @@
                         android:layout_height="24dp"
                         android:scaleType="center"
                         android:contentDescription="@string/reading_status_image_view"
-                        android:src="@drawable/ic_assignment"
+                        android:src="@drawable/ic_reading_status"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"/>
 
@@ -70,7 +70,7 @@
                         android:layout_height="24dp"
                         android:scaleType="center"
                         android:contentDescription="@string/book_shelf_image_view"
-                        android:src="@drawable/ic_view_list"
+                        android:src="@drawable/ic_bookshelf"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"/>
 
@@ -99,7 +99,7 @@
                         android:layout_height="24dp"
                         android:scaleType="center"
                         android:contentDescription="@string/note_edit_text_hint"
-                        android:src="@drawable/ic_chat"
+                        android:src="@drawable/ic_notes"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"/>
 
@@ -154,7 +154,7 @@
                         android:layout_height="24dp"
                         android:scaleType="center"
                         android:contentDescription="@string/website_edit_text_hint"
-                        android:src="@drawable/ic_earth"
+                        android:src="@drawable/ic_website"
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"/>
 

@@ -1,5 +1,7 @@
 package com.smartjinyu.mybookshelf;
 
+import android.support.annotation.NonNull;
+
 import java.util.UUID;
 
 /**

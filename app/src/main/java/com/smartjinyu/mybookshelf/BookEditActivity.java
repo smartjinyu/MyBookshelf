@@ -94,6 +94,10 @@ public class BookEditActivity extends AppCompatActivity{
             CoverDownloader coverDownloader = new CoverDownloader(this,mBook);
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
             coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL),path);
+        }else if(mBook.isHasCover()){
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
+            Bitmap src = BitmapFactory.decodeFile(path);
+            coverImageView.setImageBitmap(src);
         }
         setBookInfo();
 
@@ -126,13 +130,15 @@ public class BookEditActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_book_edit_save:
+                //save book information
+                // no attribute of book should be null
                 int month;
-                if(pubmonthEditText.getText().toString().length()== 0){
-                    month = -1;//default month
+                if(pubmonthEditText.getText().length()== 0){
+                    month = 1;//if pass month = 12 in Calendar.set(), it will be changed to default value 0
                 }else {
                     month = Integer.parseInt(pubmonthEditText.getText().toString());
                 }
-                if((month>12 || month <1)&&(month!=-1)){
+                if(month>12 || month <1){
                     Toast.makeText(this,R.string.month_invalid,Toast.LENGTH_LONG).show();
                     pubmonthEditText.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -161,13 +167,16 @@ public class BookEditActivity extends AppCompatActivity{
                         }
                         List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
                         mBook.setTranslators(translatorList);
+                    }else{
+                        List<String> list = new ArrayList<>();
+                        mBook.setTranslators(list);
                     }
                     //
                     mBook.setPublisher(publisherEditText.getText().toString());
                     //pubDate
                     int year;
                     if(pubyearEditText.getText().toString().length() == 0){
-                        year = - 9999;//default month
+                        year = 9999;//default year
                     }else {
                         year = Integer.parseInt(pubyearEditText.getText().toString());
                     }
@@ -273,11 +282,21 @@ public class BookEditActivity extends AppCompatActivity{
                     MaterialDialog inputDialog = new MaterialDialog.Builder(mBookEditActivity)
                             .title(R.string.custom_book_shelf_dialog_title)
                             .inputRange(1,10)
-                            .input(R.string.custom_book_shelf_dialog_edit_text,0,new MaterialDialog.InputCallback() {
+                            .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                    // nothing to do here
+                                }
+                            })
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     BookShelf bookShelf = new BookShelf();
-                                    bookShelf.setTitle(input.toString());
+                                    if(dialog.getInputEditText().getText()!=null){
+                                        bookShelf.setTitle(dialog.getInputEditText().getText().toString());
+                                    }else{
+                                        bookShelf.setTitle("");
+                                    }
                                     bookShelfLab.addBookShelf(bookShelf);
                                     mBook.setBookshelfID(bookShelf.getId());
                                     Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());

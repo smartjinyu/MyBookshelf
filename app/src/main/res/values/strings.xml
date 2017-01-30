@@ -92,6 +92,7 @@
     <string name="book_info_pubtime_image_view">PubDate</string>
     <string name="book_info_isbn_image_view">ISBN</string>
     <string name="book_detail_title">Details</string>
+    <string name="book_detail_header_text_view">Easter Egg: You add this book at</string>
 
 
 

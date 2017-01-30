@@ -70,7 +70,6 @@ public class DoubanFetcher extends BookFetcher{
                         mBook.setWebIds(new HashMap<String, String>());
                     }
                     mBook.getWebIds().put("douban",response.body().getId());
-                    mBook.setAddTime(Calendar.getInstance());
 
                     mBook.setPublisher(response.body().getPublisher());
 

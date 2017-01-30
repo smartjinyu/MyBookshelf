@@ -285,7 +285,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         //create a book only with isbn
                         Book mBook = new Book();
                         mBook.setIsbn(isbn);
-                        mBook.setAddTime(Calendar.getInstance());
                         Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
                         i.putExtra(BookEditActivity.BOOK,mBook);
                         i.putExtra(BookEditActivity.downloadCover,false);
@@ -324,7 +323,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         //create a book only with isbn
                         Book mBook = new Book();
                         mBook.setIsbn(isbn);
-                        mBook.setAddTime(Calendar.getInstance());
                         Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
                         i.putExtra(BookEditActivity.BOOK,mBook);
                         i.putExtra(BookEditActivity.downloadCover,false);

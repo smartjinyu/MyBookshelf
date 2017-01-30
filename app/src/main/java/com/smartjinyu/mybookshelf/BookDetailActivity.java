@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.klinker.android.sliding.SlidingActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class BookDetailActivity extends SlidingActivity {
     private Book mBook;
 
     private ImageView coverImageView;
+    private TextView addtimeTextView;
     private RelativeLayout authorRelativeLayout;
     private TextView authorTextView;
     private RelativeLayout translatorRelativeLayout;
@@ -54,8 +57,8 @@ public class BookDetailActivity extends SlidingActivity {
 
     @Override
     public void init(Bundle savedInstanceState){
-        // instead of overriding onCreate, we should override init.
-        // Intent will parse in savedInstanceState
+        // Instead of overriding onCreate(), we should override init().
+        // Intent will pass in savedInstanceState
         Intent intent = getIntent();
         mBook = (Book)intent.getSerializableExtra(Intent_Book_ToEdit);
         setTitle(mBook.getTitle());
@@ -79,6 +82,13 @@ public class BookDetailActivity extends SlidingActivity {
                 }
         );
 
+        setHeader();
+        setBookInfo();
+        setBookDetails();
+
+
+    }
+    private void setHeader(){
         coverImageView = (ImageView) findViewById(R.id.book_detail_header_cover_image_view);
         if(mBook.isHasCover()){
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
@@ -86,10 +96,10 @@ public class BookDetailActivity extends SlidingActivity {
             coverImageView.setImageBitmap(src);
             coverImageView.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white));
         }
-
-        setBookInfo();
-        setBookDetails();
-
+        addtimeTextView = (TextView) findViewById(R.id.book_detail_header_addtime_text_view);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE z");
+        String addTimeString = format.format(mBook.getAddTime().getTime());
+        addtimeTextView.setText(addTimeString);
 
     }
     private void setBookInfo(){

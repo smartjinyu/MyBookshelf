@@ -38,13 +38,15 @@ public class Book implements Serializable{
     private List<UUID> labelID;
 
     public Book(){
-        id = UUID.randomUUID();
-        bookshelfID = UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe");
-        //default bookshelf id
-        readingStatus = 0;
+        this(UUID.randomUUID());
     }
     public Book(UUID uuid){
         id = uuid;
+        bookshelfID = UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe");
+        //default bookshelf id
+        readingStatus = 0;
+        addTime = Calendar.getInstance();
+
     }
 
 
@@ -57,7 +59,7 @@ public class Book implements Serializable{
         return addTime;
     }
 
-    public void setAddTime(Calendar addTime) {
+    public void setAddTime(Calendar addTime) {//only used for recovering data from database
         this.addTime = addTime;
     }
 

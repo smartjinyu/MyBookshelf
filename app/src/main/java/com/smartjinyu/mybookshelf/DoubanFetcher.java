@@ -33,7 +33,7 @@ public class DoubanFetcher extends BookFetcher{
 
 
     @Override
-    public void getBookInfo(final Context context, final String isbn){
+    public void getBookInfo(final Context context, final String isbn,final int mode){
         mContext = context;
         mHandler = new Handler(Looper.getMainLooper());
         Retrofit mRetrofit;
@@ -98,41 +98,11 @@ public class DoubanFetcher extends BookFetcher{
                     });
                 }else{
                     Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
-                    String dialogCotent = String.format(mContext.getResources().getString(
-                            R.string.isbn_unmatched_dialog_content),isbn);
-                    MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-                            .title(R.string.isbn_unmatched_dialog_title)
-                            .content(dialogCotent)
-                            .positiveText(R.string.isbn_unmatched_dialog_positive)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    //create a book only with isbn
-                                    mBook = new Book();
-                                    mBook.setIsbn(isbn);
-                                    mBook.setAddTime(Calendar.getInstance());
-                                    Intent i = new Intent(mContext,BookEditActivity.class);
-                                    i.putExtra(BookEditActivity.BOOK,mBook);
-                                    i.putExtra(BookEditActivity.downloadCover,false);
-                                    mContext.startActivity(i);
-                                    ((Activity)mContext).finish();
-
-                                }
-                            })
-                            .negativeText(R.string.isbn_unmatched_dialog_negative)
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    ((SingleAddActivity)mContext).resumeCamera();
-                                }
-                            })
-                            .dismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialogInterface) {
-                                    ((SingleAddActivity)mContext).resumeCamera();
-                                }
-                            })
-                            .show();
+                    if(mode == 0){
+                        ((SingleAddActivity)mContext).fetchFailed(
+                                BookFetcher.fetcherID_DB,0,isbn
+                        );
+                    }
                 }
 
             }
@@ -140,41 +110,12 @@ public class DoubanFetcher extends BookFetcher{
             @Override
             public void onFailure(Call<DouBanJson> call, Throwable t) {
                 Log.w(TAG,"GET Douban information failed, " + t.toString());
-                String dialogCotent = String.format(mContext.getResources().getString(
-                        R.string.request_failed_dialog_content),isbn);
-                MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-                        .title(R.string.isbn_unmatched_dialog_title)
-                        .content(dialogCotent)
-                        .positiveText(R.string.isbn_unmatched_dialog_positive)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                //create a book only with isbn
-                                mBook = new Book();
-                                mBook.setIsbn(isbn);
-                                mBook.setAddTime(Calendar.getInstance());
-                                Intent i = new Intent(mContext,BookEditActivity.class);
-                                i.putExtra(BookEditActivity.BOOK,mBook);
-                                i.putExtra(BookEditActivity.downloadCover,false);
-                                mContext.startActivity(i);
-                                ((Activity)mContext).finish();
+                if(mode==0){
+                    ((SingleAddActivity)mContext).fetchFailed(
+                            BookFetcher.fetcherID_DB,1,isbn
+                    );
 
-                            }
-                        })
-                        .negativeText(R.string.isbn_unmatched_dialog_negative)
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                ((SingleAddActivity)mContext).resumeCamera();
-                            }
-                        })
-                        .dismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                ((SingleAddActivity)mContext).resumeCamera();
-                            }
-                        })
-                        .show();
+                }
             }
         });
 

@@ -28,10 +28,15 @@ import retrofit2.http.Url;
 
 public abstract class BookFetcher {
     private static final String TAG = "BookFetcher";
+    public static final int fetcherID_DB = 0;
     protected Context mContext;
 
     protected Book mBook;
     protected Handler mHandler;
 
-    protected abstract void getBookInfo(Context context,String isbn);
+    protected abstract void getBookInfo(Context context,String isbn,final int mode);
+    /**
+     * mode = 0 single add
+     * mode = 1 batch add
+     */
 }

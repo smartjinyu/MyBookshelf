@@ -1,7 +1,9 @@
 package com.smartjinyu.mybookshelf;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.zxing.Result;
 
+import java.util.Calendar;
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -109,13 +112,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         return super.onCreateOptionsMenu(menu);
 
     }
-    public void resumeCamera(){
-        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
-        mScannerView.setResultHandler(this);
-        mScannerView.setAutoFocus(true);
-        mScannerView.setFlash(mFlash);
-        mScannerView.startCamera();
-    }
+
+
+
 
     @Override
     public void onResume() {
@@ -211,7 +210,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             DoubanFetcher fetcher = new DoubanFetcher();
-                            fetcher.getBookInfo(context,isbn);
+                            fetcher.getBookInfo(context,isbn,0);
                         }
                     })
                     .negativeText(android.R.string.cancel)
@@ -224,7 +223,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                     .show();
         }else{
             DoubanFetcher fetcher = new DoubanFetcher();
-            fetcher.getBookInfo(this,isbn);
+            fetcher.getBookInfo(this,isbn,0);
         }
     }
 
@@ -249,6 +248,108 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         }, 2000);
         */
     }
+
+    public void resumeCamera(){
+        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
+        mScannerView.setResultHandler(this);
+        mScannerView.setAutoFocus(true);
+        mScannerView.setFlash(mFlash);
+        mScannerView.startCamera();
+    }
+
+    public void fetchFailed(int fetcherID,int event,String isbn){
+        /**
+         * event = 0, unexpected response code
+         * event = 1, request failed
+         */
+
+        if(fetcherID == BookFetcher.fetcherID_DB){
+            if(event == 0){
+                event0Dialog(isbn);
+            }else if(event == 1){
+                event1Dialog(isbn);
+            }
+
+        }
+    }
+    private void event0Dialog(final String isbn){
+        String dialogCotent = String.format(getResources().getString(
+                R.string.isbn_unmatched_dialog_content),isbn);
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.isbn_unmatched_dialog_title)
+                .content(dialogCotent)
+                .positiveText(R.string.isbn_unmatched_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //create a book only with isbn
+                        Book mBook = new Book();
+                        mBook.setIsbn(isbn);
+                        mBook.setAddTime(Calendar.getInstance());
+                        Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK,mBook);
+                        i.putExtra(BookEditActivity.downloadCover,false);
+                        startActivity(i);
+                        finish();
+
+                    }
+                })
+                .negativeText(R.string.isbn_unmatched_dialog_negative)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        resumeCamera();
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        resumeCamera();
+                    }
+                })
+                .show();
+
+    }
+
+    private void event1Dialog(final String isbn){
+        String dialogCotent = String.format(getResources().getString(
+                R.string.request_failed_dialog_content),isbn);
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.isbn_unmatched_dialog_title)
+                .content(dialogCotent)
+                .positiveText(R.string.isbn_unmatched_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //create a book only with isbn
+                        Book mBook = new Book();
+                        mBook.setIsbn(isbn);
+                        mBook.setAddTime(Calendar.getInstance());
+                        Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK,mBook);
+                        i.putExtra(BookEditActivity.downloadCover,false);
+                        startActivity(i);
+                        finish();
+
+                    }
+                })
+                .negativeText(R.string.isbn_unmatched_dialog_negative)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        resumeCamera();
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        resumeCamera();
+                    }
+                })
+                .show();
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {

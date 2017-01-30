@@ -319,12 +319,12 @@ public class BookListFragment extends Fragment {
                             snackbar = Snackbar.make(
                                     mCoordinatorLayout,
                                     R.string.book_deleted_snack_bar_0,
-                                    Snackbar.LENGTH_LONG);
+                                    Snackbar.LENGTH_SHORT);
                         }else{
                             snackbar = Snackbar.make(
                                     mCoordinatorLayout,
                                     R.string.book_deleted_snack_bar_1,
-                                    Snackbar.LENGTH_LONG);
+                                    Snackbar.LENGTH_SHORT);
                         }
                         snackbar.setAction(R.string.book_deleted_snack_bar_undo, new View.OnClickListener() {
                             @Override

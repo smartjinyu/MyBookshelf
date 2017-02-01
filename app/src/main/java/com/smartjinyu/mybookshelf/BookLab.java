@@ -97,19 +97,36 @@ public class BookLab {
 
     public List<Book> getBooks(){
         List<Book> mBooks = new ArrayList<>();
-        BookCursorWrapper cursor = queryBooks(null,null);
-        try{
+
+        try(BookCursorWrapper cursor = queryBooks(null,null)
+        ){
             cursor.moveToFirst();
             while(!cursor.isAfterLast()){
                 mBooks.add(cursor.getBook());
                 cursor.moveToNext();
             }
-        }finally {
-            cursor.close();
         }
         return mBooks;
 
     }
+
+    public List<Book> getBooks(UUID bookShelfID){
+        List<Book> mBooks = new ArrayList<>();
+
+        try(BookCursorWrapper cursor
+                    = queryBooks(
+                BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?",
+                new String[]{bookShelfID.toString()})
+        ){
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                mBooks.add(cursor.getBook());
+                cursor.moveToNext();
+            }
+        }
+        return mBooks;
+    }
+
     public boolean isBookExists(Book book){
         // return whether the book still exists in the database
 

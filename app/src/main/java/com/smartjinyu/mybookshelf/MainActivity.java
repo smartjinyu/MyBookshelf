@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
 
-    private BookAdapter mAdapter;
+    private BookAdapter mRecyclerViewAdapter;
     private ActionMode mActionMode;
 
     private boolean isMultiSelect = false;
@@ -234,34 +235,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setBookShelfSpinner(){
+    private void setBookShelfSpinner() {
         mSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
         List<BookShelf> bookShelves = BookShelfLab.get(this).getBookShelves();
         BookShelf allBookShelf = new BookShelf();
         allBookShelf.setTitle(getResources().getString(R.string.spinner_all_bookshelf)); // never save to disk
-        bookShelves.add(0,allBookShelf);
+        bookShelves.add(0, allBookShelf);
         ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<>(
-                this,R.layout.spinner_item_white,bookShelves);
+                this, R.layout.spinner_item_white, bookShelves);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(arrayAdapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                updateUI();
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void getDisplayBooks(){
+        BookLab bookLab = BookLab.get(MainActivity.this);
+        mBooks = bookLab.getBooks();
+        if(mSpinner!=null){
+            BookShelf selectedBookShelf = (BookShelf) mSpinner.getSelectedItem();
+            if (selectedBookShelf.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
+                mBooks = bookLab.getBooks();
+            } else {
+                mBooks = bookLab.getBooks(selectedBookShelf.getId());
+            }
+        }
 
     }
 
     private void updateUI(){
-        BookLab bookLab = BookLab.get(this);
-        List<Book> books = bookLab.getBooks();
-        if(mAdapter==null){
-            mAdapter = new BookAdapter(books);
-            mRecyclerView.setAdapter(mAdapter);
+        getDisplayBooks();
+        if(mRecyclerViewAdapter ==null){
+            mRecyclerViewAdapter = new BookAdapter(mBooks);
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }else{
-            mBooks = books;
-            mAdapter.notifyDataSetChanged();
+            mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        setBookShelfSpinner();
         updateUI();
     }
 
@@ -283,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                 mActionMode.finish();
 
             }
-            mAdapter.notifyDataSetChanged();
+            mRecyclerViewAdapter.notifyDataSetChanged();
         }
 
     }
@@ -407,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
                     multiSelectList = mBooks;
                     String title = getResources().getQuantityString(R.plurals.multi_title,multiSelectList.size(),multiSelectList.size());
                     mActionMode.setTitle(title);
-                    mAdapter.notifyDataSetChanged();
+                    mRecyclerViewAdapter.notifyDataSetChanged();
                     break;
                 case R.id.menu_item_delete:
                     if(multiSelectList.size()!=0){
@@ -470,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
-            mAdapter.notifyDataSetChanged();
+            mRecyclerViewAdapter.notifyDataSetChanged();
         }
     };
 

@@ -188,7 +188,7 @@ public class BookEditActivity extends AppCompatActivity{
                     mBook.setNotes(notesEditText.getText().toString());
                     mBook.setWebsite(notesEditText.getText().toString());
                     BookLab bookLab = BookLab.get(this);
-                    bookLab.addBook(mBook); // FIXME: 2017/1/31
+                    bookLab.addBook(mBook);
                     //todo
 //                    for(int i=0;i<30;i++){//only for debug
 //                        bookLab.addBook(mBook);
@@ -254,22 +254,26 @@ public class BookEditActivity extends AppCompatActivity{
     private void setBookShelf(){
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-        List<BookShelf> spinnerBookshelf = new ArrayList<>();//avoid change list bookshelves
-        for(BookShelf bookShelfTemp : bookShelves){
-            spinnerBookshelf.add(bookShelfTemp);
-        }
         final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
-                this,R.layout.spinner_item,spinnerBookshelf);
+                this,R.layout.spinner_item,bookShelves);
         //overload toString method in BookShelf
         BookShelf customShelf = new BookShelf();
         customShelf.setTitle(getResources().getString(R.string.custom_spinner_item));
         //customShelf is only used to add an item to spinner, it will never add to bookshelfList
         arrayAdapter.add(customShelf);
-
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bookshelfSpinner.setAdapter(arrayAdapter);
 
-        BookShelf curBookshelf = bookShelfLab.getBookShelf(mBook.getBookshelfID());
+        BookShelf curBookshelf = bookShelves.get(0);//default
+        for(BookShelf bookShelf: bookShelves){
+            if(bookShelf.getId().equals(mBook.getBookshelfID())){
+                curBookshelf = bookShelf;
+                break;
+            }
+        }
+        // avoid
+        // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
+        // because even the same bookshelf object in two different lists will not regard equals() = true
         curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
         bookshelfSpinner.setSelection(curBookshelfPos);
         bookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){

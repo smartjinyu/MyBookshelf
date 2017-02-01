@@ -83,16 +83,15 @@ public class BookLab {
     }
 
     public Book getBook(UUID id){
-        BookCursorWrapper cursor = queryBooks(BookDBSchema.BookTable.Cols.UUID + "= ?",
-                new String[]{id.toString()});
-        try{
+        try (BookCursorWrapper cursor = queryBooks(
+                BookDBSchema.BookTable.Cols.UUID + "= ?",
+                new String[]{id.toString()})
+        ){
             if(cursor.getCount() == 0){
                 return null;
             }
             cursor.moveToFirst();
             return cursor.getBook();
-        }finally {
-            cursor.close();
         }
     }
 
@@ -111,16 +110,44 @@ public class BookLab {
         return mBooks;
 
     }
+    public boolean isBookExists(Book book){
+        // return whether the book still exists in the database
+
+        try (BookCursorWrapper cursor = queryBooks(
+                BookDBSchema.BookTable.Cols.UUID + "= ?",
+                new String[]{book.getId().toString()})
+        ){
+            return cursor.getCount()!=0;
+        }
+
+    }
+
 
     public void addBook(Book book){
         ContentValues values = getContentValues(book);
-        mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
+        if(isBookExists(book)){
+            //book still exists, update it
+            mDatabase.update(
+                    BookDBSchema.BookTable.NAME,
+                    values,
+                    BookDBSchema.BookTable.Cols.UUID + "= ?",
+                    new String[]{book.getId().toString()}
+            );
+        }else{
+            //add a new book
+            mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
+        }
     }
+
+
 
     public void deleteBook(Book book){
         String uuidString = book.getId().toString();
-        mDatabase.delete(BookDBSchema.BookTable.NAME,BookDBSchema.BookTable.Cols.UUID + " = ?",
-                new String[]{uuidString});
+        mDatabase.delete(
+                BookDBSchema.BookTable.NAME,
+                BookDBSchema.BookTable.Cols.UUID + " = ?",
+                new String[]{uuidString}
+        );
     }
 
 

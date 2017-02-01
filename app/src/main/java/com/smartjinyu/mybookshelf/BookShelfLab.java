@@ -76,7 +76,7 @@ public class BookShelfLab {
 
 
     public void addBookShelf(BookShelf bookShelf){
-        List<BookShelf> sBookShelf = new ArrayList<>();
+        List<BookShelf> sBookShelf = loadBookShelf();
         sBookShelf.add(bookShelf);
         saveBookShelf(sBookShelf);
     }

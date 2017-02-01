@@ -8,4 +8,8 @@
     android:minHeight="?attr/actionBarSize"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     android:background="?attr/colorPrimaryDark">
+    <Spinner
+        android:id="@+id/toolbar_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </android.support.v7.widget.Toolbar>

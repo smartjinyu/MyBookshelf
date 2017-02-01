@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BookShelf</string>
 
-    <!--MainActivity-->
+    <!--Drawer-->
     <string name="drawer_header_email">Manage Your Books</string>
     <string name="drawer_item_books">Books</string>
     <string name="drawer_item_search">Search</string>
@@ -9,6 +9,9 @@
     <string name="drawer_item_create_new_label">Create new label</string>
     <string name="drawer_item_settings">Settings</string>
     <string name="drawer_item_about">About</string>
+
+    <!--MainActivity-->
+    <string name="spinner_all_bookshelf">All</string>
 
     <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>

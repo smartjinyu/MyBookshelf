@@ -272,7 +272,8 @@ public class BookEditActivity extends AppCompatActivity{
             }
         }
         // avoid
-        // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
+        // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.
+        // getBookshelfID());
         // because even the same bookshelf object in two different lists will not regard equals() = true
         curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
         bookshelfSpinner.setSelection(curBookshelfPos);

@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">BookShelf</string>
-    <string name="drawer_open">Open Navigation Drawer</string>
-    <string name="drawer_close">Close Navigation Drawer</string>
+
+    <!--MainActivity-->
+    <string name="drawer_header_email">Manage Your Books</string>
+    <string name="drawer_item_books">Books</string>
+    <string name="drawer_item_search">Search</string>
+    <string name="drawer_section_label">Labels</string>
+    <string name="drawer_item_create_new_label">Create new label</string>
+    <string name="drawer_item_settings">Settings</string>
+    <string name="drawer_item_about">About</string>
 
     <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>

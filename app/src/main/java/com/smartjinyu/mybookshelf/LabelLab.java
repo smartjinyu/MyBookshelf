@@ -25,7 +25,6 @@ public class LabelLab {
     private SharedPreferences LabelPreference;
     private Context mContext;
 
-    private  List<Label> sLabel;
 
 
     public static LabelLab get(Context context){
@@ -38,29 +37,28 @@ public class LabelLab {
     public LabelLab(Context context){
         mContext = context.getApplicationContext();
         LabelPreference = mContext.getSharedPreferences(PreferenceName,0);
-        loadLabel();
     }
 
-    private void loadLabel(){
+    private List<Label> loadLabel(){
+        List<Label> labels = new ArrayList<>();
         Type type = new TypeToken<List<Label>>(){}.getType();
         Gson gson = new Gson();
         String toLoad = LabelPreference.getString(PreferenceName,null);
         if(toLoad != null){
-            sLabel = gson.fromJson(toLoad,type);
+            labels = gson.fromJson(toLoad,type);
             Log.i(TAG,"JSON to Load = " + toLoad);
-        }else{
-            sLabel = new ArrayList<>();
-            //no default label here
         }
+        return labels;
 
     }
 
     public final List<Label> getLabels(){
-        return sLabel;
+        return loadLabel();
     }
 
     public final Label getLabel(UUID id){
-        for(Label label :sLabel){
+        List<Label> labels = loadLabel();
+        for(Label label :labels){
             if(label.getId().equals(id)){
                 return label;
             }
@@ -71,14 +69,12 @@ public class LabelLab {
 
 
     public void addLabel(Label label){
-        if(sLabel == null ){
-            sLabel = new ArrayList<Label>();
-        }
+        List<Label> sLabel = loadLabel();
         sLabel.add(label);
-        saveLabel();
+        saveLabel(sLabel);
     }
 
-    private void saveLabel(){
+    private void saveLabel(List<Label> sLabel){
         Gson gson = new Gson();
         String toSave = gson.toJson(sLabel);
         Log.i(TAG,"JSON to Save = " + toSave);
@@ -88,8 +84,9 @@ public class LabelLab {
     }
 
     public void removeLabel(Label label){
+        List<Label> sLabel = loadLabel();
         sLabel.remove(label);
-        saveLabel();
+        saveLabel(sLabel);
     }
 
 }

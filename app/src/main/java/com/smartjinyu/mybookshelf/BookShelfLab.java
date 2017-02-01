@@ -27,7 +27,6 @@ public class BookShelfLab {
     private SharedPreferences BookShelfPreference;
     private Context mContext;
 
-    private static List<BookShelf> sBookShelf;
 
 
     public static BookShelfLab get(Context context){
@@ -40,10 +39,10 @@ public class BookShelfLab {
     public BookShelfLab(Context context){
         mContext = context.getApplicationContext();
         BookShelfPreference = mContext.getSharedPreferences(PreferenceName,0);
-        loadBookShelf();
     }
 
-    private void loadBookShelf(){
+    private List<BookShelf> loadBookShelf(){
+        List<BookShelf> sBookShelf = new ArrayList<>();
         Type type = new TypeToken<List<BookShelf>>(){}.getType();
         Gson gson = new Gson();
         String toLoad = BookShelfPreference.getString(PreferenceName,null);
@@ -54,16 +53,18 @@ public class BookShelfLab {
             BookShelf bookShelf = new BookShelf(
                     UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe"));
             bookShelf.setTitle(mContext.getResources().getString(R.string.default_book_shelf_name));
-            saveBookShelf();
-            addBookShelf(bookShelf);
+            sBookShelf.add(bookShelf);
+            saveBookShelf(sBookShelf);
         }
-    }
-
-    public final List<BookShelf> getBookShelves(){
         return sBookShelf;
     }
 
+    public final List<BookShelf> getBookShelves(){
+        return loadBookShelf();
+    }
+
     public final BookShelf getBookShelf(UUID id){
+        List<BookShelf> sBookShelf = loadBookShelf();
         for(BookShelf bookShelf : sBookShelf){
             if(bookShelf.getId().equals(id)){
                 return bookShelf;
@@ -75,14 +76,12 @@ public class BookShelfLab {
 
 
     public void addBookShelf(BookShelf bookShelf){
-        if(sBookShelf == null ){
-            sBookShelf = new ArrayList<BookShelf>();
-        }
+        List<BookShelf> sBookShelf = new ArrayList<>();
         sBookShelf.add(bookShelf);
-        saveBookShelf();
+        saveBookShelf(sBookShelf);
     }
 
-    private void saveBookShelf(){
+    private void saveBookShelf(List<BookShelf> sBookShelf){
         Gson gson = new Gson();
         String toSave = gson.toJson(sBookShelf);
         Log.i(TAG,"JSON to Save = " + toSave);
@@ -92,8 +91,9 @@ public class BookShelfLab {
     }
 
     public void removeBookShelf(BookShelf bookShelf){
+        List<BookShelf> sBookShelf = loadBookShelf();
         sBookShelf.remove(bookShelf);
-        saveBookShelf();
+        saveBookShelf(sBookShelf);
     }
 
 

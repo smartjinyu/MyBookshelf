@@ -188,7 +188,7 @@ public class BookEditActivity extends AppCompatActivity{
                     mBook.setNotes(notesEditText.getText().toString());
                     mBook.setWebsite(notesEditText.getText().toString());
                     BookLab bookLab = BookLab.get(this);
-                    bookLab.addBook(mBook);
+                    bookLab.addBook(mBook); // FIXME: 2017/1/31
                     //todo
 //                    for(int i=0;i<30;i++){//only for debug
 //                        bookLab.addBook(mBook);
@@ -212,7 +212,7 @@ public class BookEditActivity extends AppCompatActivity{
 
         titleEditText.setText(mBook.getTitle());
 
-        if(mBook.getAuthors()!=null){
+        if(mBook.getAuthors()!=null && mBook.getAuthors().size()!=0){
             StringBuilder stringBuilder1 = new StringBuilder();
             for(String author: mBook.getAuthors()){
                 stringBuilder1.append(author);
@@ -222,7 +222,7 @@ public class BookEditActivity extends AppCompatActivity{
             authorEditText.setText(stringBuilder1);
         }
 
-        if(mBook.getTranslators()!=null){
+        if(mBook.getTranslators()!=null && mBook.getTranslators().size()!=0){
             translator_layout.setVisibility(View.VISIBLE);
             StringBuilder stringBuilder2 = new StringBuilder();
             for(String translator: mBook.getTranslators()){

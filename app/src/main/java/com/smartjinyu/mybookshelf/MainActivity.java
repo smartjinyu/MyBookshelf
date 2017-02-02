@@ -44,6 +44,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         setDrawer(savedInstanceState);
 
 
+    }
+    private boolean test(CharSequence... items){
+        return true;
     }
 
     private void setDrawer(Bundle savedInstanceState){

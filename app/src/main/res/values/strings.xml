@@ -66,8 +66,8 @@
     <string name="book_pubdate_text_view">PubDate:</string>
     <string name="book_isbn_text_view">ISBN:</string>
     <string name="book_title_edit_text_hint">Title of the Book</string>
-    <string name="book_author_edit_text_hint">Separate multiple by Space</string>
-    <string name="book_translator_edit_text_hint">Separate multiple by Space</string>
+    <string name="book_author_edit_text_hint">Separate multiple by comma</string>
+    <string name="book_translator_edit_text_hint">Separate multiple by comma</string>
     <string name="book_publisher_edit_text_hint">Publisher of the Book</string>
     <string name="book_isbn_edit_text_hint">ISBN of the Book</string>
     <string name="book_pubyear_edit_text_hint">Year</string>
@@ -77,6 +77,7 @@
     <string name="book_shelf_image_view">Bookshelf</string>
     <string name="note_edit_text_hint">Notes</string>
     <string name="label_image_view">Label</string>
+    <string name="label_edit_text_hint">Add labels</string>
     <string name="website_edit_text_hint">Website</string>
     <string name="tool_bar_navigation_description">Discard</string>
     <string-array name="reading_status_array">
@@ -89,6 +90,11 @@
     <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
     <string name="custom_book_shelf_dialog_title">Custom BookShelf</string>
     <string name="month_invalid">Month should be a number between 1 and 12!</string>
+    <string name="isbn_invalid">ISBN should be a 10 or 13 digits in length!</string>
+    <string name="label_choice_dialog_title">Choose labels</string>
+    <string name="label_choice_dialog_neutral">Add label</string>
+    <string name="label_add_new_dialog_title">Label Name</string>
+    <string name="label_add_new_dialog_edit_text">Input new label name</string>
 
     <!--BookShelfLab-->
     <string name="default_book_shelf_name">Default BookShelf</string>

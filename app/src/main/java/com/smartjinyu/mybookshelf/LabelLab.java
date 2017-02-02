@@ -83,8 +83,19 @@ public class LabelLab {
                 .apply();
     }
 
-    public void removeLabel(Label label){
+    /**
+     * remove specified label
+     * @param label label to remove
+     * @param removeFromBooks true to remove the label from all the books
+     */
+    public void removeLabel(Label label,boolean removeFromBooks){
         List<Label> sLabel = loadLabel();
+        if(removeFromBooks){
+            List<Book> books = BookLab.get(mContext).getBooks();
+            for(Book book:books){
+                book.removeLabel(label);
+            }
+        }
         sLabel.remove(label);
         saveLabel(sLabel);
     }

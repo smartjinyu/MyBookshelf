@@ -46,7 +46,7 @@ public class Book implements Serializable{
         //default bookshelf id
         readingStatus = 0;
         addTime = Calendar.getInstance();
-
+        labelID = new ArrayList<>();
     }
 
 
@@ -171,19 +171,29 @@ public class Book implements Serializable{
         if(labelID == null){
             labelID = new ArrayList<>();
         }
-        labelID.add(label.getId());
-    }
-    public void addLabel(UUID labelid){
-        if(labelID == null){
-            labelID = new ArrayList<>();
+        if(!this.labelID.contains(label.getId())){
+            labelID.add(label.getId());
         }
-        labelID.add(labelid);
     }
-    public void removeLabel(UUID labelid){
+    public void addLabel(UUID labelID){
+        if(this.labelID == null){
+            this.labelID = new ArrayList<>();
+        }
+        if(!this.labelID.contains(labelID)){
+            this.labelID.add(labelID);
+        }
+    }
+    public void removeLabel(UUID labelID){
+        if(this.labelID !=null){
+            this.labelID.remove(labelID);
+        }
+    }
+    public void removeLabel(Label label){
         if(labelID!=null){
-            labelID.remove(labelid);
+            labelID.remove(label.getId());
         }
     }
+
 
     public void setLabelID(List<UUID> labelID) {
         this.labelID = labelID;

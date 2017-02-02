@@ -132,14 +132,19 @@
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"/>
 
-                    <Spinner
-                        android:id="@+id/label_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="19dp"
-                        android:spinnerMode="dropdown"
-                        android:layout_alignTop="@+id/book_edit_label_image_view"
-                        android:layout_alignParentTop="true"/>
+                    <EditText
+                        android:id="@+id/book_labels_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="16sp"
+                        android:layout_marginStart="16dp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:hint="@string/label_edit_text_hint"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/book_edit_label_image_view"
+                        android:focusable="false"/>
 
                 </RelativeLayout>
 

@@ -22,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -46,6 +45,7 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,6 +53,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private static final String drawerSelected = "drawerSelected";
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 .withHeaderBackground(R.drawable.header)
                 .withSelectionListEnabledForSingleProfile(false)
                 .addProfiles(profile)
-                .withSavedInstance(savedInstanceState)
+                //.withSavedInstance(savedInstanceState)
                 .build();
 
         mDrawer = new DrawerBuilder()
@@ -217,8 +218,10 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                 })
-                .withSavedInstance(savedInstanceState)
                 .build();
+
+        //.withSavedInstance(savedInstanceState) do not use this
+                // because we add items after build
         /**
          * About position
          * begin at 1
@@ -232,6 +235,10 @@ public class MainActivity extends AppCompatActivity {
                     .withIdentifier(i+10)// identifier begin from 10
                     .withSelectable(true);
             mDrawer.addItemAtPosition(drawerItem,i+4);
+        }
+        if(savedInstanceState!=null){
+            long selection = savedInstanceState.getLong(drawerSelected);
+            mDrawer.setSelection(selection);
         }
     }
 
@@ -404,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
         }
         mBooks = bookLab.getBooks(bookshelfID,labelID);
         setToolbarColor(toolbarMode);
-        invalidateOptionsMenu();
+        invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
     }
 
@@ -421,7 +428,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        setBookShelfSpinner();
         updateUI();
     }
 
@@ -639,12 +645,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //add the values which need to be saved from the drawer to the bundle
-        outState = mDrawer.saveInstanceState(outState);
-        //add the values which need to be saved from the accountHeader to the bundle
-        outState = mAccountHeader.saveInstanceState(outState);
-        super.onSaveInstanceState(outState);
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        if(mDrawer!=null){
+            savedInstanceState.putLong(drawerSelected,mDrawer.getCurrentSelection());
+        }
     }
 
 

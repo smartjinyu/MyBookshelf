@@ -278,7 +278,7 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_label_primary"
-                    android:contentDescription="@string/label_image_view"/>
+                    android:contentDescription="@string/book_detail_labels_image_view"/>
                 <TextView
                     android:id="@+id/book_detail_labels_text_view"
                     android:layout_width="wrap_content"

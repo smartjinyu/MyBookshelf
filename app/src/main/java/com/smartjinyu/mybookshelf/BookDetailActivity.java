@@ -1,5 +1,8 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +10,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -114,6 +120,9 @@ public class BookDetailActivity extends SlidingActivity {
         isbnRelativeLayout = (RelativeLayout) findViewById(R.id.book_info_isbn_item);
         isbnTextView = (TextView) findViewById(R.id.book_info_isbn_text_view);
 
+        final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+
         if(mBook.getAuthors().size()!=0){
             StringBuilder authors = new StringBuilder();
             for(String author: mBook.getAuthors()){
@@ -127,9 +136,14 @@ public class BookDetailActivity extends SlidingActivity {
                 public boolean onLongClick(View view) {
                     Toast.makeText(
                             BookDetailActivity.this,
-                            getResources().getString(R.string.book_info_author_image_view),
+                            getResources().getString(R.string.book_info_author_toast),
                             Toast.LENGTH_SHORT)
                             .show();
+                    ClipData clipData = ClipData.newPlainText(
+                            getString(R.string.app_name),
+                            String.format(getString(R.string.book_info_author_clipboard_content),
+                                    authorTextView.getText().toString()));
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 }
             });
@@ -150,9 +164,14 @@ public class BookDetailActivity extends SlidingActivity {
                 public boolean onLongClick(View view) {
                     Toast.makeText(
                             BookDetailActivity.this,
-                            getResources().getString(R.string.book_info_translator_image_view),
+                            getResources().getString(R.string.book_info_translator_toast),
                             Toast.LENGTH_SHORT)
                             .show();
+                    ClipData clipData = ClipData.newPlainText(
+                            getString(R.string.app_name),
+                            String.format(getString(R.string.book_info_translator_clipboard_content),
+                                    translatorTextView.getText().toString()));
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 }
             });
@@ -168,9 +187,14 @@ public class BookDetailActivity extends SlidingActivity {
                 public boolean onLongClick(View view) {
                     Toast.makeText(
                             BookDetailActivity.this,
-                            getResources().getString(R.string.book_info_publisher_image_view),
+                            getResources().getString(R.string.book_info_publisher_toast),
                             Toast.LENGTH_SHORT)
                             .show();
+                    ClipData clipData = ClipData.newPlainText(
+                            getString(R.string.app_name),
+                            String.format(getString(R.string.book_info_publisher_clipboard_content),
+                                    publisherTextView.getText().toString()));
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 }
             });
@@ -194,9 +218,14 @@ public class BookDetailActivity extends SlidingActivity {
                 public boolean onLongClick(View view) {
                     Toast.makeText(
                             BookDetailActivity.this,
-                            getResources().getString(R.string.book_info_pubtime_image_view),
+                            getResources().getString(R.string.book_info_pubtime_toast),
                             Toast.LENGTH_SHORT)
                             .show();
+                    ClipData clipData = ClipData.newPlainText(
+                            getString(R.string.app_name),
+                            String.format(getString(R.string.book_info_pubtime_clipboard_content),
+                                    pubtimeTextView.getText().toString()));
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 }
             });
@@ -208,9 +237,14 @@ public class BookDetailActivity extends SlidingActivity {
                 public boolean onLongClick(View view) {
                     Toast.makeText(
                             BookDetailActivity.this,
-                            getResources().getString(R.string.book_info_isbn_image_view),
+                            getResources().getString(R.string.book_info_isbn_toast),
                             Toast.LENGTH_SHORT)
                             .show();
+                    ClipData clipData = ClipData.newPlainText(
+                            getString(R.string.app_name),
+                            String.format(getString(R.string.book_info_isbn_clipboard_content),
+                                    isbnTextView.getText().toString()));
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 }
             });
@@ -281,7 +315,29 @@ public class BookDetailActivity extends SlidingActivity {
         }
 
         List<UUID> labelID = mBook.getLabelID();
-        //// TODO: 2017/1/30
+       if(labelID.size()!=0){
+           StringBuilder labelsTitle = new StringBuilder();
+           for(UUID id : labelID){
+               labelsTitle.append(LabelLab.get(this).getLabel(id).getTitle());
+               labelsTitle.append(",");
+           }
+           labelsTitle.deleteCharAt(labelsTitle.length()-1);
+           labelsTextView.setText(labelsTitle);
+           labelsRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
+               @Override
+               public boolean onLongClick(View view) {
+                   Toast.makeText(
+                           BookDetailActivity.this,
+                           getResources().getString(R.string.book_detail_labels_image_view),
+                           Toast.LENGTH_SHORT)
+                           .show();
+                   return true;
+               }
+           });
+
+       }else{
+           labelsRelativeLayout.setVisibility(View.GONE);
+       }
 
         if(mBook.getWebsite().length()!=0){
             websiteTextView.setText(mBook.getWebsite());
@@ -299,9 +355,33 @@ public class BookDetailActivity extends SlidingActivity {
         }else{
             websiteRelativeLayout.setVisibility(View.GONE);
         }
-
-
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_bookdetail,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.book_detail_menu_delete:
+                BookLab.get(BookDetailActivity.this)
+                        .deleteBook(mBook);
+                Toast.makeText(
+                        BookDetailActivity.this,
+                        R.string.book_detail_book_delete_toast,
+                        Toast.LENGTH_LONG)
+                        .show();
+                finish();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
 
 
 }

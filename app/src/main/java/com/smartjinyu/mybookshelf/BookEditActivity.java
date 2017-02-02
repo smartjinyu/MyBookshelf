@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -215,6 +216,32 @@ public class BookEditActivity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onBackPressed(){
+        dialogBeforeDiscard();
+    }
+
+    private void dialogBeforeDiscard(){
+        new MaterialDialog.Builder(this)
+                .title(R.string.book_edit_activity_discard_dialog_title)
+                .content(R.string.book_edit_activity_discard_dialog_content)
+                .positiveText(R.string.book_edit_activity_discard_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
     private void setLabels(){
         StringBuilder labelsTitle = new StringBuilder();
         final LabelLab labelLab = LabelLab.get(this);
@@ -334,6 +361,7 @@ public class BookEditActivity extends AppCompatActivity{
                                 dialog.dismiss();
                             }
                         })
+
                         .autoDismiss(false)
                         .show();
 
@@ -580,7 +608,7 @@ public class BookEditActivity extends AppCompatActivity{
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                dialogBeforeDiscard();
             }
         });
 

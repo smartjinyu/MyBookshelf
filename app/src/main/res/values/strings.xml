@@ -84,7 +84,7 @@
         <item>Reading Status Unset</item>
         <item>Unread</item>
         <item>Reading</item>
-        <item>Read</item>
+        <item>Finished</item>
     </string-array>
     <string name="custom_spinner_item">Add New</string>
     <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
@@ -95,6 +95,9 @@
     <string name="label_choice_dialog_neutral">Add label</string>
     <string name="label_add_new_dialog_title">Label Name</string>
     <string name="label_add_new_dialog_edit_text">Input new label name</string>
+    <string name="book_edit_activity_discard_dialog_title">Discard the Book</string>
+    <string name="book_edit_activity_discard_dialog_content">We won\'t save your book and changes will be discarded.</string>
+    <string name="book_edit_activity_discard_dialog_positive">Discard</string>
 
     <!--BookShelfLab-->
     <string name="default_book_shelf_name">Default BookShelf</string>
@@ -102,13 +105,28 @@
     <!--BookDetailActivity-->
     <string name="book_info_title">Info</string>
     <string name="book_info_title_image_view">Title</string>
+    <string name="book_info_title_toast">Title copied to clipboard!</string>
+    <string name="book_info_title_clipboard_content">Title: %1$s</string>
     <string name="book_info_author_image_view">Authors</string>
+    <string name="book_info_author_toast">Authors copied to clipboard!</string>
+    <string name="book_info_author_clipboard_content">Authors: %1$s</string>
     <string name="book_info_translator_image_view">Translators</string>
+    <string name="book_info_translator_toast">Translators copied to clipboard!</string>
+    <string name="book_info_translator_clipboard_content">Translators: %1$s</string>
     <string name="book_info_publisher_image_view">Publisher</string>
+    <string name="book_info_publisher_toast">Publisher copied to clipboard!</string>
+    <string name="book_info_publisher_clipboard_content">Publisher: %1$s</string>
     <string name="book_info_pubtime_image_view">PubDate</string>
+    <string name="book_info_pubtime_toast">PubDate copied to clipboard!</string>
+    <string name="book_info_pubtime_clipboard_content">PubDate: %1$s</string>
     <string name="book_info_isbn_image_view">ISBN</string>
+    <string name="book_info_isbn_toast">ISBN copied to clipboard!</string>
+    <string name="book_info_isbn_clipboard_content">ISBN: %1$s</string>
     <string name="book_detail_title">Details</string>
     <string name="book_detail_header_text_view">Easter Egg: You add this book at</string>
+    <string name="book_detail_menu_delete">Delete Book</string>
+    <string name="book_detail_book_delete_toast">Book Deleted!</string>
+    <string name="book_detail_labels_image_view">Labels</string>
 
 
 

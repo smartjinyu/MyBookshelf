@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -44,8 +48,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> multiSelectList = new ArrayList<>();
     private List<Book> UndoBooks = new ArrayList<>();// used to undo deleting
     private List<Book> mBooks;
+    boolean showBookshelfMenuItem = false;
+    boolean showLabelMenuItem = false;
 
 
     @Override
@@ -79,13 +85,38 @@ public class MainActivity extends AppCompatActivity {
         setBookShelfSpinner();
         setDrawer(savedInstanceState);
 
-
     }
-    private boolean test(CharSequence... items){
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main,menu);
         return true;
     }
 
-    private void setDrawer(Bundle savedInstanceState){
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        MenuItem renameLabelItem = menu.findItem(R.id.menu_main_rename_label);
+        MenuItem deleteLabelItem = menu.findItem(R.id.menu_main_delete_label);
+        MenuItem renameBookshelfItem = menu.findItem(R.id.menu_main_rename_bookshelf);
+        MenuItem deleteBookshelfItem = menu.findItem(R.id.menu_main_delete_bookshelf);
+
+        renameLabelItem.setVisible(showLabelMenuItem);
+        deleteLabelItem.setVisible(showLabelMenuItem);
+        renameBookshelfItem.setVisible(showBookshelfMenuItem);
+        deleteBookshelfItem.setVisible(showBookshelfMenuItem);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //todo
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void setDrawer(final Bundle savedInstanceState){
+        final List<Label> labels = LabelLab.get(this).getLabels();
         final IProfile profile = new ProfileDrawerItem()
                 .withName(getResources().getString(R.string.app_name))
                 .withIcon(R.mipmap.ic_launcher_circle)
@@ -144,8 +175,43 @@ public class MainActivity extends AppCompatActivity {
                         //those items don't contain a drawerItem
 
                         if (drawerItem != null) {
+                            Log.i(TAG,"Select drawer item at position " + position);
+                            // Identifier between 10 and 9 + labels.size() are labels
                             if (drawerItem.getIdentifier()==1){
-                                //todo
+                                updateUI();
+                            }else if(drawerItem.getIdentifier()==3){
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title(R.string.label_add_new_dialog_title)
+                                        .inputRange(1,getResources().getInteger(R.integer.label_name_max_length))
+                                        .input(
+                                                R.string.label_add_new_dialog_edit_text,
+                                                0,
+                                                new MaterialDialog.InputCallback() {
+                                                    @Override
+                                                    public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                                                        // nothing to do here
+                                                    }
+                                                })
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                                Label labelToAdd = new Label();
+                                                labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                                LabelLab.get(MainActivity.this).addLabel(labelToAdd);
+                                                Log.i(TAG,"New label created " + labelToAdd.getTitle());
+                                                setDrawer(savedInstanceState);
+                                            }
+                                        })
+                                        .negativeText(android.R.string.cancel)
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                                inputDialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }else if(drawerItem.getIdentifier()>=10 && drawerItem.getIdentifier()<10+labels.size()){
+                                updateUI();
                             }
                         }
                         return false;
@@ -153,7 +219,20 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .withSavedInstance(savedInstanceState)
                 .build();
-
+        /**
+         * About position
+         * begin at 1
+         * divider\section also counts in
+         */
+        for(int i = 0; i < labels.size();i++){
+            // add labels
+            IDrawerItem drawerItem = new PrimaryDrawerItem()
+                    .withName(labels.get(i).getTitle())
+                    .withIcon(R.drawable.ic_label)
+                    .withIdentifier(i+10)// identifier begin from 10
+                    .withSelectable(true);
+            mDrawer.addItemAtPosition(drawerItem,i+4);
+        }
     }
 
     private void setToolbar(){
@@ -263,22 +342,74 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getDisplayBooks(){
-        BookLab bookLab = BookLab.get(MainActivity.this);
-        mBooks = bookLab.getBooks();
+    /**
+     * change Toolbar and status bar color
+     * @param mode 0 represents colorPrimary\colorPrimaryDark, 1 represents selected|selectedDark
+     */
+    private void setToolbarColor(int mode){
+        int colorPrimaryRes,colorPrimaryDarkRes;
+        if(mode == 1){
+            colorPrimaryRes = ContextCompat.getColor(this,R.color.selected_primary);
+            colorPrimaryDarkRes = ContextCompat.getColor(this,R.color.selected_primary_dark);
+        }else {
+            colorPrimaryRes = ContextCompat.getColor(this,R.color.colorPrimary);
+            colorPrimaryDarkRes = ContextCompat.getColor(this,R.color.colorPrimaryDark);
+
+        }
+        mToolbar.setBackgroundColor(colorPrimaryRes);
+        getWindow().setStatusBarColor(colorPrimaryDarkRes);
+
+
+    }
+
+    private void setBooksAndUI(){
+        BookLab bookLab = BookLab.get(this);
+        List<Label> labels = LabelLab.get(this).getLabels();
+        UUID bookshelfID = null,labelID = null;
+        int toolbarMode = 0;
         if(mSpinner!=null){
             BookShelf selectedBookShelf = (BookShelf) mSpinner.getSelectedItem();
             if (selectedBookShelf.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
-                mBooks = bookLab.getBooks();
+                // select "All"
+                showBookshelfMenuItem = false;
             } else {
-                mBooks = bookLab.getBooks(selectedBookShelf.getId());
+                // select one Bookshelf
+                toolbarMode = 1;
+                bookshelfID = selectedBookShelf.getId();
+                showBookshelfMenuItem = true;
             }
         }
+
+        int drawerSelection = (int)mDrawer.getCurrentSelection();
+        if(mDrawer!=null){
+            if(drawerSelection < 10 || drawerSelection >= 10 + labels.size()){
+                //not select label
+                mActionAddButton.setVisibility(View.VISIBLE);
+                if(mActionAddButton.isMenuButtonHidden()){
+                    mActionAddButton.showMenuButton(true);
+                }
+
+                showLabelMenuItem = false;
+            }else{
+                //select one label
+                toolbarMode = 1;
+                labelID = labels.get(drawerSelection-10).getId();
+                if(!mActionAddButton.isMenuButtonHidden()){
+                    mActionAddButton.hideMenuButton(true);
+                }
+                mActionAddButton.setVisibility(View.GONE);
+                showLabelMenuItem = true;
+
+            }
+        }
+        mBooks = bookLab.getBooks(bookshelfID,labelID);
+        setToolbarColor(toolbarMode);
+        invalidateOptionsMenu();
 
     }
 
     private void updateUI(){
-        getDisplayBooks();
+        setBooksAndUI();
         if(mRecyclerViewAdapter ==null){
             mRecyclerViewAdapter = new BookAdapter(mBooks);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
@@ -517,11 +648,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //todo
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed(){

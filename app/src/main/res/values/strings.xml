@@ -27,6 +27,11 @@
     <string name="book_deleted_snack_bar_0">Book Deleted</string>
     <string name="book_deleted_snack_bar_1">Books Deleted</string>
     <string name="book_deleted_snack_bar_undo">Undo</string>
+    <string name="menu_main_rename_bookshelf">Rename Bookshelf</string>
+    <string name="menu_main_delete_bookshelf">Delete Bookshelf</string>
+    <string name="menu_main_delete_label">Delete Label</string>
+    <string name="menu_main_rename_label">Rename Label</string>
+    <string name="menu_main_search">Search</string>
 
     <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>

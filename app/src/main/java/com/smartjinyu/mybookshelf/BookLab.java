@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
@@ -69,6 +70,7 @@ public class BookLab {
     }
 
     private BookCursorWrapper queryBooks(String whereClause,String[] whereArgs){
+
         Cursor cursor = mDatabase.query(
                 BookDBSchema.BookTable.NAME,//TableName
                 null,//columns, null select all columns
@@ -78,6 +80,15 @@ public class BookLab {
                 null,//having
                 null//limit
         );
+        // for log
+        if(whereArgs == null){
+            whereArgs = new String[]{"null"};
+        }
+        if(whereClause == null){
+            whereClause = "null";
+        }
+        Log.i(TAG,"Query books whereClause = " + whereClause + ", whereArgs = " +whereArgs.toString());
+
         return new BookCursorWrapper(cursor);
 
     }
@@ -110,19 +121,42 @@ public class BookLab {
 
     }
 
-    public List<Book> getBooks(UUID bookShelfID){
-        List<Book> mBooks = new ArrayList<>();
+    /**
+     * getBooks by bookshelfID and labelID, all the parameters can be null
+     * @param bookShelfID
+     * @param labelID
+     * @return
+     */
 
-        try(BookCursorWrapper cursor
-                    = queryBooks(
-                BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?",
-                new String[]{bookShelfID.toString()})
-        ){
+    public List<Book> getBooks(UUID bookShelfID,UUID labelID){
+        List<Book> mBooks = new ArrayList<>();
+        BookCursorWrapper cursor;
+        if(bookShelfID == null && labelID == null){
+            return getBooks();
+        }else if (bookShelfID == null){
+            // bookShelfID == null and labelID != null
+            cursor = queryBooks(BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?",
+                    new String[]{"*"+labelID.toString()+"*"});
+            // It is WRONG to write ... + "GLOB *?*",new String[](labelID.toString())
+        }else if (labelID == null){
+            // bookShelfID != null and labelID == null
+            cursor = queryBooks(BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?",
+                    new String[]{bookShelfID.toString()});
+        }else{
+            // bookShelfID != null and labelID != null
+            cursor = queryBooks(BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ? AND "
+                    +BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?",
+                    new String[]{bookShelfID.toString(),"*"+labelID.toString()+"*"});
+        }
+
+        try{
             cursor.moveToFirst();
             while(!cursor.isAfterLast()){
                 mBooks.add(cursor.getBook());
                 cursor.moveToNext();
             }
+        }finally{
+            cursor.close();
         }
         return mBooks;
     }

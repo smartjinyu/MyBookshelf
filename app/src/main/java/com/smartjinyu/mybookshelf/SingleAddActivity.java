@@ -46,14 +46,13 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     private boolean mFlash;
     private Toolbar mToolbar;
 
+    /** startMode is a number of 0,1,2
+     * 0: start without a camera
+     * 1: start with camera in single book mode
+     * 2: start with camera in batch mode
+     */
     public static Intent newIntent(Context context){
-        /** startMode is a number of 0,1,2
-         * 0: start without a camera
-         * 1: start with camera in single book mode
-         * 2: start with camera in batch mode
-         */
-        Intent intent = new Intent(context,SingleAddActivity.class);
-        return intent;
+        return new Intent(context,SingleAddActivity.class);
     }
 
 

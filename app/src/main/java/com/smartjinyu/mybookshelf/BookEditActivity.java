@@ -323,7 +323,7 @@ public class BookEditActivity extends AppCompatActivity{
                                 // create new label
                                 new MaterialDialog.Builder(BookEditActivity.this)
                                         .title(R.string.label_add_new_dialog_title)
-                                        .inputRange(1,10)
+                                        .inputRange(1,getResources().getInteger(R.integer.label_name_max_length))
                                         .input(
                                                 R.string.label_add_new_dialog_edit_text,
                                                 0,
@@ -443,8 +443,7 @@ public class BookEditActivity extends AppCompatActivity{
             }
         }
         // avoid
-        // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.
-        // getBookshelfID());
+        // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
         // because even the same bookshelf object in two different lists will not regard equals() = true
         curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
         bookshelfSpinner.setSelection(curBookshelfPos);
@@ -457,7 +456,7 @@ public class BookEditActivity extends AppCompatActivity{
                     Log.i(TAG,"Custom Bookshelf clicked");
                     MaterialDialog inputDialog = new MaterialDialog.Builder(BookEditActivity.this)
                             .title(R.string.custom_book_shelf_dialog_title)
-                            .inputRange(1,10)
+                            .inputRange(1,getResources().getInteger(R.integer.bookshelf_name_max_length))
                             .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {

@@ -8,5 +8,7 @@
     <color name="colorSecondaryText">#757575</color>
     <color name="actionbar_opacity">#33000000</color>
     <color name="recycler_item_selected">#ebf2ff</color>
+    <color name="selected_primary">#607D8B</color>
+    <color name="selected_primary_dark">#455A64</color>
 
 </resources>

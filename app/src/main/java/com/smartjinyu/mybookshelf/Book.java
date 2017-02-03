@@ -1,8 +1,13 @@
 package com.smartjinyu.mybookshelf;
 
+import android.util.Log;
+
+import com.github.promeg.pinyinhelper.Pinyin;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -13,6 +18,8 @@ import java.util.UUID;
  */
 
 public class Book implements Serializable{
+    private static final String TAG = "Book";
+
     private String title;
     private UUID id; // A unique id to identify each book
     private List<String> authors;
@@ -198,4 +205,61 @@ public class Book implements Serializable{
     public void setLabelID(List<UUID> labelID) {
         this.labelID = labelID;
     }
+
+    public static class titleComparator implements Comparator<Book> {
+        @Override
+        public int compare(Book book1,Book book2){
+            // transfer to Chinese Pinyin
+            String title1 = Pinyin.toPinyin(book1.getTitle(),"");
+            String title2 = Pinyin.toPinyin(book2.getTitle(),"");
+            return title1.compareTo(title2);
+        }
+    }
+
+    public static class publisherComparator implements Comparator<Book> {
+        @Override
+        public int compare(Book book1,Book book2){
+            // transfer to Chinese Pinyin
+            String publisher1 = Pinyin.toPinyin(book1.getPublisher(),"");
+            String publisher2 = Pinyin.toPinyin(book2.getPublisher(),"");
+            return publisher1.compareTo(publisher2);
+        }
+    }
+
+    public static class pubtimeComparator implements Comparator<Book> {
+        @Override
+        public int compare(Book book1,Book book2){
+            Calendar pubtime1 = book1.getPubTime();
+            Calendar pubtime2 = book2.getPubTime();
+            return pubtime1.compareTo(pubtime2);
+        }
+    }
+
+    public static class authorComparator implements Comparator<Book> {
+        @Override
+        public int compare(Book book1,Book book2){
+            /*
+            String author1,author2;
+            if(book1.getAuthors().size()==0){
+                author1 = "";
+            }else{
+                author1 = book1.getAuthors().get(0);
+            }
+            */
+            String author1 = Pinyin.toPinyin(book1.getAuthors().toString(),"");
+            Log.d(TAG,"Title1 = " + book1.getTitle() + ", Author1 Pinyin = " + author1);
+            String author2 = Pinyin.toPinyin(book2.getAuthors().toString(),"");
+            Log.d(TAG,"Title2 = " + book2.getTitle() + ", Author2 Pinyin = " + author2);
+            int result =  author1.compareTo(author2);
+            Log.d(TAG,"Compare result is " + result);
+            return result;
+        }
+    }
+
+
+
+
+
+
+
 }

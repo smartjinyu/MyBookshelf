@@ -121,7 +121,7 @@ public class BookEditActivity extends AppCompatActivity{
     /**
      * save book information.
      * no attribute of book should be null after this method finishing
-     * @return true if save successfully, false means it needs edit
+     * @return true if save successfully, false means it needs to edit
      */
     private boolean saveBook(){
         int month;
@@ -144,6 +144,7 @@ public class BookEditActivity extends AppCompatActivity{
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(isbnEditText,InputMethodManager.SHOW_IMPLICIT);
             return false;
+            //// TODO: 2017/2/3 check title not empty
         } else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
@@ -155,6 +156,8 @@ public class BookEditActivity extends AppCompatActivity{
                 authorArray = authors.split(" ");
             }else if(authors.contains(",")){
                 authorArray = authors.split(",");
+            }else if(authors.contains("，")){
+                authorArray = authors.split("，");
             }else{
                 authorArray = new String[]{authors};
             }

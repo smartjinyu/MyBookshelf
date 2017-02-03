@@ -12,22 +12,6 @@
 
     <!--MainActivity-->
     <string name="spinner_all_bookshelf">All</string>
-    <string name="rename_bookshelf_dialog_title">Rename Bookshelf</string>
-    <string name="rename_bookshelf_dialog_edit_text">Input new bookshelf name here</string>
-    <string name="delete_bookshelf_dialog_title">Delete Bookshelf</string>
-    <string name="delete_bookshelf_dialog_content">We will delete this bookshelf
-        and all the books on it will be moved to default bookshelf.
-    No books will be deleted.</string>
-    <string name="delete_bookshelf_dialog_positive">Delete</string>
-    <string name="rename_label_dialog_title">Rename Label</string>
-    <string name="rename_label_dialog_edit_text">Input new label name here</string>
-    <string name="delete_label_dialog_title">Delete Label</string>
-    <string name="delete_label_dialog_content">We will delete this label
-        and remove it from all books. No books will be deleted.</string>
-    <string name="delete_label_dialog_positive">Delete</string>
-
-
-    <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
     <string name="pubdate_unset">Unset</string>
@@ -46,6 +30,29 @@
     <string name="menu_main_delete_label">Delete Label</string>
     <string name="menu_main_rename_label">Rename Label</string>
     <string name="menu_main_search">Search</string>
+    <string name="menu_main_sort">Sort</string>
+    <string name="rename_bookshelf_dialog_title">Rename Bookshelf</string>
+    <string name="rename_bookshelf_dialog_edit_text">Input new bookshelf name here</string>
+    <string name="delete_bookshelf_dialog_title">Delete Bookshelf</string>
+    <string name="delete_bookshelf_dialog_content">We will delete this bookshelf
+        and all the books on it will be moved to default bookshelf.
+    No books will be deleted.</string>
+    <string name="delete_bookshelf_dialog_positive">Delete</string>
+    <string name="rename_label_dialog_title">Rename Label</string>
+    <string name="rename_label_dialog_edit_text">Input new label name here</string>
+    <string name="delete_label_dialog_title">Delete Label</string>
+    <string name="delete_label_dialog_content">We will delete this label
+        and remove it from all books. No books will be deleted.</string>
+    <string name="delete_label_dialog_positive">Delete</string>
+    <string-array name="main_sort_dialog">
+        <item>Title</item>
+        <item>Author</item>
+        <item>Publisher</item>
+        <item>PubDate</item>
+    </string-array>
+    <string name="sort_choice_dialog_title">Sort By</string>
+    <string name="sort_choice_dialog_positive">Sort</string>
+
 
     <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>

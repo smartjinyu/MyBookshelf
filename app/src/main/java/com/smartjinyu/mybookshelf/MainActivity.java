@@ -48,6 +48,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> multiSelectList = new ArrayList<>();
     private List<Book> UndoBooks = new ArrayList<>();// used to undo deleting
     private List<Book> mBooks;
-    boolean showBookshelfMenuItem = false;
-    boolean showLabelMenuItem = false;
+    private boolean showBookshelfMenuItem = false;
+    private boolean showLabelMenuItem = false;
+    private int sortMethod = 0;
 
 
     @Override
@@ -248,6 +251,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 break;
+            case R.id.menu_main_sort:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.sort_choice_dialog_title)
+                        .items(R.array.main_sort_dialog)
+                        .itemsCallbackSingleChoice(sortMethod, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                sortMethod = which;
+                                return true; // return true allow select
+                            }
+                        })
+                        .positiveText(R.string.sort_choice_dialog_positive)
+                        .alwaysCallSingleChoiceCallback()
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                updateUI(false);
+                            }
+                        })
+                        .show();
+                break;
             default:
                 break;
         }
@@ -322,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                                 // study drawerLayout and try to lock the drawer in the future
                             }
                             if (drawerItem.getIdentifier()==1){
-                                updateUI();
+                                updateUI(true);
                             }else if(drawerItem.getIdentifier()==3){
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title(R.string.label_add_new_dialog_title)
@@ -355,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
                                         })
                                         .show();
                             }else if(drawerItem.getIdentifier()>=10 && drawerItem.getIdentifier()<10+labels.size()){
-                                updateUI();
+                                updateUI(true);
                             }
                         }
                         return false;
@@ -484,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                updateUI();
+                updateUI(true);
             }
 
 
@@ -564,8 +588,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateUI(){
-        setBooksAndUI();
+    private void sortBooks(){
+        Comparator<Book> comparator;
+        switch (sortMethod){
+            case 0:
+                comparator = new Book.titleComparator();
+                break;
+            case 1:
+                comparator = new Book.authorComparator();
+                break;
+            case 2:
+                comparator = new Book.publisherComparator();
+                break;
+            case 3:
+                comparator = new Book.pubtimeComparator();
+                break;
+            default:
+                comparator = new Book.titleComparator();
+        }
+        Collections.sort(mBooks,comparator);
+    }
+
+
+    /**
+     *
+     * @param updateBooksList whether to retreive a new List<Book> mBooks
+     */
+    private void updateUI(boolean updateBooksList){
+        if(updateBooksList){
+            setBooksAndUI();
+        }
+        sortBooks();
         if(mRecyclerViewAdapter ==null){
             mRecyclerViewAdapter = new BookAdapter(mBooks);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
@@ -584,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
         if(mDrawer!=null){
             setDrawer(mDrawer.getCurrentSelection());
         }
-        updateUI();
+        updateUI(true);
     }
 
 
@@ -657,8 +710,12 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 pubDate.append(year);
                 pubDate.append("-");
+                if(month<9){
+                    pubDate.append("0");
+                }
                 pubDate.append(month+1);
             }
+
             mPubtimeTextView.setText(pubDate);
             if(multiSelectList.contains(book)){//set select
                 mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this,R.color.recycler_item_selected));
@@ -760,7 +817,7 @@ public class MainActivity extends AppCompatActivity {
                                     bookLab.addBook(book);
                                 }
                                 UndoBooks = new ArrayList<>();
-                                updateUI();
+                                updateUI(true);
                             }
                         });
                         snackbar.addCallback(new Snackbar.Callback(){
@@ -772,7 +829,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         showFAM = false;
                         // for that the FAM won't move up when a snackbar shows, just hide it currently
-                        updateUI();
+                        updateUI(true);
                         snackbar.show();
                         mActionMode.finish();
                     }
@@ -818,5 +875,8 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
+
 
 }

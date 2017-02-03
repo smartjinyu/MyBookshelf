@@ -3,15 +3,23 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_item_select_all"
+        android:id="@+id/menu_multi_select_select_all"
         android:icon="@drawable/ic_select_all"
-        android:title="@string/multi_menu_item_select_all"
+        android:title="@string/menu_multi_select_item_select_all"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/menu_item_delete"
+        android:id="@+id/menu_multi_select_delete"
         android:icon="@drawable/ic_delete"
-        android:title="@string/multi_menu_item_delete"
+        android:title="@string/menu_multi_select_item_delete"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_multi_select_add_label"
+        android:title="@string/menu_multi_select_item_add_label"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_multi_select_move_to"
+        android:title="@string/menu_multi_select_item_move_bookshelf"
+        app:showAsAction="never"/>
 
 </menu>

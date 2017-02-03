@@ -252,7 +252,7 @@ public class BookEditActivity extends AppCompatActivity{
         final List<Label> labels = labelLab.getLabels();
         if(labels.size()==0){
             Label testLabel = new Label();
-            testLabel.setTitle("Only for test");
+            testLabel.setTitle("Only for test,do not select");
             labels.add(testLabel);
             // delete these code when Material Dialog Library updating
         }//// TODO: 2017/2/2
@@ -293,6 +293,8 @@ public class BookEditActivity extends AppCompatActivity{
                                 // set mBook labels
                                 List<CharSequence> allItems = dialog.getItems();
                                 List<Integer> whichList = Arrays.asList(which);
+                                List<Label> labels = labelLab.getLabels();
+                                // refresh label list for that user may add label
                                 for(int i = 0; i < allItems.size(); i++){
                                     if(whichList.contains(i)){
                                         // the item is selected, add it to mBook label list

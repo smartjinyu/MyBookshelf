@@ -15,8 +15,10 @@
     <string name="fab_menu_1">Add Book</string>
     <string name="fab_menu_2">Batch Add</string>
     <string name="pubdate_unset">Unset</string>
-    <string name="multi_menu_item_delete">Delete</string>
-    <string name="multi_menu_item_select_all">Select All</string>
+    <string name="menu_multi_select_item_delete">Delete</string>
+    <string name="menu_multi_select_item_select_all">Select All</string>
+    <string name="menu_multi_select_item_add_label">Add label</string>
+    <string name="menu_multi_select_item_move_bookshelf">Move to</string>
     <plurals name="multi_title">
         <item quantity="one">Select %1$d Book</item>
         <item quantity="other">Select %1$d Books</item>
@@ -52,6 +54,9 @@
     </string-array>
     <string name="sort_choice_dialog_title">Sort By</string>
     <string name="sort_choice_dialog_positive">Sort</string>
+    <string name="add_label_dialog_title">Choose labels</string>
+    <string name="move_to_dialog_title">Choose bookshelf</string>
+    <string name="move_to_dialog_neutral">Add bookshelf</string>
 
 
     <!--SingleAddActivity-->
@@ -113,8 +118,8 @@
         <item>Finished</item>
     </string-array>
     <string name="custom_spinner_item">Add New</string>
-    <string name="custom_book_shelf_dialog_edit_text">Bookshelf Name</string>
-    <string name="custom_book_shelf_dialog_title">Custom BookShelf</string>
+    <string name="custom_book_shelf_dialog_edit_text">Input new bookshelf name</string>
+    <string name="custom_book_shelf_dialog_title">Bookshelf Name</string>
     <string name="month_invalid">Month should be a number between 1 and 12!</string>
     <string name="isbn_invalid">ISBN should be a 10 or 13 digits in length!</string>
     <string name="label_choice_dialog_title">Choose labels</string>

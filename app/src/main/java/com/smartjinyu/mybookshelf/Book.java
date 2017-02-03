@@ -178,7 +178,7 @@ public class Book implements Serializable{
         if(labelID == null){
             labelID = new ArrayList<>();
         }
-        if(!this.labelID.contains(label.getId())){
+        if(!labelID.contains(label.getId())){
             labelID.add(label.getId());
         }
     }
@@ -238,14 +238,6 @@ public class Book implements Serializable{
     public static class authorComparator implements Comparator<Book> {
         @Override
         public int compare(Book book1,Book book2){
-            /*
-            String author1,author2;
-            if(book1.getAuthors().size()==0){
-                author1 = "";
-            }else{
-                author1 = book1.getAuthors().get(0);
-            }
-            */
             String author1 = Pinyin.toPinyin(book1.getAuthors().toString(),"");
             Log.d(TAG,"Title1 = " + book1.getTitle() + ", Author1 Pinyin = " + author1);
             String author2 = Pinyin.toPinyin(book2.getAuthors().toString(),"");

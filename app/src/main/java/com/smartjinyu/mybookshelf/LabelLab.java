@@ -84,20 +84,39 @@ public class LabelLab {
     }
 
     /**
-     * remove specified label
-     * @param label label to remove
+     * delete specified label
+     * @param id the id of the label to delete
      * @param removeFromBooks true to remove the label from all the books
      */
-    public void removeLabel(Label label,boolean removeFromBooks){
+    public void deleteLabel(UUID id, boolean removeFromBooks){
         List<Label> sLabel = loadLabel();
         if(removeFromBooks){
-            List<Book> books = BookLab.get(mContext).getBooks();
+            List<Book> books = BookLab.get(mContext).getBooks(null,id);
             for(Book book:books){
-                book.removeLabel(label);
+                book.removeLabel(id);
+                BookLab.get(mContext).updateBook(book);
             }
         }
-        sLabel.remove(label);
+        for(Label label:sLabel){
+            if(label.getId().equals(id)){
+                sLabel.remove(label);
+                break;
+            }
+        }
         saveLabel(sLabel);
     }
+
+    public void renameLabel(UUID id,String newName){
+        List<Label> labels = loadLabel();
+        for(Label label : labels){
+            if(label.getId().equals(id)){
+                label.setTitle(newName);
+                break;
+            }
+        }
+        saveLabel(labels);
+
+    }
+
 
 }

@@ -83,8 +83,12 @@ public class MainActivity extends AppCompatActivity {
         setRecyclerView();
         setFloatingActionButton();
         setToolbar();
-        setBookShelfSpinner();
-        setDrawer(savedInstanceState);
+        setBookShelfSpinner(0);
+        long drawerSelection = -1;
+        if(savedInstanceState!=null){
+            drawerSelection = savedInstanceState.getLong(drawerSelected,-1);
+        }
+        setDrawer(drawerSelection);
 
     }
 
@@ -111,12 +115,147 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //todo
+        switch (item.getItemId()){
+            case R.id.menu_main_rename_bookshelf:
+                if(mSpinner!=null){
+                    final BookShelf selectedBS =(BookShelf) mSpinner.getSelectedItem();
+                    if(!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))){
+                        // make sure the bookshelf to rename is valid
+                        new MaterialDialog.Builder(this)
+                                .title(R.string.rename_bookshelf_dialog_title)
+                                .input(
+                                        getString(R.string.rename_bookshelf_dialog_edit_text),
+                                        selectedBS.getTitle(),
+                                        new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                // nothing to do here
+                                            }
+                                        })
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        String newName = dialog.getInputEditText().getText().toString();
+                                        BookShelfLab.get(MainActivity.this).renameBookShelf(selectedBS.getId(),newName);
+                                        setBookShelfSpinner(mSpinner.getSelectedItemPosition());
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                }
+                break;
+            case R.id.menu_main_delete_bookshelf:
+                if(mSpinner!=null){
+                    final BookShelf selectedBS =(BookShelf) mSpinner.getSelectedItem();
+                    if(!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))){
+                        // make sure the bookshelf to rename is valid
+                        new MaterialDialog.Builder(this)
+                                .title(R.string.delete_bookshelf_dialog_title)
+                                .content(R.string.delete_bookshelf_dialog_content)
+                                .positiveText(R.string.delete_bookshelf_dialog_positive)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(),true);
+                                        setBookShelfSpinner(0);
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                }
+
+                break;
+            case R.id.menu_main_rename_label:
+                if(mDrawer!=null){
+                    long drawerSelection = mDrawer.getCurrentSelection();
+                    List<Label> labels = LabelLab.get(MainActivity.this).getLabels();
+                    if(drawerSelection >= 10 && drawerSelection < 10 + labels.size()){
+                        // make sure the selection label is valid
+                        final Label selectedLB = labels.get((int)drawerSelection-10);
+                        new MaterialDialog.Builder(this)
+                                .title(R.string.rename_label_dialog_title)
+                                .input(
+                                        getString(R.string.rename_label_dialog_edit_text),
+                                        selectedLB.getTitle(),
+                                        new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                // nothing to do here
+                                            }
+                                        })
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        String newName = dialog.getInputEditText().getText().toString();
+                                        LabelLab.get(MainActivity.this).renameLabel(selectedLB.getId(),newName);
+                                        setDrawer(mDrawer.getCurrentSelection());
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+
+                    }
+                }
+                break;
+            case R.id.menu_main_delete_label:
+                if(mDrawer!=null) {
+                    long drawerSelection = mDrawer.getCurrentSelection();
+                    List<Label> labels = LabelLab.get(MainActivity.this).getLabels();
+                    if (drawerSelection >= 10 && drawerSelection < 10 + labels.size()) {
+                        // make sure the selection label is valid
+                        final Label selectedLB = labels.get((int) drawerSelection - 10);
+                        new MaterialDialog.Builder(this)
+                                .title(R.string.delete_label_dialog_title)
+                                .content(R.string.delete_label_dialog_content)
+                                .positiveText(R.string.delete_label_dialog_positive)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        LabelLab.get(MainActivity.this).deleteLabel(selectedLB.getId(),true);
+                                        setDrawer(1);
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
 
-    private void setDrawer(final Bundle savedInstanceState){
+    private void setDrawer(long selectionIdentifier){
         final List<Label> labels = LabelLab.get(this).getLabels();
         final IProfile profile = new ProfileDrawerItem()
                 .withName(getResources().getString(R.string.app_name))
@@ -178,6 +317,10 @@ public class MainActivity extends AppCompatActivity {
                         if (drawerItem != null) {
                             Log.i(TAG,"Select drawer item at position " + position);
                             // Identifier between 10 and 9 + labels.size() are labels
+                            if(mActionMode!=null){
+                                mActionMode.finish();
+                                // study drawerLayout and try to lock the drawer in the future
+                            }
                             if (drawerItem.getIdentifier()==1){
                                 updateUI();
                             }else if(drawerItem.getIdentifier()==3){
@@ -200,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                                                 labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
                                                 LabelLab.get(MainActivity.this).addLabel(labelToAdd);
                                                 Log.i(TAG,"New label created " + labelToAdd.getTitle());
-                                                setDrawer(savedInstanceState);
+                                                setDrawer(mDrawer.getCurrentSelection());
                                             }
                                         })
                                         .negativeText(android.R.string.cancel)
@@ -221,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         //.withSavedInstance(savedInstanceState) do not use this
-                // because we add items after build
+                // because we add items after .build()
         /**
          * About position
          * begin at 1
@@ -236,9 +379,9 @@ public class MainActivity extends AppCompatActivity {
                     .withSelectable(true);
             mDrawer.addItemAtPosition(drawerItem,i+4);
         }
-        if(savedInstanceState!=null){
-            long selection = savedInstanceState.getLong(drawerSelected);
-            mDrawer.setSelection(selection);
+
+        if(selectionIdentifier != -1){
+            mDrawer.setSelection(selectionIdentifier);
         }
     }
 
@@ -324,8 +467,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    private void setBookShelfSpinner() {
+    /**
+     * setBookShelfSpinner
+     * @param selection default selection position
+     */
+    private void setBookShelfSpinner(int selection) {
         mSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
         List<BookShelf> bookShelves = BookShelfLab.get(this).getBookShelves();
         BookShelf allBookShelf = new BookShelf();
@@ -347,6 +493,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        if(selection>=0 && selection < bookShelves.size()){
+            mSpinner.setSelection(selection);
+        }
     }
 
     /**
@@ -387,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        int drawerSelection = (int)mDrawer.getCurrentSelection();
+        long drawerSelection = mDrawer.getCurrentSelection();
         if(mDrawer!=null){
             if(drawerSelection < 10 || drawerSelection >= 10 + labels.size()){
                 //not select label
@@ -400,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 //select one label
                 toolbarMode = 1;
-                labelID = labels.get(drawerSelection-10).getId();
+                labelID = labels.get((int)drawerSelection-10).getId();
                 if(!mActionAddButton.isMenuButtonHidden()){
                     mActionAddButton.hideMenuButton(true);
                 }
@@ -428,6 +577,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+        if(mSpinner!=null){
+            // user may create new bookshelf in edit or creating new book
+            setBookShelfSpinner(mSpinner.getSelectedItemPosition());
+        }
+        if(mDrawer!=null){
+            setDrawer(mDrawer.getCurrentSelection());
+        }
         updateUI();
     }
 

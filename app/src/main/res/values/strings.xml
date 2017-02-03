@@ -12,6 +12,20 @@
 
     <!--MainActivity-->
     <string name="spinner_all_bookshelf">All</string>
+    <string name="rename_bookshelf_dialog_title">Rename Bookshelf</string>
+    <string name="rename_bookshelf_dialog_edit_text">Input new bookshelf name here</string>
+    <string name="delete_bookshelf_dialog_title">Delete Bookshelf</string>
+    <string name="delete_bookshelf_dialog_content">We will delete this bookshelf
+        and all the books on it will be moved to default bookshelf.
+    No books will be deleted.</string>
+    <string name="delete_bookshelf_dialog_positive">Delete</string>
+    <string name="rename_label_dialog_title">Rename Label</string>
+    <string name="rename_label_dialog_edit_text">Input new label name here</string>
+    <string name="delete_label_dialog_title">Delete Label</string>
+    <string name="delete_label_dialog_content">We will delete this label
+        and remove it from all books. No books will be deleted.</string>
+    <string name="delete_label_dialog_positive">Delete</string>
+
 
     <!--BookList Fragment-->
     <string name="fab_menu_1">Add Book</string>
@@ -106,6 +120,8 @@
 
     <!--BookShelfLab-->
     <string name="default_book_shelf_name">Default BookShelf</string>
+    <string name="default_book_shelf_uuid">407c4479-5a57-4371-8b94-ad038f1276fe</string>
+    <!--in Book.java, default book shelf id doesn't refer to here-->
 
     <!--BookDetailActivity-->
     <string name="book_info_title">Info</string>

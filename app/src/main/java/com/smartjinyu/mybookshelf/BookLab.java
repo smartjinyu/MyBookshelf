@@ -127,7 +127,6 @@ public class BookLab {
      * @param labelID
      * @return
      */
-
     public List<Book> getBooks(UUID bookShelfID,UUID labelID){
         List<Book> mBooks = new ArrayList<>();
         BookCursorWrapper cursor;
@@ -197,6 +196,18 @@ public class BookLab {
         mDatabase.delete(
                 BookDBSchema.BookTable.NAME,
                 BookDBSchema.BookTable.Cols.UUID + " = ?",
+                new String[]{uuidString}
+        );
+    }
+
+
+    public void updateBook(Book book){
+        ContentValues values = getContentValues(book);
+        String uuidString = book.getId().toString();
+        mDatabase.update(
+                BookDBSchema.BookTable.NAME,
+                values,
+                BookDBSchema.BookTable.Cols.UUID + "= ?",
                 new String[]{uuidString}
         );
     }

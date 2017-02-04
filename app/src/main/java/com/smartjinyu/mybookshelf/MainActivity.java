@@ -584,6 +584,139 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public class BookHolder extends RecyclerView.ViewHolder {
+
+        private ImageView mCoverImageView;
+        private TextView mTitleTextView;
+        private TextView mPublisherTextView;
+        private TextView mPubtimeTextView;
+        private RelativeLayout mRelativeLayout;
+
+        public BookHolder(View itemView){
+            super(itemView);
+            mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
+            mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
+            mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
+            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
+        }
+
+        public void bindBook(Book book){
+            mTitleTextView.setText(book.getTitle());
+
+            StringBuilder authorAndPub = new StringBuilder();
+            for(String author : book.getAuthors()){
+                authorAndPub.append(author);
+                authorAndPub.append(",");
+            }
+            authorAndPub.deleteCharAt(authorAndPub.length()-1);
+
+            if(book.getPublisher().length()!=0){
+                if(authorAndPub.length()!=0){
+                    authorAndPub.append(" ");
+                    authorAndPub.append(getResources().getString(R.string.author_suffix));
+                    authorAndPub.append(",   ");
+                }
+                authorAndPub.append(book.getPublisher());
+            }
+            mPublisherTextView.setText(authorAndPub);
+            Calendar calendar = book.getPubTime();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            StringBuilder pubDate = new StringBuilder();
+            if(year == 9999){
+                pubDate.append(getResources().getString(R.string.pubdate_unset));
+            }else{
+                pubDate.append(year);
+                pubDate.append("-");
+                if(month<9){
+                    pubDate.append("0");
+                }
+                pubDate.append(month+1);
+            }
+
+            mPubtimeTextView.setText(pubDate);
+            if(multiSelectList.contains(book)){//set select
+                mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this,R.color.recycler_item_selected));
+                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.ic_check_circle));
+            }else{//back to normal
+                mRelativeLayout.setBackgroundColor(Color.WHITE);
+                if(book.isHasCover()){
+                    String path =
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
+                    Bitmap src = BitmapFactory.decodeFile(path);
+                    mCoverImageView.setImageBitmap(src);
+                }
+            }
+
+        }
+
+    }
+
+    public class HeaderViewHoler extends RecyclerView.ViewHolder{
+        private TextView mTextView;
+        public HeaderViewHoler(View itemView){
+            super(itemView);
+            mTextView = (TextView) itemView.findViewById(R.id.recyclerview_header_text);
+        }
+        public void setCount(int count){
+            mTextView.setText(String.valueOf(count));
+        }
+    }
+
+
+    public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+        // implement header
+        private static final int TYPE_HEADER = 0;
+        private static final int TYPE_ITEM = 1;
+
+        public BookAdapter(List<Book> books){
+            mBooks = books;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            if(viewType == TYPE_ITEM){
+                View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview,parent,false);
+                return new BookHolder(view);
+            }else if(viewType == TYPE_HEADER){
+                View view = layoutInflater.inflate(R.layout.header_booklist_recyclerview,parent,false);
+                return new HeaderViewHoler(view);
+            }
+            throw new RuntimeException("no type  matches the type " + viewType + " + make sure your using types correctly");
+
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
+            if (holder instanceof BookHolder){
+                Book book = mBooks.get(position-1); // remember to -1 because of the header
+                ((BookHolder)holder).bindBook(book);
+                Log.d(TAG,"onBindViewHolder BookHolder" + position);
+            }else if(holder instanceof HeaderViewHoler){
+                // set header
+                ((HeaderViewHoler) holder).setCount(mBooks.size());
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position){
+            if(position == 0){
+                return TYPE_HEADER;
+            }else{
+                return TYPE_ITEM;
+            }
+        }
+
+        @Override
+        public int getItemCount(){
+            return mBooks.size() + 1;
+        }
+
+    }
+
+
     /**
      * setBookShelfSpinner
      * @param selection default selection position
@@ -748,103 +881,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-    public class BookHolder extends RecyclerView.ViewHolder {
-
-        private ImageView mCoverImageView;
-        private TextView mTitleTextView;
-        private TextView mPublisherTextView;
-        private TextView mPubtimeTextView;
-        private RelativeLayout mRelativeLayout;
-
-        public BookHolder(View itemView){
-            super(itemView);
-            mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
-            mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
-            mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
-            mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
-        }
-
-        public void bindBook(Book book){
-            mTitleTextView.setText(book.getTitle());
-
-            StringBuilder authorAndPub = new StringBuilder();
-            for(String author : book.getAuthors()){
-                authorAndPub.append(author);
-                authorAndPub.append(",");
-            }
-            authorAndPub.deleteCharAt(authorAndPub.length()-1);
-
-            if(book.getPublisher().length()!=0){
-                if(authorAndPub.length()!=0){
-                    authorAndPub.append(" ");
-                    authorAndPub.append(getResources().getString(R.string.author_suffix));
-                    authorAndPub.append(",   ");
-                }
-                authorAndPub.append(book.getPublisher());
-            }
-            mPublisherTextView.setText(authorAndPub);
-            Calendar calendar = book.getPubTime();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            StringBuilder pubDate = new StringBuilder();
-            if(year == 9999){
-                pubDate.append(getResources().getString(R.string.pubdate_unset));
-            }else{
-                pubDate.append(year);
-                pubDate.append("-");
-                if(month<9){
-                    pubDate.append("0");
-                }
-                pubDate.append(month+1);
-            }
-
-            mPubtimeTextView.setText(pubDate);
-            if(multiSelectList.contains(book)){//set select
-                mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this,R.color.recycler_item_selected));
-                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.ic_check_circle));
-            }else{//back to normal
-                mRelativeLayout.setBackgroundColor(Color.WHITE);
-                if(book.isHasCover()){
-                    String path =
-                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
-                    Bitmap src = BitmapFactory.decodeFile(path);
-                    mCoverImageView.setImageBitmap(src);
-                }
-            }
-
-        }
-
-    }
-
-
-    public class BookAdapter extends RecyclerView.Adapter<BookHolder>{
-        public BookAdapter(List<Book> books){
-            mBooks = books;
-        }
-
-        @Override
-        public BookHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview,parent,false);
-            return new BookHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(BookHolder holder,int position){
-            Book book = mBooks.get(position);
-            holder.bindBook(book);
-            Log.d(TAG,"onBindViewHolder " + position);
-        }
-
-        @Override
-        public int getItemCount(){
-            return mBooks.size();
-        }
-
-    }
 
     private boolean showFAM = true;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {

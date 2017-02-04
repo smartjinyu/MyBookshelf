@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.smartjinyu.mybookshelf"
         minSdkVersion 21
@@ -38,6 +38,8 @@ dependencies {
         transitive = true
     }
     compile 'com.github.promeg:tinypinyin:2.0.1'
+    compile 'com.lapism:searchview:4.0'
+
 
 
 }

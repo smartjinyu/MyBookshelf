@@ -57,6 +57,7 @@
     <string name="add_label_dialog_title">Choose labels</string>
     <string name="move_to_dialog_title">Choose bookshelf</string>
     <string name="move_to_dialog_neutral">Add bookshelf</string>
+    <string name="search_view_hint">Search Books</string>
 
 
     <!--SingleAddActivity-->

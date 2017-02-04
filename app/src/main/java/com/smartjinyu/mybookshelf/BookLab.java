@@ -13,6 +13,7 @@ import com.smartjinyu.mybookshelf.database.BookCursorWrapper;
 import com.smartjinyu.mybookshelf.database.BookDBSchema;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,7 +88,7 @@ public class BookLab {
         if(whereClause == null){
             whereClause = "null";
         }
-        Log.i(TAG,"Query books whereClause = " + whereClause + ", whereArgs = " +whereArgs.toString());
+        Log.i(TAG,"Query books whereClause = " + whereClause + ", whereArgs = " + Arrays.toString(whereArgs));
 
         return new BookCursorWrapper(cursor);
 

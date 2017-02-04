@@ -1,11 +1,11 @@
 package com.smartjinyu.mybookshelf;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -36,6 +36,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.lapism.searchview.SearchView;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -49,12 +50,12 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionMenu mActionAddButton;
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
+    private SearchView mSearchView;
 
     private BookAdapter mRecyclerViewAdapter;
     private ActionMode mActionMode;
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             drawerSelection = savedInstanceState.getLong(drawerSelected,-1);
         }
         setDrawer(drawerSelection);
+        setSearchView();
 
     }
 
@@ -106,15 +109,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
+        Log.i(TAG,"onPrepareOptionsMenu showLabelItem = " + showLabelMenuItem + ", showBookshelfItem = " + showBookshelfMenuItem);
         MenuItem renameLabelItem = menu.findItem(R.id.menu_main_rename_label);
         MenuItem deleteLabelItem = menu.findItem(R.id.menu_main_delete_label);
         MenuItem renameBookshelfItem = menu.findItem(R.id.menu_main_rename_bookshelf);
         MenuItem deleteBookshelfItem = menu.findItem(R.id.menu_main_delete_bookshelf);
+        MenuItem searchItem = menu.findItem(R.id.menu_main_search);
 
         renameLabelItem.setVisible(showLabelMenuItem);
         deleteLabelItem.setVisible(showLabelMenuItem);
+        searchItem.setVisible(!showLabelMenuItem);// no search icon in label page
+
         renameBookshelfItem.setVisible(showBookshelfMenuItem);
         deleteBookshelfItem.setVisible(showBookshelfMenuItem);
+        if(showLabelMenuItem){
+            Log.d(TAG,"Hide FAM 1");
+            mActionAddButton.setVisibility(View.GONE);
+            mActionAddButton.hideMenuButton(true);
+        }else{
+            Log.d(TAG,"Show FAM 1");
+            mActionAddButton.setVisibility(View.VISIBLE);
+            mActionAddButton.showMenuButton(true);
+        }
 
         return true;
     }
@@ -288,10 +304,51 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .show();
                 break;
+            case R.id.menu_main_search:
+                mSearchView.open(true,item);
+                break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setSearchView(){
+        mSearchView = (SearchView) findViewById(R.id.searchView);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG,"Search " + query);
+                mSearchView.hideKeyboard();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+            @Override
+            public boolean onClose() {
+                if(mActionAddButton!=null){
+                    Log.d(TAG,"Show FAM 2");
+                    mActionAddButton.setVisibility(View.VISIBLE);
+                    mActionAddButton.showMenuButton(true);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onOpen() {
+                if(mActionAddButton!=null){
+                    Log.d(TAG,"Hide FAM 2");
+                    mActionAddButton.setVisibility(View.GONE);
+                    mActionAddButton.hideMenuButton(true);
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -362,6 +419,11 @@ public class MainActivity extends AppCompatActivity {
                                 // study drawerLayout and try to lock the drawer in the future
                             }
                             if (drawerItem.getIdentifier()==1){
+                                if(mSearchView!=null){
+                                    if(mSearchView.isSearchOpen()){
+                                        mSearchView.close(true);
+                                    }
+                                }
                                 updateUI(true);
                             }else if(drawerItem.getIdentifier()==3){
                                 new MaterialDialog.Builder(MainActivity.this)
@@ -395,7 +457,20 @@ public class MainActivity extends AppCompatActivity {
                                         })
                                         .show();
                             }else if(drawerItem.getIdentifier()>=10 && drawerItem.getIdentifier()<10+labels.size()){
+                                if(mSearchView!=null){
+                                    if(mSearchView.isSearchOpen()){
+                                        mSearchView.close(true);
+                                    }
+                                }
                                 updateUI(true);
+                            }else if(drawerItem.getIdentifier() == 2){
+                                mDrawer.setSelection(1);
+                                updateUI(true);
+                                if(mSearchView!=null){
+                                    if(!mSearchView.isSearchOpen()){
+                                        mSearchView.open(true);
+                                    }
+                                }
                             }
                         }
                         return false;
@@ -466,10 +541,12 @@ public class MainActivity extends AppCompatActivity {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if(dy>0){
                     if(!mActionAddButton.isMenuButtonHidden()) {
+                        Log.d(TAG,"Hide FAM 3");
                         mActionAddButton.hideMenuButton(true);
                     }
                 }else{
                     if(mActionAddButton.isMenuButtonHidden()){
+                        Log.d(TAG,"Show FAM 3");
                         mActionAddButton.showMenuButton(true);
                     }
                 }
@@ -580,20 +657,12 @@ public class MainActivity extends AppCompatActivity {
         if(mDrawer!=null){
             if(drawerSelection < 10 || drawerSelection >= 10 + labels.size()){
                 //not select label
-                mActionAddButton.setVisibility(View.VISIBLE);
-                if(mActionAddButton.isMenuButtonHidden()){
-                    mActionAddButton.showMenuButton(true);
-                }
 
                 showLabelMenuItem = false;
             }else{
                 //select one label
                 toolbarMode = 1;
                 labelID = labels.get((int)drawerSelection-10).getId();
-                if(!mActionAddButton.isMenuButtonHidden()){
-                    mActionAddButton.hideMenuButton(true);
-                }
-                mActionAddButton.setVisibility(View.GONE);
                 showLabelMenuItem = true;
 
             }
@@ -784,8 +853,9 @@ public class MainActivity extends AppCompatActivity {
             // inflate a menu resource providing contextual menu items
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_multiselect,menu);
-            mActionAddButton.hideMenuButton(true);
+            Log.d(TAG,"Hide FAM 4");
             mActionAddButton.setVisibility(View.GONE);
+            mActionAddButton.hideMenuButton(true);
             showFAM=true;
             return true;
         }
@@ -840,8 +910,9 @@ public class MainActivity extends AppCompatActivity {
                         snackbar.addCallback(new Snackbar.Callback(){
                             @Override
                             public void onDismissed(Snackbar snackbar,int event){
-                                mActionAddButton.showMenuButton(true);
+                                Log.d(TAG,"Show FAM 4");
                                 mActionAddButton.setVisibility(View.VISIBLE);
+                                mActionAddButton.showMenuButton(true);
                             }
                         });
                         showFAM = false;
@@ -1032,6 +1103,7 @@ public class MainActivity extends AppCompatActivity {
             isMultiSelect = false;
             multiSelectList = new ArrayList<>();
             if(showFAM){
+                Log.d(TAG,"Show FAM 5");
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
@@ -1061,6 +1133,23 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && results.size() > 0) {
+                String searchWrd = results.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    if (mSearchView != null) {
+                        mSearchView.setQuery(searchWrd, true);
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
 
 

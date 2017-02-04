@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -299,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                updateUI(false);
+                                updateUI(false,null);
                             }
                         })
                         .show();
@@ -320,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG,"Search " + query);
                 mSearchView.hideKeyboard();
+                updateUI(true,query);
                 return true;
             }
 
@@ -331,16 +333,19 @@ public class MainActivity extends AppCompatActivity {
         mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
             @Override
             public boolean onClose() {
+                Log.d(TAG,"SearchView close");
                 if(mActionAddButton!=null){
                     Log.d(TAG,"Show FAM 2");
                     mActionAddButton.setVisibility(View.VISIBLE);
                     mActionAddButton.showMenuButton(true);
                 }
+                updateUI(true,null);
                 return true;
             }
 
             @Override
             public boolean onOpen() {
+                Log.d(TAG,"SearchView open");
                 if(mActionAddButton!=null){
                     Log.d(TAG,"Hide FAM 2");
                     mActionAddButton.setVisibility(View.GONE);
@@ -424,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
                                         mSearchView.close(true);
                                     }
                                 }
-                                updateUI(true);
+                                updateUI(true,null);
                             }else if(drawerItem.getIdentifier()==3){
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title(R.string.label_add_new_dialog_title)
@@ -462,10 +467,10 @@ public class MainActivity extends AppCompatActivity {
                                         mSearchView.close(true);
                                     }
                                 }
-                                updateUI(true);
+                                updateUI(true,null);
                             }else if(drawerItem.getIdentifier() == 2){
                                 mDrawer.setSelection(1);
-                                updateUI(true);
+                                updateUI(true,null);
                                 if(mSearchView!=null){
                                     if(!mSearchView.isSearchOpen()){
                                         mSearchView.open(true);
@@ -557,13 +562,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 if(isMultiSelect){
-                    multiSelect(position);
+                    multiSelect(position-1);
                 }else{
                     if(mActionAddButton.isOpened()){
                         mActionAddButton.close(true);
                     }else{
                         Intent i = new Intent(MainActivity.this,BookDetailActivity.class);
-                        i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position));
+                        i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position-1));
                         startActivity(i);
                     }
                 }
@@ -578,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                 if(mActionMode==null){
                     mActionMode = startActionMode(mActionModeCallback);
                 }
-                multiSelect(position);
+                multiSelect(position-1);
             }
         }));
 
@@ -653,9 +658,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class HeaderViewHoler extends RecyclerView.ViewHolder{
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
         private TextView mTextView;
-        public HeaderViewHoler(View itemView){
+        public HeaderViewHolder(View itemView){
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.recyclerview_header_text);
         }
@@ -682,7 +687,7 @@ public class MainActivity extends AppCompatActivity {
                 return new BookHolder(view);
             }else if(viewType == TYPE_HEADER){
                 View view = layoutInflater.inflate(R.layout.header_booklist_recyclerview,parent,false);
-                return new HeaderViewHoler(view);
+                return new HeaderViewHolder(view);
             }
             throw new RuntimeException("no type  matches the type " + viewType + " + make sure your using types correctly");
 
@@ -694,9 +699,9 @@ public class MainActivity extends AppCompatActivity {
                 Book book = mBooks.get(position-1); // remember to -1 because of the header
                 ((BookHolder)holder).bindBook(book);
                 Log.d(TAG,"onBindViewHolder BookHolder" + position);
-            }else if(holder instanceof HeaderViewHoler){
+            }else if(holder instanceof HeaderViewHolder){
                 // set header
-                ((HeaderViewHoler) holder).setCount(mBooks.size());
+                ((HeaderViewHolder) holder).setCount(mBooks.size());
             }
         }
 
@@ -734,7 +739,7 @@ public class MainActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                updateUI(true);
+                updateUI(true,null);
             }
 
 
@@ -768,7 +773,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setBooksAndUI(){
+    private void setBooksAndUI(@Nullable String keyword){
         BookLab bookLab = BookLab.get(this);
         List<Label> labels = LabelLab.get(this).getLabels();
         UUID bookshelfID = null,labelID = null;
@@ -800,7 +805,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        mBooks = bookLab.getBooks(bookshelfID,labelID);
+        if(mSearchView!=null && mSearchView.isSearchOpen()){
+            // in search mode, only support search in specified bookshelf currently
+            mBooks = bookLab.searchBook(keyword,bookshelfID);
+        }else{
+            mBooks = bookLab.getBooks(bookshelfID,labelID);
+        }
         setToolbarColor(toolbarMode);
         invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
@@ -830,11 +840,11 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      *
-     * @param updateBooksList whether to retreive a new List<Book> mBooks
+     * @param updateBooksList whether to retrieve a new List<Book> mBooks
      */
-    private void updateUI(boolean updateBooksList){
+    private void updateUI(boolean updateBooksList, @Nullable String keyword){
         if(updateBooksList){
-            setBooksAndUI();
+            setBooksAndUI(keyword);
         }
         sortBooks();
         if(mRecyclerViewAdapter ==null){
@@ -855,7 +865,13 @@ public class MainActivity extends AppCompatActivity {
         if(mDrawer!=null){
             setDrawer(mDrawer.getCurrentSelection());
         }
-        updateUI(true);
+
+        if(mSearchView!=null && mSearchView.isSearchOpen()){
+            updateUI(true,mSearchView.getQuery().toString());
+
+        }else{
+            updateUI(true,null);
+        }
     }
 
 
@@ -940,7 +956,7 @@ public class MainActivity extends AppCompatActivity {
                                     bookLab.addBook(book);
                                 }
                                 UndoBooks = new ArrayList<>();
-                                updateUI(true);
+                                updateUI(true,null);
                             }
                         });
                         snackbar.addCallback(new Snackbar.Callback(){
@@ -953,7 +969,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         showFAM = false;
                         // for that the FAM won't move up when a snackbar shows, just hide it currently
-                        updateUI(true);
+                        updateUI(true,null);
                         snackbar.show();
                         mActionMode.finish();
                     }
@@ -994,7 +1010,7 @@ public class MainActivity extends AppCompatActivity {
                                     if(mDrawer!=null){
                                         setDrawer(mDrawer.getCurrentSelection());
                                     }
-                                    updateUI(true);
+                                    updateUI(true,null);
                                     dialog.dismiss();
                                     return true;
                                 }
@@ -1072,7 +1088,7 @@ public class MainActivity extends AppCompatActivity {
                                     if(mSpinner!=null){
                                         setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                                     }
-                                    updateUI(true);
+                                    updateUI(true,null);
                                     dialog.dismiss();
                                 }
                             })

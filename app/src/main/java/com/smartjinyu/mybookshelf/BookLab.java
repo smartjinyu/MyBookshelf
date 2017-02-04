@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -126,40 +127,96 @@ public class BookLab {
      * getBooks by bookshelfID and labelID, all the parameters can be null
      * @param bookShelfID
      * @param labelID
-     * @return
+     * @return result
      */
-    public List<Book> getBooks(UUID bookShelfID,UUID labelID){
+    public List<Book> getBooks(@Nullable UUID bookShelfID,@Nullable UUID labelID){
         List<Book> mBooks = new ArrayList<>();
-        BookCursorWrapper cursor;
+        String whereClause;
+        String[] whereArgs;
         if(bookShelfID == null && labelID == null){
             return getBooks();
         }else if (bookShelfID == null){
             // bookShelfID == null and labelID != null
-            cursor = queryBooks(BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?",
-                    new String[]{"*"+labelID.toString()+"*"});
+            whereClause = BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?";
+            whereArgs = new String[]{"*"+labelID.toString()+"*"};
             // It is WRONG to write ... + "GLOB *?*",new String[](labelID.toString())
         }else if (labelID == null){
             // bookShelfID != null and labelID == null
-            cursor = queryBooks(BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?",
-                    new String[]{bookShelfID.toString()});
+            whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?";
+            whereArgs = new String[]{bookShelfID.toString()};
         }else{
             // bookShelfID != null and labelID != null
-            cursor = queryBooks(BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ? AND "
-                    +BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?",
-                    new String[]{bookShelfID.toString(),"*"+labelID.toString()+"*"});
+            whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ? AND "
+                    +BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?";
+            whereArgs = new String[]{bookShelfID.toString(),"*"+labelID.toString()+"*"};
         }
 
-        try{
+        try(BookCursorWrapper cursor
+                    = queryBooks(whereClause,whereArgs)
+        ){
             cursor.moveToFirst();
             while(!cursor.isAfterLast()){
                 mBooks.add(cursor.getBook());
                 cursor.moveToNext();
             }
-        }finally{
-            cursor.close();
         }
         return mBooks;
     }
+
+    /**
+     * Search books only supports search on bookshelf currently,
+     * keyword will try to match title,authors,translators,publishers,note (case-insensitive)
+     * @param keyword search keyword
+     * @param bookshelfID bookshelf id, pass null if on all bookshelves
+     * @return search result
+     */
+    public List<Book> searchBook(String keyword, @Nullable UUID bookshelfID){
+        List<Book> books = new ArrayList<>();
+        String whereClause;
+        String[] whereArgs;
+        // in sql, "GLOB" is case-sensitive while "LIKE" is case-insensitive
+        if(bookshelfID==null){
+            // on all bookshelves
+            whereClause = BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.AUTHORS + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.TRANSLATORS + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.PUBLISHER + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.NOTES + " LIKE ? ";
+            whereArgs = new String[]{"%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%"};
+        }else{
+            // on specified bookshelf
+            whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + " = ? AND"
+                    +BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.AUTHORS + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.TRANSLATORS + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.PUBLISHER + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.NOTES + " LIKE ? ";
+            whereArgs = new String[]{bookshelfID.toString(),
+                    "%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%",
+                    "%"+keyword+"%"};
+        }
+
+        try(BookCursorWrapper cursor
+                    = queryBooks(whereClause,whereArgs)
+        ){
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                books.add(cursor.getBook());
+                cursor.moveToNext();
+            }
+        }
+
+        return books;
+
+    }
+
 
     public boolean isBookExists(Book book){
         // return whether the book still exists in the database

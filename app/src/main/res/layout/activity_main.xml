@@ -39,9 +39,10 @@
         app:search_theme="light"
         app:search_voice="true"
         app:search_hint="@string/search_view_hint"
-        app:search_hide_on_keyboard_close="true"
+        app:search_hide_on_keyboard_close="false"
         app:search_clear_on_open="true"
-        app:search_clear_on_close="true"/>
+        app:search_clear_on_close="true"
+        app:search_shadow="false"/>
 
 
 

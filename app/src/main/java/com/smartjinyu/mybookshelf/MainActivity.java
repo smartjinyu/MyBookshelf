@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         renameBookshelfItem.setVisible(showBookshelfMenuItem);
         deleteBookshelfItem.setVisible(showBookshelfMenuItem);
-        if(showLabelMenuItem){
+        if(showLabelMenuItem){//// TODO: 2017/2/5 check searchview here
             Log.d(TAG,"Hide FAM 1");
             mActionAddButton.setVisibility(View.GONE);
             mActionAddButton.hideMenuButton(true);
@@ -476,6 +476,9 @@ public class MainActivity extends AppCompatActivity {
                                         mSearchView.open(true);
                                     }
                                 }
+                            }else if(drawerItem.getIdentifier() == 5){
+                                Intent i = new Intent(MainActivity.this,AboutActivity.class);
+                                startActivity(i);
                             }
                         }
                         return false;
@@ -508,7 +511,9 @@ public class MainActivity extends AppCompatActivity {
     private void setToolbar(){
         mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
     }
 
     private void setFloatingActionButton(){
@@ -867,6 +872,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(mSearchView!=null && mSearchView.isSearchOpen()){
+            // bug in searchview lib, if we remove focus from it,
+            // isSearchOpen will return false no matter it is expanded or not
             updateUI(true,mSearchView.getQuery().toString());
 
         }else{

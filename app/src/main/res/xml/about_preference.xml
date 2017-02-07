@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/about_preference_category_title">
+        <Preference
+            android:title="@string/app_name"
+            android:key="about_pref_name">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="market://details?id=com.smartjinyu.mybookshelf"/>
+        </Preference>
+        <Preference
+            android:title="@string/about_preference_donate_title"
+            android:summary="@string/about_preference_donate_summary"
+            android:key="about_pref_donate"/>
+        <Preference
+            android:title="@string/about_preference_github_repository"
+            android:summary="https://github.com/smartjinyu/MyBookshelf">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/smartjinyu/MyBookshelf"/>
+        </Preference>
+        <Preference
+            android:title="@string/about_preference_feedback_title"
+            android:summary="@string/about_preference_feedback_summary"
+            android:key="about_pref_feedback"/>
+        <Preference
+            android:title="@string/about_preference_license"
+            android:key="about_pref_license"/>
+
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

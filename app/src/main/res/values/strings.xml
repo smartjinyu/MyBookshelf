@@ -162,6 +162,17 @@
     <string name="book_detail_book_delete_toast">Book Deleted!</string>
     <string name="book_detail_labels_image_view">Labels</string>
 
+    <!--About-->
+    <string name="about_preference_category_title">About</string>
+    <string name="about_preference_donate_title">Donate Me</string>
+    <string name="about_preference_donate_summary">PayPal Alipay:smartjinyu@gmail.com</string>
+    <string name="about_preference_donate_toast">My account has been copied to clipboard! Thanks for your donating!</string>
+    <string name="about_preference_github_repository">Open Source</string>
+    <string name="about_preference_feedback_title">Feedback</string>
+    <string name="about_preference_feedback_summary">Contact me if any suggestions or complaints</string>
+    <string name="about_preference_license">License</string>
+    <string name="about_preference_license_dialog">Open Source License</string>
+
 
 
 

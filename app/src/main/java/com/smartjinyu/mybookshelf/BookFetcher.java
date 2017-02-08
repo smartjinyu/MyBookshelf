@@ -32,11 +32,12 @@ public abstract class BookFetcher {
     protected Context mContext;
 
     protected Book mBook;
-    protected Handler mHandler;
 
-    protected abstract void getBookInfo(Context context,String isbn,final int mode);
     /**
-     * mode = 0 single add
-     * mode = 1 batch add
+     * get book info from webservices
+     * @param context
+     * @param isbn book's isbn
+     * @param mode 0 single add, 1 batch add
      */
+    protected abstract void getBookInfo(Context context,String isbn,final int mode);
 }

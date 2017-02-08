@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -46,9 +48,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     private boolean mFlash;
     private Toolbar mToolbar;
 
-    public static Intent newIntent(Context context){
-        return new Intent(context,SingleAddActivity.class);
-}
 
 
     @Override
@@ -76,10 +75,12 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         }
 
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.singleScanFrame);
+
         mScannerView = new ZXingScannerView(this);
         contentFrame.addView(mScannerView);
         mScannerView.setResultHandler(this);
         mScannerView.setAutoFocus(true);
+        mScannerView.setFlash(mFlash);
 
     }
 
@@ -100,12 +101,16 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         menuItem = menu.add(Menu.NONE,R.id.menu_simple_add_manually,0,R.string.menu_single_add_manually);
         MenuItemCompat.setShowAsAction(menuItem,MenuItemCompat.SHOW_AS_ACTION_NEVER);
 
-
-
-
         return super.onCreateOptionsMenu(menu);
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(FLASH_STATE,mFlash);
+    }
+
 
 
 
@@ -146,7 +151,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 return true;
             case R.id.menu_simple_add_manually:
                 mScannerView.stopCamera();
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                new MaterialDialog.Builder(this)
                         .title(R.string.input_isbn_manually_title)
                         .content(R.string.input_isbn_manually_content)
                         .positiveText(R.string.input_isbn_manually_positive)
@@ -183,7 +188,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     }
 
     private void addBook(final String isbn){
-        final Context context = this;
         mScannerView.stopCamera();
         BookLab bookLab = BookLab.get(this);
         List<Book> mBooks = bookLab.getBooks();
@@ -204,7 +208,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             DoubanFetcher fetcher = new DoubanFetcher();
-                            fetcher.getBookInfo(context,isbn,0);
+                            fetcher.getBookInfo(SingleAddActivity.this,isbn,0);
                         }
                     })
                     .negativeText(android.R.string.cancel)
@@ -251,6 +255,24 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.startCamera();
     }
 
+
+    public void fetchSucceed(final Book mBook,final String imageURL){
+        Handler mHandler = new Handler(Looper.getMainLooper());
+
+        mHandler.post(new Runnable() {//on the main thread
+            @Override
+            public void run() {
+                Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
+                i.putExtra(BookEditActivity.BOOK,mBook);
+                i.putExtra(BookEditActivity.downloadCover,true);
+                i.putExtra(BookEditActivity.imageURL,imageURL);
+                startActivity(i);
+                finish();
+            }
+        });
+
+    }
+
     public void fetchFailed(int fetcherID,int event,String isbn){
         /**
          * event = 0, unexpected response code
@@ -267,11 +289,11 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         }
     }
     private void event0Dialog(final String isbn){
-        String dialogCotent = String.format(getResources().getString(
+        String dialogContent = String.format(getResources().getString(
                 R.string.isbn_unmatched_dialog_content),isbn);
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
+        new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
-                .content(dialogCotent)
+                .content(dialogContent)
                 .positiveText(R.string.isbn_unmatched_dialog_positive)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -305,11 +327,11 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     }
 
     private void event1Dialog(final String isbn){
-        String dialogCotent = String.format(getResources().getString(
+        String dialogContent = String.format(getResources().getString(
                 R.string.request_failed_dialog_content),isbn);
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
+        new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
-                .content(dialogCotent)
+                .content(dialogContent)
                 .positiveText(R.string.isbn_unmatched_dialog_positive)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -344,7 +366,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case CAMERA_PERMISSION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {

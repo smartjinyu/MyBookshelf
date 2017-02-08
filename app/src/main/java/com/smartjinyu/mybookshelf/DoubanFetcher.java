@@ -1,16 +1,9 @@
 package com.smartjinyu.mybookshelf;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,7 +28,6 @@ public class DoubanFetcher extends BookFetcher{
     @Override
     public void getBookInfo(final Context context, final String isbn,final int mode){
         mContext = context;
-        mHandler = new Handler(Looper.getMainLooper());
         Retrofit mRetrofit;
         mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://api.douban.com/v2/book/")
@@ -70,7 +62,6 @@ public class DoubanFetcher extends BookFetcher{
                         mBook.setWebIds(new HashMap<String, String>());
                     }
                     mBook.getWebIds().put("douban",response.body().getId());
-
                     mBook.setPublisher(response.body().getPublisher());
 
                     String rawDate = response.body().getPubdate();
@@ -84,23 +75,25 @@ public class DoubanFetcher extends BookFetcher{
                     calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,1);
                     mBook.setPubTime(calendar);
                     final String imageURL = response.body().getImages().getLarge();
-                    mHandler.post(new Runnable() {//on the main thread
-                        @Override
-                        public void run() {
-                            Intent i = new Intent(mContext,BookEditActivity.class);
-                            i.putExtra(BookEditActivity.BOOK,mBook);
-                            i.putExtra(BookEditActivity.downloadCover,true);
-                            i.putExtra(BookEditActivity.imageURL,imageURL);
-                            mContext.startActivity(i);
-                            ((Activity)mContext).finish();
-                        }
-                    });
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    boolean addWebsite = pref.getBoolean("settings_pref_acwebsite",true);
+                    if(addWebsite){
+                        mBook.setWebsite("https://book.douban.com/subject/" + response.body().getId());
+                    }
+                    if(mode == 0){
+                        ((SingleAddActivity)mContext).fetchSucceed(mBook,imageURL);
+                    }else if(mode == 1){
+                        ((BatchAddActivity)mContext).fetchSucceed(mBook,imageURL);
+                    }
                 }else{
                     Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
                     if(mode == 0){
                         ((SingleAddActivity)mContext).fetchFailed(
                                 BookFetcher.fetcherID_DB,0,isbn
                         );
+                    }else if(mode == 1){
+                        ((BatchAddActivity)mContext).fetchFailed(
+                                BookFetcher.fetcherID_DB,0,isbn);
                     }
                 }
 
@@ -113,7 +106,9 @@ public class DoubanFetcher extends BookFetcher{
                     ((SingleAddActivity)mContext).fetchFailed(
                             BookFetcher.fetcherID_DB,1,isbn
                     );
-
+                }else if(mode == 1){
+                    ((BatchAddActivity)mContext).fetchFailed(
+                            BookFetcher.fetcherID_DB,1,isbn);
                 }
             }
         });

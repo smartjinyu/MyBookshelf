@@ -4,17 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <FrameLayout
         android:id="@+id/singleScanFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <include
+        layout="@layout/toolbar_singleadd"/>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/singleScanToolbar"
-        android:layout_gravity="top"
-        android:minHeight="?attr/actionBarSize"
-        android:background="@color/actionbar_opacity"
-        android:theme="@style/TransparentToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
 </FrameLayout>

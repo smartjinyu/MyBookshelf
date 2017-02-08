@@ -27,6 +27,7 @@
             android:theme="@style/Theme.Sliding.Light"/>
         <activity android:name=".AboutActivity"/>
         <activity android:name=".SettingsActivity"/>
+        <activity android:name=".BatchAddActivity"/>
 
     </application>
 

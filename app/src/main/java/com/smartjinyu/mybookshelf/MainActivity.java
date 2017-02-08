@@ -526,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i(TAG,"fab menu item 1 clicked");
-                Intent i = SingleAddActivity.newIntent(MainActivity.this);
+                Intent i = new Intent(MainActivity.this,SingleAddActivity.class);
                 startActivity(i);
                 mActionAddButton.close(true);
 
@@ -537,6 +537,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i(TAG,"fab menu item 2 clicked");
+                Intent i = new Intent(MainActivity.this,BatchAddActivity.class);
+                startActivity(i);
                 mActionAddButton.close(true);
             }
         });

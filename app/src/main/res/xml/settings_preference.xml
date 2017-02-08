@@ -8,7 +8,7 @@
                 android:entries="@array/settings_web_services_entries"
                 android:entryValues="@array/settings_web_services_entry_values"
                 android:defaultValue="1"/>
-            <CheckBoxPreference
+            <SwitchPreference
                 android:title="@string/settings_auto_complete_website_title"
                 android:key="settings_pref_acwebsite"
                 android:defaultValue="true"/>

@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -80,12 +82,21 @@ public class AboutFragment extends PreferenceFragment {
                 WebView wv = new WebView(getActivity());
                 wv.loadUrl("file:///android_asset/license.html");
                 wv.setWebViewClient(new WebViewClient() {
+                    @SuppressWarnings("deprecation")
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                         view.loadUrl(url);
-
                         return true;
                     }
+
+                    @TargetApi(Build.VERSION_CODES.N)
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                        final Uri uri = request.getUrl();
+                        view.loadUrl(uri.toString());
+                        return true;
+                    }
+
                 });
 
                 alert.setView(wv);

@@ -5,11 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -70,7 +68,7 @@ public class BookEditActivity extends AppCompatActivity{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bookedit);
+        setContentView(R.layout.activity_book_edit);
 
         Intent i = getIntent();
 
@@ -194,13 +192,9 @@ public class BookEditActivity extends AppCompatActivity{
             //
             mBook.setIsbn(isbnEditText.getText().toString());
             mBook.setNotes(notesEditText.getText().toString());
-            mBook.setWebsite(notesEditText.getText().toString());
+            mBook.setWebsite(websiteEditText.getText().toString());
             BookLab bookLab = BookLab.get(this);
             bookLab.addBook(mBook);
-            //todo
-//                    for(int i=0;i<30;i++){//only for debug
-//                        bookLab.addBook(mBook);
-//                    }
             return true;
 
         }

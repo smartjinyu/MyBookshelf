@@ -185,6 +185,16 @@
     <string name="settings_web_services_title">Web Services</string>
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
 
+    <!--BatchAddActivity-->
+    <string name="batch_add_navigation_close">Close</string>
+    <string name="isbn_unmatched_dialog_batch_title">Get Information Failed</string>
+    <string name="isbn_unmatched_dialog_batch_content">Your Book\'s ISBN is %1$s,
+        we failed to get details from web services. Please check ISBN.\n
+        You can rescan it or add it through single add function.</string>
+    <string name="request_failed_dialog_batch_content">Your Book\'s ISBN is %1$s,
+        we failed to connect to web services. Please check network.\n
+        You can rescan it or add it through single add function.</string>
+
 
 
 

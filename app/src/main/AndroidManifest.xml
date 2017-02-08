@@ -26,6 +26,7 @@
             android:taskAffinity=""
             android:theme="@style/Theme.Sliding.Light"/>
         <activity android:name=".AboutActivity"/>
+        <activity android:name=".SettingsActivity"/>
 
     </application>
 

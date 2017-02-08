@@ -476,6 +476,9 @@ public class MainActivity extends AppCompatActivity {
                                         mSearchView.open(true);
                                     }
                                 }
+                            }else if(drawerItem.getIdentifier()==4){
+                                Intent i = new Intent(MainActivity.this,SettingsActivity.class);
+                                startActivity(i);
                             }else if(drawerItem.getIdentifier() == 5){
                                 Intent i = new Intent(MainActivity.this,AboutActivity.class);
                                 startActivity(i);
@@ -774,8 +777,6 @@ public class MainActivity extends AppCompatActivity {
         }
         mToolbar.setBackgroundColor(colorPrimaryRes);
         getWindow().setStatusBarColor(colorPrimaryDarkRes);
-
-
     }
 
     private void setBooksAndUI(@Nullable String keyword){

@@ -250,12 +250,6 @@ public class BookEditActivity extends AppCompatActivity{
         final LabelLab labelLab = LabelLab.get(this);
         labelsEditText = (EditText) findViewById(R.id.book_labels_edit_text);
         final List<Label> labels = labelLab.getLabels();
-        if(labels.size()==0){
-            Label testLabel = new Label();
-            testLabel.setTitle("Only for test,do not select");
-            labels.add(testLabel);
-            // delete these code when Material Dialog Library updating
-        }//// TODO: 2017/2/2
         List<Integer> existsLabelIndex = new ArrayList<>();
         if(mBook.getLabelID()!=null && mBook.getLabelID().size()!=0){
             for(UUID labelID : mBook.getLabelID()){

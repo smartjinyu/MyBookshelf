@@ -172,6 +172,20 @@
     <string name="about_preference_feedback_summary">Contact me if any suggestions or complaints</string>
     <string name="about_preference_license">License</string>
     <string name="about_preference_license_dialog">Open Source License</string>
+    
+    <!--Settings-->
+    <string name="settings_settings">Settings</string>
+    <string name="settings_info_retrieval">Book Info Retrieval</string>
+    <string-array name="settings_web_services_entries">
+        <item>Douban.com</item>
+    </string-array>
+    <string-array name="settings_web_services_entry_values">
+        <item>1</item>
+    </string-array>
+    <string name="settings_web_services_title">Web Services</string>
+    <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
+
+
 
 
 

@@ -1,5 +1,9 @@
 ## Bookshelf
 
+中文版在[这里]
+
+[这里]:https://smartjinyu.com/android/2017/02/09/mybookshelf.html
+
 ### Screenshots
 ![Screenshot1](https://smartjinyu.com/img/2017-02-09/1.png)
 ![Screenshot2](https://smartjinyu.com/img/2017-02-09/2.png)
@@ -24,6 +28,8 @@ Features:
 - No ADs
 
 *Only support Douban.com currently, more services will be added in the near future
+
+If you have any advice or complaints, feel free to open an issue. PR is welcomed anytime.
 
 ### Download
 

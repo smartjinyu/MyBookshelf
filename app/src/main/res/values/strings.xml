@@ -65,7 +65,7 @@
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>
     <string name="menu_single_add_manually">Input ISBN Manually</string>
-    <string name="camera_permission_denied">Please grant Camera permission to scan Barcode.</string>
+    <string name="camera_permission_denied">Please grant Camera permission to scan Barcode!</string>
     <string name="isbn_unmatched_dialog_title">Get Information Failed</string>
     <string name="isbn_unmatched_dialog_content">Your Book\'s ISBN is %1$s,
         we failed to get details from web services. Please check ISBN.\n
@@ -133,7 +133,7 @@
 
     <!--BookShelfLab-->
     <string name="default_book_shelf_name">Default BookShelf</string>
-    <string name="default_book_shelf_uuid">407c4479-5a57-4371-8b94-ad038f1276fe</string>
+    <string name="default_book_shelf_uuid" translatable="false">407c4479-5a57-4371-8b94-ad038f1276fe</string>
     <!--in Book.java, default book shelf id doesn't refer to here-->
 
     <!--BookDetailActivity-->
@@ -165,7 +165,7 @@
     <!--About-->
     <string name="about_preference_category_title">About</string>
     <string name="about_preference_donate_title">Donate Me</string>
-    <string name="about_preference_donate_summary">PayPal Alipay:smartjinyu@gmail.com</string>
+    <string name="about_preference_donate_summary" translatable="false">PayPal Alipay:smartjinyu@gmail.com</string>
     <string name="about_preference_donate_toast">My account has been copied to clipboard! Thanks for your donating!</string>
     <string name="about_preference_github_repository">Open Source</string>
     <string name="about_preference_feedback_title">Feedback</string>
@@ -200,7 +200,7 @@
     <string name="batch_add_activity_discard_dialog_positive">Discard</string>
     <string name="batch_add_tab_title_0">Scan</string>
     <string name="batch_add_tab_title_1">Added(%1$d)</string>
-    <string name="batch_add_added_snack_bar">\"%1$s\" add successfully! </string>
+    <string name="batch_add_added_snack_bar">\"%1$s\" add successfully</string>
     <string name="batch_add_delete_book_dialog_title">Delete Book</string>
     <string name="batch_add_delete_book_dialog_content">Are you sure to delete the book from your list?</string>
     <string name="batch_add_delete_book_dialog_positive">Delete</string>

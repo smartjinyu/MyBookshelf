@@ -5,11 +5,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AndroidException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Calendar;
 import java.util.List;
@@ -51,8 +54,29 @@ public class BatchListFragment extends Fragment {
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
-
+            public void onItemLongClick(View view, final int position) {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.batch_add_delete_book_dialog_title)
+                        .content(R.string.batch_add_delete_book_dialog_content)
+                        .positiveText(R.string.batch_add_delete_book_dialog_positive)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                BatchAddActivity.mBooks.remove(position);
+                                mRecyclerViewAdapter.notifyDataSetChanged();
+                                BatchAddActivity.tabLayout.getTabAt(1).
+                                        setText(String.format(getString(R.string.batch_add_tab_title_1),
+                                                BatchAddActivity.mBooks.size()));
+                            }
+                        })
+                        .negativeText(android.R.string.cancel)
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         }));
     }

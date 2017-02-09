@@ -189,7 +189,7 @@ public class BookLab {
                     "%"+keyword+"%"};
         }else{
             // on specified bookshelf
-            whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + " = ? AND"
+            whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + " = ? AND "
                     +BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.AUTHORS + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.TRANSLATORS + " LIKE ? OR "
@@ -244,6 +244,14 @@ public class BookLab {
         }else{
             //add a new book
             mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
+        }
+    }
+
+    public void addBooks(List<Book> books){
+        if(books!=null){
+            for(Book book : books){
+                addBook(book);
+            }
         }
     }
 

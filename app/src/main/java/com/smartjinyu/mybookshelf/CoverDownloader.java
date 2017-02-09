@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,13 +29,21 @@ public class CoverDownloader {
     private static final String TAG = "CoverDownloader";
 
     private Handler mHandler;
-    private BookEditActivity mBookEditActivity;
+    private Context mContext;
     private Book mBook;
+    private int mode;
 
-    public CoverDownloader(BookEditActivity context,Book book){
+    /**
+     *
+     * @param context
+     * @param book
+     * @param mode = 0 Call from BookEditActivity, mode = 1 Call from BatchAddActivity
+     */
+    public CoverDownloader(Context context,Book book,int mode){
         mBook = book;
-        mBookEditActivity = context;
+        mContext = context;
         mHandler = new Handler(Looper.getMainLooper());
+        this.mode = mode;
     }
 
 
@@ -54,7 +63,10 @@ public class CoverDownloader {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mBookEditActivity.setBookCover();
+                            if(mode == 0){
+                                ((BookEditActivity)mContext).setBookCover();
+                            }
+                            // nothing except setHasCover(true) need to do if mode == 1
                         }
                     });
                 }
@@ -62,7 +74,7 @@ public class CoverDownloader {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.w(TAG,"Fail to download image response," + t.toString());
+                Log.e(TAG,"Fail to download image response," + t.toString());
                 // Toast.makeText(mContext,"",Toast.LENGTH_LONG).show();
                 //todo
             }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -50,12 +51,12 @@ public class DoubanFetcher extends BookFetcher{
                     if(response.body().getAuthor().size()!=0){
                         mBook.setAuthors(response.body().getAuthor());
                     }else{
-                        mBook.setAuthors(null);
+                        mBook.setAuthors(new ArrayList<String>());
                     }
                     if(response.body().getTranslator().size()!=0){
                         mBook.setTranslators(response.body().getTranslator());
                     }else{
-                        mBook.setTranslators(null);
+                        mBook.setTranslators(new ArrayList<String>());
                     }
 
                     if(mBook.getWebIds() == null){

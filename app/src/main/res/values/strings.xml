@@ -186,6 +186,7 @@
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
 
     <!--BatchAddActivity-->
+    <string name="batch_add_title">Batch Add</string>
     <string name="batch_add_navigation_close">Close</string>
     <string name="isbn_unmatched_dialog_batch_title">Get Information Failed</string>
     <string name="isbn_unmatched_dialog_batch_content">Your Book\'s ISBN is %1$s,
@@ -194,6 +195,17 @@
     <string name="request_failed_dialog_batch_content">Your Book\'s ISBN is %1$s,
         we failed to connect to web services. Please check network.\n
         You can rescan it or add it through single add function.</string>
+    <string name="batch_add_activity_discard_dialog_title">Discard Books</string>
+    <string name="batch_add_activity_discard_dialog_content">We won\'t save any of the books you add this time. Are you sure to discard them?</string>
+    <string name="batch_add_activity_discard_dialog_positive">Discard</string>
+    <string name="batch_add_tab_title_0">Scan</string>
+    <string name="batch_add_tab_title_1">Added(%1$d)</string>
+    <string name="batch_add_added_snack_bar">\"%1$s\" add successfully! </string>
+    <string name="batch_add_delete_book_dialog_title">Delete Book</string>
+    <string name="batch_add_delete_book_dialog_content">Are you sure to delete the book from your list?</string>
+    <string name="batch_add_delete_book_dialog_positive">Delete</string>
+    <string name="batch_add_menu_item_save">Save</string>
+
 
 
 

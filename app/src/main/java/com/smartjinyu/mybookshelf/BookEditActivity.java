@@ -84,7 +84,7 @@ public class BookEditActivity extends AppCompatActivity{
 
         coverImageView = (ImageView) findViewById(R.id.book_cover_image_view);
         if(i.getBooleanExtra(downloadCover,false)){
-            CoverDownloader coverDownloader = new CoverDownloader(this,mBook);
+            CoverDownloader coverDownloader = new CoverDownloader(this,mBook,0);
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
             coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL),path);
         }else if(mBook.isHasCover()){

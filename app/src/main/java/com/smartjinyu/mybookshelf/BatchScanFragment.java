@@ -97,6 +97,14 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
                 break;
             }
         }
+        if(!isExist){ // added this time
+            for(Book book:BatchAddActivity.mBooks){
+                if (book.getIsbn().equals(isbn)){
+                    isExist = true;
+                    break;
+                }
+            }
+        }
         if(isExist){//The book is already in the list
             new MaterialDialog.Builder(getActivity())
                     .title(R.string.book_duplicate_dialog_title)
@@ -154,13 +162,6 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
 
     }
 
-    public void resumeCamera(){
-        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
-        mScannerView.setResultHandler(this);
-        mScannerView.setAutoFocus(true);
-        mScannerView.setFlash(mFlash);
-        mScannerView.startCamera();
-    }
 
 
     @Override

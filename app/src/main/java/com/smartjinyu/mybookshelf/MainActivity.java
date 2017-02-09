@@ -987,12 +987,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_multi_select_add_label:
                     final LabelLab labelLab = LabelLab.get(MainActivity.this);
                     final List<Label> labels = labelLab.getLabels();
-                    if(labels.size()==0){
-                        Label testLabel = new Label();
-                        testLabel.setTitle("Only for test,do not select");
-                        labels.add(testLabel);
-                        //  todo delete these code when Material Dialog Library updating
-                    }
                     new MaterialDialog.Builder(MainActivity.this)
                             .title(R.string.add_label_dialog_title)
                             .items(labels)
@@ -1070,11 +1064,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_multi_select_move_to:
                     final BookShelfLab bookShelfLab = BookShelfLab.get(MainActivity.this);
                     final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-                    if(bookShelves.size()==0){
-                        BookShelf bookShelf = new BookShelf();
-                        bookShelf.setTitle("Only for test,do not select");
-                        bookShelves.add(bookShelf);
-                    }
                     new MaterialDialog.Builder(MainActivity.this)
                             .title(R.string.move_to_dialog_title)
                             .items(bookShelves)

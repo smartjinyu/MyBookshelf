@@ -149,4 +149,25 @@
     <string name="spinner_all_bookshelf">所有</string>
     <string name="tool_bar_navigation_description">舍弃</string>
     <string name="website_edit_text_hint">网站</string>
+    <string-array name="reading_status_array">
+        <item>阅读状态未设置</item>
+        <item>未读</item>
+        <item>阅读中</item>
+        <item>已读</item>
+    </string-array>
+    <string-array name="main_sort_dialog">
+        <item>标题</item>
+        <item>作者</item>
+        <item>出版社</item>
+        <item>出版时间</item>
+    </string-array>
+    <string-array name="settings_web_services_entries">
+        <item>Douban.com</item>
+    </string-array>
+    <string-array name="settings_web_services_entry_values">
+        <item>1</item>
+    </string-array>
+
+
+
 </resources>

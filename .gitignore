@@ -8,3 +8,4 @@
 /captures
 .externalNativeBuild
 /icon
+/app/src/main/AndroidManifest.xml

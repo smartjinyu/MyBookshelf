@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +71,13 @@ public class BookEditActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_edit);
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Activity")
+                .putContentId("1007")
+                .putCustomAttribute("onCreate", "onCreate"));
+
 
         Intent i = getIntent();
 

@@ -29,6 +29,9 @@
         <activity android:name=".SettingsActivity"/>
         <activity android:name=".BatchAddActivity"/>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="fakeKey" />
     </application>
 
 </manifest>

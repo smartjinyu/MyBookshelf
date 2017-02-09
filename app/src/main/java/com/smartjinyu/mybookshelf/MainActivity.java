@@ -37,6 +37,9 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.lapism.searchview.SearchView;
@@ -52,6 +55,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
     private SearchView mSearchView;
+    private CoordinatorLayout mCoordinatorLayout;
 
     private BookAdapter mRecyclerViewAdapter;
     private ActionMode mActionMode;
@@ -90,10 +95,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Activity")
+                .putContentId("1001")
+                .putCustomAttribute("onCreate", "onCreate"));
+
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortMethod = preferences.getInt(SORT_METHOD,0);
+
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
+
 
         setRecyclerView();
         setFloatingActionButton();
@@ -105,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
         }
         setDrawer(drawerSelection);
         setSearchView();
+
+
 
     }
 
@@ -326,6 +344,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG,"Search " + query);
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Activity")
+                        .putContentId("1002")
+                        .putCustomAttribute("Search", "Search Text Submitted"));
                 mSearchView.hideKeyboard();
                 updateUI(true,query);
                 return true;
@@ -574,6 +597,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
         mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this, mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -955,8 +979,6 @@ public class MainActivity extends AppCompatActivity {
                             UndoBooks.add(book);
                         }
                         Snackbar snackbar;
-                        CoordinatorLayout mCoordinatorLayout =
-                                (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
                         if(UndoBooks.size() == 1){
                             snackbar = Snackbar.make(
                                     mCoordinatorLayout,

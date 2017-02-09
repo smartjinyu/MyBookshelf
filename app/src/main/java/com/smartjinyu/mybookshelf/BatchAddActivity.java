@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -52,6 +54,13 @@ public class BatchAddActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_batch_add);
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Activity")
+                .putContentId("1004")
+                .putCustomAttribute("onCreate", "onCreate"));
+
 
         mBooks = new ArrayList<>();
 
@@ -92,7 +101,11 @@ public class BatchAddActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.batch_add_menu_item_save:
                 // choose bookshelf
-                chooseBookshelf();
+                if(mBooks.size()!=0){
+                    chooseBookshelf();
+                }else{
+                    finish();
+                }
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -194,6 +207,12 @@ public class BatchAddActivity extends AppCompatActivity {
                         }
                         dialog.dismiss();
                         BookLab.get(BatchAddActivity.this).addBooks(mBooks);
+                        Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentName(TAG)
+                                .putContentType("ADD")
+                                .putContentId("1202")
+                                .putCustomAttribute("ADD Succeeded", mBooks.size()));
+
                         finish();
                         return true;
 

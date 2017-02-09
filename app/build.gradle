@@ -41,7 +41,7 @@ dependencies {
         transitive = true
     }
     compile 'com.github.promeg:tinypinyin:2.0.1'
-    compile 'com.lapism:searchview:4.0'
+    compile project (':searchview')
 
 
 

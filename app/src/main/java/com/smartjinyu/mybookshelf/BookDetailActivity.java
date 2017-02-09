@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -350,6 +351,14 @@ public class BookDetailActivity extends SlidingActivity {
                             Toast.LENGTH_SHORT)
                             .show();
                     return true;
+                }
+            });
+            websiteRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(mBook.getWebsite()));
+                    startActivity(i);
                 }
             });
         }else{

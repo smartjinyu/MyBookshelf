@@ -1,10 +1,12 @@
 package com.smartjinyu.mybookshelf;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +63,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String drawerSelected = "drawerSelected";
+    private static final String SORT_METHOD = "SORT_METHOD";
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
@@ -81,13 +84,16 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> mBooks;
     private boolean showBookshelfMenuItem = false;
     private boolean showLabelMenuItem = false;
-    private int sortMethod = 0;
+    private int sortMethod;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sortMethod = preferences.getInt(SORT_METHOD,0);
 
         setRecyclerView();
         setFloatingActionButton();
@@ -843,6 +849,9 @@ public class MainActivity extends AppCompatActivity {
                 comparator = new Book.titleComparator();
         }
         Collections.sort(mBooks,comparator);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit()
+                .putInt(SORT_METHOD,sortMethod).apply();
     }
 
 
@@ -866,6 +875,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+        Log.d(TAG,"onResume, mSearchView open = " + mSearchView.isSearchOpen());
         if(mSpinner!=null){
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());
@@ -878,7 +888,6 @@ public class MainActivity extends AppCompatActivity {
             // bug in searchview lib, if we remove focus from it,
             // isSearchOpen will return false no matter it is expanded or not
             updateUI(true,mSearchView.getQuery().toString());
-
         }else{
             updateUI(true,null);
         }

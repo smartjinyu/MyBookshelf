@@ -31,7 +31,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="fakekey" />
+            android:value="${fabric_api_key}" />
     </application>
 
 </manifest>

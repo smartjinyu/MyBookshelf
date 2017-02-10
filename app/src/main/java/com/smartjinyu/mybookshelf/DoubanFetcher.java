@@ -67,10 +67,22 @@ public class DoubanFetcher extends BookFetcher{
 
                     String rawDate = response.body().getPubdate();
                     Log.i(TAG,"Date raw = " + rawDate);
-                    String[] date = rawDate.split("-");
-                    String year = date[0];
-                    // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
-                    String month = date[1];
+                    String year,month;
+                    if(rawDate.contains("-")){
+                        // 2016-11
+                        String[] date = rawDate.split("-");
+                        year = date[0];
+                        // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
+                        month = date[1];
+                    }else if (rawDate.contains(".")){
+                        String[] date = rawDate.split("\\.");
+                        year = date[0];
+                        // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
+                        month = date[1];
+                    }else{
+                        year = "9999";
+                        month = "1";
+                    }
                     Log.i(TAG,"Get PubDate Year = " + year + ", month = " + month);
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,1);

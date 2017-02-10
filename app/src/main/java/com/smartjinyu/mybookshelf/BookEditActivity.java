@@ -390,7 +390,9 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder1.append(author);
                 stringBuilder1.append(",");
             }
-            stringBuilder1.deleteCharAt(stringBuilder1.length()-1);
+            if(stringBuilder1.length()!=0){
+                stringBuilder1.deleteCharAt(stringBuilder1.length()-1);
+            }
             authorEditText.setText(stringBuilder1);
         }
 
@@ -401,7 +403,9 @@ public class BookEditActivity extends AppCompatActivity{
                 stringBuilder2.append(translator);
                 stringBuilder2.append(",");
             }
-            stringBuilder2.deleteCharAt(stringBuilder2.length()-1);
+            if(stringBuilder2.length()!=0){
+                stringBuilder2.deleteCharAt(stringBuilder2.length()-1);
+            }
             translatorEditText.setText(stringBuilder2);
         }
 

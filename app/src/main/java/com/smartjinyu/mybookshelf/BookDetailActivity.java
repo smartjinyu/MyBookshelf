@@ -130,7 +130,9 @@ public class BookDetailActivity extends SlidingActivity {
                 authors.append(author);
                 authors.append(",");
             }
-            authors.deleteCharAt(authors.length()-1);
+            if(authors.length()!=0){
+                authors.deleteCharAt(authors.length()-1);
+            }
             authorTextView.setText(authors);
             authorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -158,7 +160,9 @@ public class BookDetailActivity extends SlidingActivity {
                 translators.append(translator);
                 translators.append(",");
             }
-            translators.deleteCharAt(translators.length()-1);
+            if(translators.length()!=0){
+                translators.deleteCharAt(translators.length()-1);
+            }
             translatorTextView.setText(translators);
             translatorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

@@ -125,7 +125,9 @@ public class BatchListFragment extends Fragment {
                 authorAndPub.append(author);
                 authorAndPub.append(",");
             }
-            authorAndPub.deleteCharAt(authorAndPub.length()-1);
+            if(authorAndPub.length()!=0){
+                authorAndPub.deleteCharAt(authorAndPub.length()-1);
+            }
 
             if(book.getPublisher().length()!=0){
                 if(authorAndPub.length()!=0){

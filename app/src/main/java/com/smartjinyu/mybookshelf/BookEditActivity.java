@@ -159,8 +159,6 @@ public class BookEditActivity extends AppCompatActivity{
             String[] authorArray;
             if(authors.contains("、")){
                 authorArray = authors.split("、");
-            }else if(authors.contains(" ")){
-                authorArray = authors.split(" ");
             }else if(authors.contains(",")){
                 authorArray = authors.split(",");
             }else if(authors.contains("，")){

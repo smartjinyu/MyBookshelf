@@ -10,9 +10,11 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
+
 
 
 def getApiKey(){
@@ -23,7 +25,6 @@ def getApiKey(){
 
 
 
-
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -31,8 +32,8 @@ android {
         applicationId "com.smartjinyu.mybookshelf"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 2
-        versionName "1.0"
+        versionCode 3
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

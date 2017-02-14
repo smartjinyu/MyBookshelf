@@ -218,9 +218,12 @@ public class BookLab {
     }
 
 
+    /**
+     * whether this book is in the database (check id, not isbn)
+     * @param book the book need to check
+     * @return
+     */
     public boolean isBookExists(Book book){
-        // return whether the book still exists in the database
-
         try (BookCursorWrapper cursor = queryBooks(
                 BookDBSchema.BookTable.Cols.UUID + "= ?",
                 new String[]{book.getId().toString()})

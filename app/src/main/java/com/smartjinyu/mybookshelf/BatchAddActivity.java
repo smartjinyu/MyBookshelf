@@ -1,14 +1,9 @@
 package com.smartjinyu.mybookshelf;
 
 import android.Manifest;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -32,9 +27,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Batch add books activity
@@ -113,6 +108,7 @@ public class BatchAddActivity extends AppCompatActivity {
     }
 
     private void chooseBookshelf(){
+
         final BookShelfLab bookShelfLab = BookShelfLab.get(BatchAddActivity.this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
         new MaterialDialog.Builder(BatchAddActivity.this)
@@ -267,7 +263,6 @@ public class BatchAddActivity extends AppCompatActivity {
                     setText(String.format(getString(R.string.batch_add_tab_title_1),mBooks.size()));
 
         }
-
     }
 
 

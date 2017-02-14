@@ -151,8 +151,15 @@ public class BookEditActivity extends AppCompatActivity{
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(isbnEditText,InputMethodManager.SHOW_IMPLICIT);
             return false;
-            //// TODO: 2017/2/3 check title not empty
-        } else {
+        } else if(titleEditText.getText().toString().length() == 0){
+            Log.i(TAG,"Title Empty problem.");
+            Toast.makeText(this,R.string.title_empty,Toast.LENGTH_LONG).show();
+            titleEditText.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(isbnEditText,InputMethodManager.SHOW_IMPLICIT);
+            return false;
+        }
+        else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
             String authors = authorEditText.getText().toString();

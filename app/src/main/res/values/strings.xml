@@ -123,6 +123,7 @@
     <string name="custom_book_shelf_dialog_title">Bookshelf Name</string>
     <string name="month_invalid">Month should be a number between 1 and 12!</string>
     <string name="isbn_invalid">ISBN should be a 10 or 13 digits in length!</string>
+    <string name="title_empty">Title should not  be empty! </string>
     <string name="label_choice_dialog_title">Choose labels</string>
     <string name="label_choice_dialog_neutral">Add label</string>
     <string name="label_add_new_dialog_title">Label Name</string>

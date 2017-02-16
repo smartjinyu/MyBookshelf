@@ -185,6 +185,17 @@
     </string-array>
     <string name="settings_web_services_title">Web Services</string>
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
+    <string name="settings_backup_category">Backup</string>
+    <string name="settings_backup_location_title">Backup Location</string>
+    <string name="settings_backup_title">Backup Bookshelf</string>
+    <string name="settings_restore_title">Restore Bookshelf</string>
+    <string name="storage_permission_toast">You have to grant STORAGE permission so that we can backup your books!</string>
+    <string name="backup_succeed_toast">Backup Succeeded!</string>
+    <string name="backup_fail_cover_toast">Backup Failed(Type 1)!</string>
+    <string name="backup_fail_coverZip_toast">Backup Failed(Type 2)!</string>
+    <string name="backup_fail_zip_toast">Backup Failed(Type 3)!</string>
+
+
 
     <!--BatchAddActivity-->
     <string name="batch_add_title">Batch Add</string>

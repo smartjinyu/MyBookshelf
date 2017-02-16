@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public class BookShelfLab {
     private static final String TAG = "BookShelfLab";
-    private static final String PreferenceName = "bookshelf";
+    public static final String PreferenceName = "bookshelf";
 
     private static BookShelfLab sBookShelfLab;
     private SharedPreferences BookShelfPreference;

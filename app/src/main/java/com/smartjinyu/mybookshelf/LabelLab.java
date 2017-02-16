@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class LabelLab {
     private static final String TAG = "LabelLab";
-    private static final String PreferenceName = "labels";
+    public static final String PreferenceName = "labels";
 
     private static LabelLab sLabelLab;
     private SharedPreferences LabelPreference;

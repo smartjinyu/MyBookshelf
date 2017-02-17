@@ -3,6 +3,7 @@ package com.smartjinyu.mybookshelf;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
@@ -14,6 +15,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.zxing.ResultPoint;
 import com.google.zxing.common.reedsolomon.GenericGF;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
 
@@ -72,7 +76,7 @@ public class SettingsFragment extends PreferenceFragment {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},STORAGE_PERMISSION);
                 }else{
-                    backupFiles();
+                    new backupTask().execute();
                 }
                 return false;
             }
@@ -81,80 +85,131 @@ public class SettingsFragment extends PreferenceFragment {
         restorePreference = findPreference("settings_pref_restore");
 
     }
-    private void backupFiles(){
-        List<String> fileName = new ArrayList<>();
-        File covers = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        String coverZipFileName = backupLocationPreference.getSummary() + "/Covers.zip";
-        if(covers!=null){
-            try{
-                zipFiles(covers.listFiles(),coverZipFileName);
-                fileName.add(coverZipFileName);
-                Log.i(TAG,"Cover temp zip created " + coverZipFileName);
+
+    private class backupTask extends AsyncTask<Void,Void,Boolean>{
+        private MaterialDialog mDialog;
+        private String zipFile;
+
+
+        @Override
+        protected void onPreExecute(){
+            mDialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.backup_progress_dialog_title)
+                    .content(R.string.backup_progress_dialog_content)
+                    .progress(true,0)
+                    .progressIndeterminateStyle(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void...params){
+            List<String> fileName = new ArrayList<>();
+            File covers = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            String coverZipFileName = backupLocationPreference.getSummary() + "/Covers.zip";
+            if(covers!=null){
+                try{
+                    zipFiles(covers.listFiles(),coverZipFileName);
+                    fileName.add(coverZipFileName);
+                    Log.i(TAG,"Cover temp zip created " + coverZipFileName);
+                }catch (IOException e){
+                    Log.e(TAG,"IOException when zipCovers = " + e.toString());
+                    return false;
+                }
                 fileName.add(getActivity().getDatabasePath(BookBaseHelper.DATABASE_NAME).getAbsolutePath());
                 fileName.add(getActivity().getFilesDir().getParent()+ "/shared_prefs/" + BookShelfLab.PreferenceName + ".xml");
                 fileName.add(getActivity().getFilesDir().getParent() + "/shared_prefs/" + LabelLab.PreferenceName + ".xml");
                 fileName.add(getActivity().getFilesDir().getParent() + "/shared_prefs/" + getActivity().getPackageName() + "_preferences.xml");
-                String zipFile = backupLocationPreference.getSummary() + "/Bookshelf_backup_" + Calendar.getInstance().getTimeInMillis() + ".zip";
+                zipFile = backupLocationPreference.getSummary() + "/Bookshelf_backup_" + Calendar.getInstance().getTimeInMillis() + ".zip";
                 try{
                     zipFiles(fileName.toArray(new String[0]),zipFile);
                     Log.i(TAG,"Backup created " + zipFile);
-                    Toast.makeText(getActivity(),getString(R.string.backup_succeed_toast),Toast.LENGTH_SHORT).show();
                 }catch (IOException e){
                     Log.e(TAG,"IOException when zipFiles = " + e.toString());
-                    Toast.makeText(getActivity(),getString(R.string.backup_fail_zip_toast),Toast.LENGTH_SHORT).show();
-
+                    return false;
                 }
                 File coverZipFile = new File(coverZipFileName);
                 boolean deleted = coverZipFile.delete();
                 Log.i(TAG,"Cover.zip name = " + coverZipFileName + ", delete result = " + deleted);
-            }catch (IOException e){
-                Log.e(TAG,"IOException when zipCovers = " + e.toString());
-                Toast.makeText(getActivity(),getString(R.string.backup_fail_coverZip_toast),Toast.LENGTH_SHORT).show();
+                return true;
+            }else{
+                return false;
             }
-        }else{
-            Toast.makeText(getActivity(),getString(R.string.backup_fail_cover_toast),Toast.LENGTH_SHORT).show();
         }
-    }
 
-    //zip and unzip code is referenced to http://stackoverflow.com/questions/7485114/how-to-zip-and-unzip-the-files
-    private void zipFiles(String[] files,String zipFile) throws IOException{
-        int BUFFER_SIZE = 2048;
-        try(ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile))))
-        {
-            byte data[] = new byte[BUFFER_SIZE]; // buffer size
-            for(String fileName: files){
-                FileInputStream fi = new FileInputStream(fileName);
-                try(BufferedInputStream origin = new BufferedInputStream(fi,BUFFER_SIZE)){
-                    ZipEntry entry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/")+1));
-                    out.putNextEntry(entry);
-                    int count;
-                    while((count = origin.read(data,0,BUFFER_SIZE))!=-1){
-                        out.write(data,0,count);
+        @Override
+        protected void onPostExecute(Boolean isSucceed){
+            mDialog.dismiss();
+            if(isSucceed){
+                String content = String.format(getString(R.string.backup_succeed_toast),zipFile);
+                Toast.makeText(getActivity(),content,Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(getActivity(),getString(R.string.backup_fail_toast),Toast.LENGTH_LONG).show();
+            }
+        }
+
+        //zip and unzip code is referenced to http://stackoverflow.com/questions/7485114/how-to-zip-and-unzip-the-files
+        private void zipFiles(String[] files,String zipFile) throws IOException{
+            if(files.length!=0) {
+                int BUFFER_SIZE = 2048;
+                File folder = new File(zipFile.substring(0,zipFile.lastIndexOf("/")));// the folder
+                if (!folder.isDirectory()){
+                    boolean result = folder.mkdirs();
+                }
+                try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)))) {
+                    byte data[] = new byte[BUFFER_SIZE]; // buffer size
+                    for (String fileName : files) {
+                        File file = new File(fileName);
+                        if (file.exists()) {
+                            FileInputStream fi = new FileInputStream(fileName);
+                            try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER_SIZE)) {
+                                ZipEntry entry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
+                                out.putNextEntry(entry);
+                                int count;
+                                while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
+                                    out.write(data, 0, count);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    }
 
-    private void zipFiles(File[] files,String zipFile) throws IOException{
-        int BUFFER_SIZE = 2048;
-        try(ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile))))
-        {
-            byte data[] = new byte[BUFFER_SIZE]; // buffer size
-            for(File file: files){
-                FileInputStream fi = new FileInputStream(file);
-                try(BufferedInputStream origin = new BufferedInputStream(fi,BUFFER_SIZE)){
-                    String fileName = file.getAbsolutePath();
-                    ZipEntry entry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/")+1));
-                    out.putNextEntry(entry);
-                    int count;
-                    while((count = origin.read(data,0,BUFFER_SIZE))!=-1){
-                        out.write(data,0,count);
+        private void zipFiles(File[] files,String zipFile) throws IOException{
+            if(files.length!=0){
+                int BUFFER_SIZE = 2048;
+                File folder = new File(zipFile.substring(0,zipFile.lastIndexOf("/")));// the folder
+                if (!folder.isDirectory()){
+                    boolean result = folder.mkdirs();
+                }
+
+                try(ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile))))
+                {
+                    byte data[] = new byte[BUFFER_SIZE]; // buffer size
+                    for(File file: files){
+                        if(file.exists()){
+                            FileInputStream fi = new FileInputStream(file);
+                            try(BufferedInputStream origin = new BufferedInputStream(fi,BUFFER_SIZE)){
+                                String fileName = file.getAbsolutePath();
+                                ZipEntry entry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/")+1));
+                                out.putNextEntry(entry);
+                                int count;
+                                while((count = origin.read(data,0,BUFFER_SIZE))!=-1){
+                                    out.write(data,0,count);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+
+
+
     }
+
+
+
 
 
 
@@ -172,7 +227,7 @@ public class SettingsFragment extends PreferenceFragment {
                             .show();
                     Log.e(TAG,"Storage Permission Denied");
                 }else{
-                    backupFiles();
+                    new backupTask().execute();
                 }
         }
     }

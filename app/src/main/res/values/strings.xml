@@ -190,10 +190,10 @@
     <string name="settings_backup_title">Backup Bookshelf</string>
     <string name="settings_restore_title">Restore Bookshelf</string>
     <string name="storage_permission_toast">You have to grant STORAGE permission so that we can backup your books!</string>
-    <string name="backup_succeed_toast">Backup Succeeded!</string>
-    <string name="backup_fail_cover_toast">Backup Failed(Type 1)!</string>
-    <string name="backup_fail_coverZip_toast">Backup Failed(Type 2)!</string>
-    <string name="backup_fail_zip_toast">Backup Failed(Type 3)!</string>
+    <string name="backup_succeed_toast">Backup Succeeded! File Path: %1$s</string>
+    <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
+    <string name="backup_progress_dialog_title">Backing Up Bookshelf</string>
+    <string name="backup_progress_dialog_content">Please wait…</string>
 
 
 

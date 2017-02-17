@@ -41,6 +41,7 @@ public class BookLab {
         mDatabase = new BookBaseHelper(context).getWritableDatabase();
     }
 
+
     private static ContentValues getContentValues(Book book){
         ContentValues values = new ContentValues();
         values.put(BookDBSchema.BookTable.Cols.TITLE,book.getTitle());

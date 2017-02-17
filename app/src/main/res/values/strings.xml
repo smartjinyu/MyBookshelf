@@ -198,8 +198,16 @@
     <string name="backup_progress_dialog_content">Please wait…</string>
     <string name="restore_progress_dialog_title">Backing Up Bookshelf</string>
     <string name="choose_folder_dialog_choose">Choose</string>
-    <string name="restore_succeed_toast">Restore Succeeded!</string>
+    <string name="restore_succeed_toast">Restore Succeeded, and App will restart in 2 seconds…</string>
     <string name="restore_fail_toast">Restore Failed! Please check logs and contact the developer!</string>
+    <string name="restore_dialog_title">Backups</string>
+    <string name="restore_dialog_content">Choose backups to restore:</string>
+    <string name="restore_delete_dialog_title">Delete Backup</string>
+    <string name="restore_delete_dialog_content">Are you sure to delete this backup?</string>
+    <string name="restore_no_backup_toast">It seems that there are not any backups in your folder…</string>
+    <string name="restore_confirm_dialog_title">Caution</string>
+    <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in Bookshelf currently. yOU CANNOT recover them after this aciton. Are you sure to continue to restore?</string>
+
 
 
     <!--BatchAddActivity-->

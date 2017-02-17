@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -17,9 +18,13 @@ import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
 
@@ -30,9 +35,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -69,6 +76,12 @@ public class SettingsFragment extends PreferenceFragment{
         backupLocationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Backup Location")
+                        .putContentId("2005")
+                        .putCustomAttribute("Click Backup Location", 1));
+
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
@@ -90,6 +103,12 @@ public class SettingsFragment extends PreferenceFragment{
         backupPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Backup")
+                        .putContentId("2006")
+                        .putCustomAttribute("Click Backup", 1));
+
                 if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
                     FragmentCompat.requestPermissions(SettingsFragment.this,
@@ -105,18 +124,112 @@ public class SettingsFragment extends PreferenceFragment{
         restorePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Restore")
+                        .putContentId("2007")
+                        .putCustomAttribute("Click Restore", 1));
+
                 if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
                     FragmentCompat.requestPermissions(SettingsFragment.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_BACKUP);
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_RESTORE);
                 }else{
-
+                    restoreBackup();
                 }
                 return false;
             }
         });
 
     }
+
+    private void restoreBackup(){
+        File backupFolder = new File(backupLocationPreference.getSummary().toString());
+        final String[] files = backupFolder.list();
+        List<String> backups = new ArrayList<>();
+        for(String name: files){
+            if (name.contains("Bookshelf_backup_") && name.contains(".zip")){
+                long timeInMills = Long.parseLong(name.substring(name.lastIndexOf("_")+1,name.lastIndexOf(".")));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(timeInMills);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String time = format.format(calendar.getTime());
+                backups.add(name + "(" + time + ")");
+            }
+        }
+        if(backups.size()!=0){
+            new MaterialDialog.Builder(getActivity())
+                    .title(R.string.restore_dialog_title)
+                    .content(R.string.restore_dialog_content)
+                    .items(backups)
+                    .itemsCallback(new MaterialDialog.ListCallback() {
+                        @Override
+                        public void onSelection(final MaterialDialog listDialog, View itemView, int position,final CharSequence text) {
+                            new MaterialDialog.Builder(getActivity())
+                                    .title(R.string.restore_confirm_dialog_title)
+                                    .content(R.string.restore_confirm_dialog_content)
+                                    .positiveText(android.R.string.ok)
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            String path = backupLocationPreference.getSummary().toString() + "/"
+                                                    + text.toString().substring(0,text.toString().lastIndexOf(".zip")+4);
+                                            new restoreTask().execute(path);
+                                            listDialog.dismiss();
+                                        }
+                                    })
+                                    .negativeText(android.R.string.cancel)
+                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            dialog.dismiss();
+                                            listDialog.dismiss();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    })
+                    .itemsLongCallback(new MaterialDialog.ListLongCallback() {
+                        @Override
+                        public boolean onLongSelection(final MaterialDialog dialogList, View itemView, final int position, final CharSequence text) {
+                            new MaterialDialog.Builder(getActivity())
+                                    .title(R.string.restore_delete_dialog_title)
+                                    .content(R.string.restore_delete_dialog_content)
+                                    .positiveText(android.R.string.ok)
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            String path = backupLocationPreference.getSummary().toString() + "/"
+                                                    + text.toString().substring(0,text.toString().lastIndexOf(".zip")+4);
+                                            File file = new File(path);
+                                            if(file.exists()){
+                                                file.delete();
+                                            }
+                                            dialogList.getItems().remove(position);
+                                            dialogList.notifyItemsChanged();
+                                        }
+                                    })
+                                    .negativeText(android.R.string.cancel)
+                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .show();
+
+                            return false;
+                        }
+                    })
+                    .autoDismiss(false)
+                    .show();
+        }else{
+            Toast.makeText(getActivity(),getString(R.string.restore_no_backup_toast),Toast.LENGTH_LONG)
+                    .show();
+        }
+
+    }
+
 
 
     private class backupTask extends AsyncTask<Void,Void,Boolean>{
@@ -172,6 +285,12 @@ public class SettingsFragment extends PreferenceFragment{
         @Override
         protected void onPostExecute(Boolean isSucceed){
             mDialog.dismiss();
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentName(TAG)
+                    .putContentType("Backup")
+                    .putContentId("2011")
+                    .putCustomAttribute("Backup Result = ",isSucceed.toString()));
+
             if(isSucceed){
                 String content = String.format(getString(R.string.backup_succeed_toast),zipFile);
                 Toast.makeText(getActivity(),content,Toast.LENGTH_LONG).show();
@@ -241,6 +360,9 @@ public class SettingsFragment extends PreferenceFragment{
 
     }
 
+    /**
+     * Sting - path of backup zip
+     */
     private class restoreTask extends AsyncTask<String,Void,Boolean>{
         private MaterialDialog mDialog;
         @Override
@@ -264,7 +386,8 @@ public class SettingsFragment extends PreferenceFragment{
                 Log.e(TAG,"Unzip failed 1, ioe = " +e.toString());
                 return false;
             }
-            String[] fileName = new File(unZipDir).list();
+            File unzipDirectory = new File(unZipDir);
+            String[] fileName = unzipDirectory.list();
             for(String file: fileName){
                 // restore files
                 if(file.equals("Covers.zip")){
@@ -287,6 +410,7 @@ public class SettingsFragment extends PreferenceFragment{
 
                     continue;
                 }
+
                 if(file.equals(BookShelfLab.PreferenceName + ".xml")){
                     String src = unZipDir + "/" + BookShelfLab.PreferenceName + ".xml";
                     String dest = getActivity().getFilesDir().getParent()+ "/shared_prefs/" + BookShelfLab.PreferenceName + ".xml";
@@ -303,18 +427,21 @@ public class SettingsFragment extends PreferenceFragment{
 
                 if(file.equals(getActivity().getPackageName() + "_preferences.xml")){
                     String src = unZipDir + "/" + getActivity().getPackageName() + "_preferences.xml";
-                    String dest = getActivity().getFilesDir().getParent()+ getActivity().getPackageName() + "_preferences.xml";
+                    String dest = getActivity().getFilesDir().getParent() +"/shared_prefs/" +getActivity().getPackageName() + "_preferences.xml";
                     copyFile(new File(src),new File(dest));
                     continue;
                 }
 
-                if(file.equals(BookBaseHelper.DATABASE_NAME + ".db")){
-                    String src = unZipDir + "/" + BookBaseHelper.DATABASE_NAME + "db.xml";
+                if(file.equals(BookBaseHelper.DATABASE_NAME)){
+                    String src = unZipDir + "/" + BookBaseHelper.DATABASE_NAME;
                     String dest = getActivity().getDatabasePath(BookBaseHelper.DATABASE_NAME).getAbsolutePath();
                     copyFile(new File(src),new File(dest));
                 }
             }
 
+            if(unzipDirectory.exists()){
+                deleteRecursive(unzipDirectory);
+            }
 
             return true;
         }
@@ -322,8 +449,21 @@ public class SettingsFragment extends PreferenceFragment{
         @Override
         protected void onPostExecute(Boolean isSucceed){
             mDialog.dismiss();
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentName(TAG)
+                    .putContentType("Restore")
+                    .putContentId("2010")
+                    .putCustomAttribute("Restore Result = ",isSucceed.toString()));
             if(isSucceed){
                 Toast.makeText(getActivity(),getString(R.string.restore_succeed_toast),Toast.LENGTH_LONG).show();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        restartApp();
+                    }
+                },2000);
+                Log.i(TAG,"Restore successfully!");
             }else{
                 Toast.makeText(getActivity(),getString(R.string.restore_fail_toast),Toast.LENGTH_LONG).show();
             }
@@ -392,6 +532,7 @@ public class SettingsFragment extends PreferenceFragment{
                 FileChannel inChannel = inStream.getChannel();
                 FileChannel outChannel = outStream.getChannel();
                 inChannel.transferTo(0, inChannel.size(), outChannel);
+                Log.i(TAG,"Copy file succeed" + ",src = " + src.getAbsolutePath() + ",dest = " + dst.getAbsolutePath());
                 return true;
             }catch (IOException e){
                 Log.e(TAG,"Copy file IOException = " + e.toString() + ",src = " + src.getAbsolutePath() + ",dest = " + dst.getAbsolutePath());
@@ -399,6 +540,25 @@ public class SettingsFragment extends PreferenceFragment{
             }
 
         }
+        //delete folder
+        void deleteRecursive(File fileOrDirectory) {
+            if (fileOrDirectory.isDirectory())
+                for (File child : fileOrDirectory.listFiles())
+                    deleteRecursive(child);
+
+            fileOrDirectory.delete();
+        }
+
+
+    }
+
+    private void restartApp(){
+        Intent i = getActivity().getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+
+        Runtime.getRuntime().exit(0);
 
     }
 
@@ -440,7 +600,7 @@ public class SettingsFragment extends PreferenceFragment{
                             .show();
                     Log.e(TAG, "Storage Permission Denied 3");
                 }else{
-
+                    restoreBackup();
                 }
                 break;
 

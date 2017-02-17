@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
         renameBookshelfItem.setVisible(showBookshelfMenuItem);
         deleteBookshelfItem.setVisible(showBookshelfMenuItem);
-        if(showLabelMenuItem){//// TODO: 2017/2/5 check searchview here
+        if(showLabelMenuItem){
             Log.d(TAG,"Hide FAM 1");
             mActionAddButton.setVisibility(View.GONE);
             mActionAddButton.hideMenuButton(true);
@@ -835,11 +835,10 @@ public class MainActivity extends AppCompatActivity {
         long drawerSelection = mDrawer.getCurrentSelection();
         if(mDrawer!=null){
             if(drawerSelection < 10 || drawerSelection >= 10 + labels.size()){
-                //not select label
-
+                // not select label
                 showLabelMenuItem = false;
             }else{
-                //select one label
+                // select one label
                 toolbarMode = 1;
                 labelID = labels.get((int)drawerSelection-10).getId();
                 showLabelMenuItem = true;

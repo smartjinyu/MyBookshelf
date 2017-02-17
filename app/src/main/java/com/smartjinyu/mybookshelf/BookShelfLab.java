@@ -27,8 +27,6 @@ public class BookShelfLab {
     private SharedPreferences BookShelfPreference;
     private Context mContext;
 
-
-
     public static BookShelfLab get(Context context){
         if(sBookShelfLab==null){
             sBookShelfLab = new BookShelfLab(context);

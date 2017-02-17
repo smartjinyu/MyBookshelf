@@ -194,7 +194,7 @@
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
     <string name="backup_progress_dialog_title">Backing Up Bookshelf</string>
     <string name="backup_progress_dialog_content">Please wait…</string>
-
+    <string name="choose_folder_dialog_choose">Choose</string>
 
 
     <!--BatchAddActivity-->

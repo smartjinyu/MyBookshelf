@@ -167,7 +167,29 @@
     <string-array name="settings_web_services_entry_values">
         <item>1</item>
     </string-array>
-
+    <string name="storage_permission_toast1">请授予“存储空间”权限以便更改您的备份目录！</string>
+    <string name="storage_permission_toast2">请授予“存储空间”权限以便保存您的备份！</string>
+    <string name="storage_permission_toast3">请授予“存储空间”权限以便恢复您的备份！</string>
+    <string name="title_empty">标题不能为空！</string>
+    <string name="settings_backup_category">备份</string>
+    <string name="settings_backup_location_title">备份位置</string>
+    <string name="settings_backup_title">备份应用</string>
+    <string name="settings_restore_title">恢复应用</string>
+    <string name="restore_confirm_dialog_content">恢复此备份将会覆盖您目前所有的书籍和设置，此操作不能被还原！你确定要继续恢复备份吗？</string>
+    <string name="restore_confirm_dialog_title">注意</string>
+    <string name="restore_delete_dialog_content">你确定要删除此备份吗？</string>
+    <string name="restore_delete_dialog_title">删除备份</string>
+    <string name="restore_dialog_content">选择您要恢复的备份：</string>
+    <string name="restore_dialog_title">备份文件</string>
+    <string name="restore_fail_toast">恢复失败！请您保留日志文件并联系开发者！</string>
+    <string name="restore_no_backup_toast">看上去在备份目录下没有任何备份文件…</string>
+    <string name="restore_progress_dialog_title">正在备份应用</string>
+    <string name="restore_succeed_toast">恢复成功！应用将在2秒钟后自动重启…</string>
+    <string name="choose_folder_dialog_choose">选择</string>
+    <string name="backup_fail_toast">备份失败！请保存日志文件并联系开发者！</string>
+    <string name="backup_progress_dialog_content">请稍候…</string>
+    <string name="backup_progress_dialog_title">正在备份应用</string>
+    <string name="backup_succeed_toast">备份成功！备份文件：%1$s</string>
 
 
 </resources>

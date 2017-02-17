@@ -189,12 +189,17 @@
     <string name="settings_backup_location_title">Backup Location</string>
     <string name="settings_backup_title">Backup Bookshelf</string>
     <string name="settings_restore_title">Restore Bookshelf</string>
-    <string name="storage_permission_toast">You have to grant STORAGE permission so that we can backup your books!</string>
+    <string name="storage_permission_toast1">You have to grant STORAGE permission so that you can choose backup location!</string>
+    <string name="storage_permission_toast2">You have to grant STORAGE permission so that we can backup your books!</string>
+    <string name="storage_permission_toast3">You have to grant STORAGE permission so that we can restore your books!</string>
     <string name="backup_succeed_toast">Backup Succeeded! File Path: %1$s</string>
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
     <string name="backup_progress_dialog_title">Backing Up Bookshelf</string>
     <string name="backup_progress_dialog_content">Please wait…</string>
+    <string name="restore_progress_dialog_title">Backing Up Bookshelf</string>
     <string name="choose_folder_dialog_choose">Choose</string>
+    <string name="restore_succeed_toast">Restore Succeeded!</string>
+    <string name="restore_fail_toast">Restore Failed! Please check logs and contact the developer!</string>
 
 
     <!--BatchAddActivity-->

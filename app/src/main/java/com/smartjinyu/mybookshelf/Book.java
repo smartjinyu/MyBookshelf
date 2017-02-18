@@ -239,11 +239,11 @@ public class Book implements Serializable{
         @Override
         public int compare(Book book1,Book book2){
             String author1 = Pinyin.toPinyin(book1.getAuthors().toString(),"");
-            Log.d(TAG,"Title1 = " + book1.getTitle() + ", Author1 Pinyin = " + author1);
+            //Log.d(TAG,"Title1 = " + book1.getTitle() + ", Author1 Pinyin = " + author1);
             String author2 = Pinyin.toPinyin(book2.getAuthors().toString(),"");
-            Log.d(TAG,"Title2 = " + book2.getTitle() + ", Author2 Pinyin = " + author2);
+            //Log.d(TAG,"Title2 = " + book2.getTitle() + ", Author2 Pinyin = " + author2);
             int result =  author1.compareTo(author2);
-            Log.d(TAG,"Compare result is " + result);
+            //Log.d(TAG,"Compare result is " + result);
             return result;
         }
     }

@@ -2,9 +2,11 @@ package com.smartjinyu.mybookshelf;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean showBookshelfMenuItem = false;
     private boolean showLabelMenuItem = false;
     private int sortMethod;
+    private SharedPreferences defaultSharedPreferences;
 
 
     @Override
@@ -105,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 .putCustomAttribute("onCreate", "onCreate"));
 
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sortMethod = preferences.getInt(SORT_METHOD,0);
+        defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sortMethod = defaultSharedPreferences.getInt(SORT_METHOD,0);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
 
@@ -741,7 +744,6 @@ public class MainActivity extends AppCompatActivity {
             if (holder instanceof BookHolder){
                 Book book = mBooks.get(position-1); // remember to -1 because of the header
                 ((BookHolder)holder).bindBook(book);
-                Log.d(TAG,"onBindViewHolder BookHolder" + position);
             }else if(holder instanceof HeaderViewHolder){
                 // set header
                 ((HeaderViewHolder) holder).setCount(mBooks.size());
@@ -1214,7 +1216,76 @@ public class MainActivity extends AppCompatActivity {
         if(mDrawer!=null && mDrawer.isDrawerOpen()){
             mDrawer.closeDrawer();
         }else{
-            super.onBackPressed();
+            if(defaultSharedPreferences!=null){
+                int startTimes = defaultSharedPreferences.getInt("launchTimes",1);
+                Log.i(TAG,"startTimes = " + startTimes);
+                defaultSharedPreferences.edit().putInt("launchTimes",startTimes + 1).apply();
+                boolean muteRatings = defaultSharedPreferences.getBoolean("muteRatings",false);
+                boolean isRated = defaultSharedPreferences.getBoolean("isRated",false);
+                Log.i(TAG,"rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
+                if(!muteRatings &&
+                        !isRated &&
+                        startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
+                        mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)){
+                    // show ratings dialog
+                    Answers.getInstance().logContentView(new ContentViewEvent()
+                            .putContentName(TAG)
+                            .putContentType("Rating")
+                            .putContentId("2100")
+                            .putCustomAttribute("Rating Dialog show", 1));
+
+                    new MaterialDialog.Builder(this)
+                            .title(R.string.rating_dialog_title)
+                            .content(R.string.rating_dialog_content)
+                            .positiveText(R.string.rating_dialog_positive)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    defaultSharedPreferences.edit().putBoolean("isRated",true).apply();
+                                    Intent i = new Intent(Intent.ACTION_VIEW);
+                                    i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
+                                    startActivity(i);
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Rating")
+                                            .putContentId("2101")
+                                            .putCustomAttribute("Go to Store", 1));
+
+                                    MainActivity.super.onBackPressed();
+                                }
+                            })
+                            .negativeText(R.string.rating_dialog_negative)
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Rating")
+                                            .putContentId("2102")
+                                            .putCustomAttribute("Cancel Rating", 1));
+                                    MainActivity.super.onBackPressed();
+                                }
+                            })
+                            .neutralText(R.string.rating_dialog_neutral)
+                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    defaultSharedPreferences.edit().putBoolean("muteRatings",true).apply();
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Rating")
+                                            .putContentId("2102")
+                                            .putCustomAttribute("Mute Rating", 1));
+                                    MainActivity.super.onBackPressed();
+                                }
+                            })
+                            .show();
+                }else{
+                    super.onBackPressed();
+                }
+            }else{
+                super.onBackPressed();
+            }
         }
     }
 

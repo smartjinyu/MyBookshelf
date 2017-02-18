@@ -58,6 +58,11 @@
     <string name="move_to_dialog_title">Choose bookshelf</string>
     <string name="move_to_dialog_neutral">Add bookshelf</string>
     <string name="search_view_hint">Search Books</string>
+    <string name="rating_dialog_title">Rate Me</string>
+    <string name="rating_dialog_content">If you find this app useful, please rate me on the market. Thanks for your supporting!</string>
+    <string name="rating_dialog_neutral">Don\'t remind</string>
+    <string name="rating_dialog_negative">Cancel</string>
+    <string name="rating_dialog_positive">Rating</string>
 
 
     <!--SingleAddActivity-->

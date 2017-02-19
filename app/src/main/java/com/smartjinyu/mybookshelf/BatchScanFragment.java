@@ -2,6 +2,7 @@ package com.smartjinyu.mybookshelf;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -15,11 +16,15 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
 
 /**
  * Fragment holds camera scanner used for batch add
@@ -32,6 +37,8 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
 
     private ZXingScannerView mScannerView;
     public static boolean mFlash = false;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -111,17 +118,37 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            DoubanFetcher fetcher = new DoubanFetcher();
-                            fetcher.getBookInfo(getActivity(),isbn,1);
+                            beginFetcher(isbn);
                         }
                     })
                     .negativeText(android.R.string.cancel)
                     .show();
         }else{
+            beginFetcher(isbn);
+        }
+    }
+
+    private void beginFetcher(String isbn){
+        BatchAddActivity.indexOfServiceTested = 0;
+        String rawWS = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("webServices",null);
+        if(rawWS!=null){
+            Type type = new TypeToken<Integer[]>(){}.getType();
+            Gson gson = new Gson();
+            BatchAddActivity.selectedServices = gson.fromJson(rawWS,type);
+        }else{
+            BatchAddActivity.selectedServices = new Integer[]{0,1}; //two webServices currently
+        }
+
+        if(BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 0){
             DoubanFetcher fetcher = new DoubanFetcher();
+            fetcher.getBookInfo(getActivity(),isbn,1);
+        }else if(BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 1){
+            OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
             fetcher.getBookInfo(getActivity(),isbn,1);
         }
     }
+
+
 
 
 

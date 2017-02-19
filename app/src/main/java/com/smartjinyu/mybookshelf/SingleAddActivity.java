@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,8 +29,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
 
+import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.List;
 
@@ -49,6 +54,12 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     private ZXingScannerView mScannerView;
     private boolean mFlash;
     private Toolbar mToolbar;
+
+    private Integer[] selectedServices;
+    private int indexOfServiceTested;
+    // the index of service in selectedServices has been tested.
+    // Initially is -1,when the 0st one is tested, it is 0.
+    // Caution it is selectedServices[x], instead of the id of webServices itself.
 
 
 
@@ -189,6 +200,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                                 }
                             }
                         })
+                        .canceledOnTouchOutside(false)
                         .show();
 
         }
@@ -215,8 +227,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            DoubanFetcher fetcher = new DoubanFetcher();
-                            fetcher.getBookInfo(SingleAddActivity.this,isbn,0);
+                            beginFetcher(isbn);
                         }
                     })
                     .negativeText(android.R.string.cancel)
@@ -228,7 +239,26 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                     })
                     .show();
         }else{
+            beginFetcher(isbn);
+        }
+    }
+
+    private void beginFetcher(String isbn){
+        indexOfServiceTested = 0;
+        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices",null);
+        if(rawWS!=null){
+            Type type = new TypeToken<Integer[]>(){}.getType();
+            Gson gson = new Gson();
+            selectedServices = gson.fromJson(rawWS,type);
+        }else{
+            selectedServices = new Integer[]{0,1}; //two webServices currently
+        }
+
+        if(selectedServices[indexOfServiceTested] == 0){
             DoubanFetcher fetcher = new DoubanFetcher();
+            fetcher.getBookInfo(this,isbn,0);
+        }else if(selectedServices[indexOfServiceTested] == 1){
+            OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
             fetcher.getBookInfo(this,isbn,0);
         }
     }
@@ -299,14 +329,26 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 .putCustomAttribute("fetchFailed event = ", event));
 
 
-        if(fetcherID == BookFetcher.fetcherID_DB){
+        indexOfServiceTested += 1;
+        if(indexOfServiceTested < selectedServices.length){
+            // test next
+            if(selectedServices[indexOfServiceTested] == 0){
+                DoubanFetcher fetcher = new DoubanFetcher();
+                fetcher.getBookInfo(this,isbn,0);
+            }else if(selectedServices[indexOfServiceTested] == 1){
+                OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
+                fetcher.getBookInfo(this,isbn,0);
+            }
+        }else{
             if(event == 0){
                 event0Dialog(isbn);
             }else if(event == 1){
                 event1Dialog(isbn);
             }
-
         }
+
+
+
     }
     private void event0Dialog(final String isbn){
         String dialogContent = String.format(getResources().getString(

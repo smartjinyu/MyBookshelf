@@ -29,8 +29,7 @@ public class DoubanFetcher extends BookFetcher{
     @Override
     public void getBookInfo(final Context context, final String isbn,final int mode){
         mContext = context;
-        Retrofit mRetrofit;
-        mRetrofit = new Retrofit.Builder()
+        Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://api.douban.com/v2/book/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

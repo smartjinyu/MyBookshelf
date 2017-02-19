@@ -2,6 +2,7 @@ package com.smartjinyu.mybookshelf;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,6 +26,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
 
@@ -34,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +64,7 @@ public class SettingsFragment extends PreferenceFragment{
     private Preference backupLocationPreference;
     private Preference backupPreference;
     private Preference restorePreference;
+    private Preference webServicesPreference;
 
     private SharedPreferences sharedPreferences;
 
@@ -67,9 +72,63 @@ public class SettingsFragment extends PreferenceFragment{
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_preference);
-
-        backupLocationPreference = findPreference("settings_pref_backup_location");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        setBackupCategory();
+        setWebServicesPreference();
+
+    }
+
+    private void setWebServicesPreference(){
+        webServicesPreference = findPreference("settings_pref_web_services");
+        String rawWS = sharedPreferences.getString("webServices",null);
+        final Integer[] initialSelected;
+        if(rawWS!=null){
+            Type type = new TypeToken<Integer[]>(){}.getType();
+            Gson gson = new Gson();
+            initialSelected = gson.fromJson(rawWS,type);
+        }else{
+            initialSelected = new Integer[]{0,1}; //two webServices currently
+        }
+
+        webServicesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.settings_web_services_title)
+                        .items(R.array.settings_web_services_entries)
+                        .positiveText(android.R.string.ok)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Gson gson = new Gson();
+                                String toSave = gson.toJson(dialog.getSelectedIndices());
+                                sharedPreferences.edit().putString("webServices",toSave).apply();
+                                setWebServicesPreference(); // refresh initial selected list
+                            }
+                        })
+                        .alwaysCallMultiChoiceCallback()
+                        .itemsCallbackMultiChoice(initialSelected, new MaterialDialog.ListCallbackMultiChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                boolean allowSelectionChange = which.length >= 1;
+                                if(!allowSelectionChange){
+                                    Toast.makeText(getActivity(),R.string.settings_web_services_min_toast,Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                                return allowSelectionChange;
+                            }
+                        })
+                        .canceledOnTouchOutside(false)
+                        .show();
+
+                return false;
+            }
+        });
+
+    }
+
+    private void setBackupCategory(){
+        backupLocationPreference = findPreference("settings_pref_backup_location");
         final String path = sharedPreferences.getString("settings_pref_backup_location",
                 Environment.getExternalStorageDirectory().getAbsolutePath()+"/backups");
         backupLocationPreference.setSummary(path);

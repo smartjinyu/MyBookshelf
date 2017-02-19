@@ -43,6 +43,13 @@ public class BatchAddActivity extends AppCompatActivity {
 
     FragmentPagerAdapter adapter;
 
+    public static Integer[] selectedServices;
+    public static int indexOfServiceTested;
+    // the index of service in selectedServices has been tested.
+    // Initially is -1,when the 0st one is tested, it is 0.
+    // Caution it is selectedServices[x], instead of the id of webServices itself.
+
+
     public static List<Book> mBooks;// books added
 
     @Override
@@ -330,13 +337,22 @@ public class BatchAddActivity extends AppCompatActivity {
          * event = 1, request failed
          */
 
-        if(fetcherID == BookFetcher.fetcherID_DB){
+        indexOfServiceTested += 1;
+        if(indexOfServiceTested < selectedServices.length){
+            // test next
+            if(selectedServices[indexOfServiceTested] == 0){
+                DoubanFetcher fetcher = new DoubanFetcher();
+                fetcher.getBookInfo(this,isbn,1);
+            }else if(selectedServices[indexOfServiceTested] == 1){
+                OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
+                fetcher.getBookInfo(this,isbn,1);
+            }
+        }else{
             if(event == 0){
                 event0Dialog(isbn);
             }else if(event == 1){
                 event1Dialog(isbn);
             }
-
         }
     }
     private void event0Dialog(final String isbn){

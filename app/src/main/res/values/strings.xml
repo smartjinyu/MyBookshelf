@@ -184,11 +184,14 @@
     <string name="settings_info_retrieval">Book Info Retrieval</string>
     <string-array name="settings_web_services_entries">
         <item>Douban.com</item>
+        <item>OpenLibrary.com</item>
     </string-array>
     <string-array name="settings_web_services_entry_values">
         <item>1</item>
+        <item>2</item>
     </string-array>
     <string name="settings_web_services_title">Web Services</string>
+    <string name="settings_web_services_min_toast">You have to choose at least one service!</string>
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
     <string name="settings_backup_category">Backup</string>
     <string name="settings_backup_location_title">Backup Location</string>

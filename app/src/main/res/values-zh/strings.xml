@@ -55,7 +55,7 @@
     <string name="book_info_pubtime_clipboard_content">出版时间：%1$s</string>
     <string name="book_info_pubtime_image_view">出版时间</string>
     <string name="book_info_pubtime_toast">出版时间已复制到剪贴板！</string>
-    <string name="book_info_title">信息</string>
+    <string name="book_info_title">信息(来源: %1$s)</string>
     <string name="book_info_title_clipboard_content">标题：%1$s</string>
     <string name="book_info_title_image_view">标题</string>
     <string name="book_info_title_toast">标题已复制到剪贴板！</string>
@@ -138,7 +138,6 @@
     <string name="request_failed_dialog_batch_content">此书的 ISBN 是%1$s，我们无法获取书籍详情，请检查您的网络。您可以再次扫描或使用单个添加功能手动添加ben\'shu</string>
     <string name="request_failed_dialog_content">此书的 ISBN 是%1$s，我们无法获取书籍详情，请检查您的网络。您可以手动输入详情或重新扫描。</string>
     <string name="search_view_hint">搜索书籍</string>
-    <string name="separator_text_view1">详情</string>
     <string name="settings_auto_complete_website_title">自动填充“网站”栏</string>
     <string name="settings_info_retrieval">自动获取书籍详情</string>
     <string name="settings_settings">设置</string>
@@ -190,6 +189,13 @@
     <string name="backup_progress_dialog_content">请稍候…</string>
     <string name="backup_progress_dialog_title">正在备份应用</string>
     <string name="backup_succeed_toast">备份成功！备份文件：%1$s</string>
+    <string name="rating_dialog_content">如果您觉得此 APP 对您有所帮助，请为我们在应用市场评分。感谢您的支持！</string>
+    <string name="rating_dialog_negative">退出</string>
+    <string name="rating_dialog_neutral">不再提醒</string>
+    <string name="rating_dialog_positive">评分</string>
+    <string name="rating_dialog_title">评分</string>
+    <string name="separator_text_view" translatable="false">详情(来源: %1$s)</string>
+    <string name="settings_web_services_min_toast">请至少选择一个网络服务！</string>
 
 
 </resources>

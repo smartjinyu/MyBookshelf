@@ -25,6 +25,7 @@ import com.klinker.android.sliding.SlidingActivity;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -37,6 +38,7 @@ public class BookDetailActivity extends SlidingActivity {
     public static String Intent_Book_ToEdit = "BOOKTOEDIT";
     private Book mBook;
 
+    private TextView infoTitleTextView;
     private ImageView coverImageView;
     private TextView addtimeTextView;
     private RelativeLayout authorRelativeLayout;
@@ -120,6 +122,7 @@ public class BookDetailActivity extends SlidingActivity {
         pubtimeTextView = (TextView) findViewById(R.id.book_info_pubtime_text_view);
         isbnRelativeLayout = (RelativeLayout) findViewById(R.id.book_info_isbn_item);
         isbnTextView = (TextView) findViewById(R.id.book_info_isbn_text_view);
+        infoTitleTextView = (TextView) findViewById(R.id.book_info_title_bar_text_view);
 
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
@@ -256,6 +259,31 @@ public class BookDetailActivity extends SlidingActivity {
         }else{
             isbnRelativeLayout.setVisibility(View.GONE);
         }
+
+        boolean isManually = false;
+        Map<String,String> webIds = mBook.getWebIds();
+        if(webIds == null || webIds.size() ==0 ){
+            isManually = true;
+        }else{
+            for(String key: webIds.keySet()){
+                if(key.equals("douban")){
+                    isManually = false;
+                    String detailBarText = String.format(getString(R.string.book_info_title),"DouBan.com");
+                    infoTitleTextView.setText(detailBarText);
+                    continue;
+                }
+                if(key.equals("openLibrary")){
+                    isManually = false;
+                    String detailBarText = String.format(getString(R.string.book_info_title),"OpenLibrary.org");
+                    infoTitleTextView.setText(detailBarText);
+                }
+            }
+        }
+        if(isManually){
+            String detailBarText = String.format(getString(R.string.book_info_title),"Manually");
+            infoTitleTextView.setText(detailBarText);
+        }
+
 
 
 

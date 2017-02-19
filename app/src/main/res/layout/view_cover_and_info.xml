@@ -6,6 +6,8 @@
               android:layout_marginEnd="12dp"
               android:layout_marginTop="16dp">
 
+
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,6 +23,7 @@
             android:background="@android:color/darker_gray"
             android:contentDescription="@string/book_cover_image_view_hint"
             android:cropToPadding="true"/>
+
 
     </LinearLayout>
 

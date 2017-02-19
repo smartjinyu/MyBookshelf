@@ -16,7 +16,9 @@
                       android:orientation="vertical"
                       android:focusable="true"
                       android:focusableInTouchMode="true">
+
             <include layout="@layout/view_cover_and_info"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -24,9 +26,9 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp">
                 <TextView
+                    android:id="@+id/book_edit_detail_bar_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/separator_text_view1"
                     style="?android:listSeparatorTextViewStyle"/>
 
                 <RelativeLayout

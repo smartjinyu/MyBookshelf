@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -65,6 +67,7 @@ public class BookEditActivity extends AppCompatActivity{
     private EditText notesEditText;
     private EditText websiteEditText;
     private LinearLayout translator_layout;
+    private TextView detailBarTextView;
 
 
     @Override
@@ -386,6 +389,7 @@ public class BookEditActivity extends AppCompatActivity{
         pubmonthEditText = (EditText) findViewById(R.id.book_pubmonth_edit_text);
         isbnEditText = (EditText) findViewById(R.id.book_isbn_edit_text);
         translator_layout = (LinearLayout) findViewById(R.id.translator_layout);
+        detailBarTextView = (TextView) findViewById(R.id.book_edit_detail_bar_text_view);
 
         titleEditText.setText(mBook.getTitle());
 
@@ -429,6 +433,29 @@ public class BookEditActivity extends AppCompatActivity{
 
 
         isbnEditText.setText(mBook.getIsbn());
+        boolean isManually = false;
+        Map<String,String> webIds = mBook.getWebIds();
+        if(webIds == null || webIds.size() ==0 ){
+            isManually = true;
+        }else{
+            for(String key: webIds.keySet()){
+                if(key.equals("douban")){
+                    isManually = false;
+                    String detailBarText = String.format(getString(R.string.separator_text_view),"DouBan.com");
+                    detailBarTextView.setText(detailBarText);
+                    continue;
+                }
+                if(key.equals("openLibrary")){
+                    isManually = false;
+                    String detailBarText = String.format(getString(R.string.separator_text_view),"OpenLibrary.org");
+                    detailBarTextView.setText(detailBarText);
+                }
+            }
+        }
+        if(isManually){
+            String detailBarText = String.format(getString(R.string.separator_text_view),"Manually");
+            detailBarTextView.setText(detailBarText);
+        }
     }
 
     private int curBookshelfPos;

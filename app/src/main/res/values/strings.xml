@@ -109,7 +109,7 @@
     <string name="book_isbn_edit_text_hint">ISBN of the Book</string>
     <string name="book_pubyear_edit_text_hint">Year</string>
     <string name="book_pubmonth_edit_text_hint">Mon</string>
-    <string name="separator_text_view1">Details</string>
+    <string name="separator_text_view">Details (Source: %1$s)</string>
     <string name="reading_status_image_view">Reading Status</string>
     <string name="book_shelf_image_view">Bookshelf</string>
     <string name="note_edit_text_hint">Notes</string>
@@ -143,7 +143,7 @@
     <!--in Book.java, default book shelf id doesn't refer to here-->
 
     <!--BookDetailActivity-->
-    <string name="book_info_title">Info</string>
+    <string name="book_info_title">Info (Source: %1$s)</string>
     <string name="book_info_title_image_view">Title</string>
     <string name="book_info_title_toast">Title copied to clipboard!</string>
     <string name="book_info_title_clipboard_content">Title: %1$s</string>
@@ -183,12 +183,8 @@
     <string name="settings_settings">Settings</string>
     <string name="settings_info_retrieval">Book Info Retrieval</string>
     <string-array name="settings_web_services_entries">
-        <item>Douban.com</item>
+        <item>DouBan.com</item>
         <item>OpenLibrary.com</item>
-    </string-array>
-    <string-array name="settings_web_services_entry_values">
-        <item>1</item>
-        <item>2</item>
     </string-array>
     <string name="settings_web_services_title">Web Services</string>
     <string name="settings_web_services_min_toast">You have to choose at least one service!</string>

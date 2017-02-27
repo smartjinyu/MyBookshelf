@@ -59,7 +59,7 @@
     <string name="move_to_dialog_neutral">Add bookshelf</string>
     <string name="search_view_hint">Search Books</string>
     <string name="rating_dialog_title">Rate Me</string>
-    <string name="rating_dialog_content">If you find this app useful, please rate me on the market. Thanks for your supporting!</string>
+    <string name="rating_dialog_content">If you find this app useful, please give me five stars on the market. Thanks for your supporting!</string>
     <string name="rating_dialog_neutral">Don\'t remind</string>
     <string name="rating_dialog_negative">Cancel</string>
     <string name="rating_dialog_positive">Rating</string>
@@ -170,6 +170,8 @@
 
     <!--About-->
     <string name="about_preference_category_title">About</string>
+    <string name="about_preference_rate_title">Rate Me</string>
+    <string name="about_preference_rate_summary">Please give five stars if you find it useful!</string>
     <string name="about_preference_donate_title">Donate Me</string>
     <string name="about_preference_donate_summary" translatable="false">PayPal Alipay:smartjinyu@gmail.com</string>
     <string name="about_preference_donate_toast">My account has been copied to clipboard! Thanks for your donating!</string>

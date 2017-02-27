@@ -7,8 +7,17 @@
             android:key="about_pref_name">
             <intent
                 android:action="android.intent.action.VIEW"
+                android:data="https://smartjinyu.com/android/2017/02/09/mybookshelf.html"/>
+        </Preference>
+        <Preference
+            android:title="@string/about_preference_rate_title"
+            android:summary="@string/about_preference_rate_summary"
+            android:key="about_pref_market">
+            <intent
+                android:action="android.intent.action.VIEW"
                 android:data="market://details?id=com.smartjinyu.mybookshelf"/>
         </Preference>
+
         <Preference
             android:title="@string/about_preference_donate_title"
             android:summary="@string/about_preference_donate_summary"

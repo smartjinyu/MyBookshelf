@@ -604,16 +604,22 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this, mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                if(isMultiSelect){
-                    multiSelect(position-1);
-                }else{
-                    if(mActionAddButton.isOpened()){
-                        mActionAddButton.close(true);
+                Log.d(TAG,"Click recyclerView position = " + position);
+                if(position!=-1){
+                    //// TODO: 2017/2/19 for unknown reason, in some cases position will be -1
+                    if(isMultiSelect){
+                        multiSelect(position-1);
                     }else{
-                        Intent i = new Intent(MainActivity.this,BookDetailActivity.class);
-                        i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position-1));
-                        startActivity(i);
+                        if(mActionAddButton.isOpened()){
+                            mActionAddButton.close(true);
+                        }else{
+                            Intent i = new Intent(MainActivity.this,BookDetailActivity.class);
+                            i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position-1));
+                            startActivity(i);
+                        }
                     }
+                }else{
+                    Log.e(TAG,"RecyclerView Position -1");
                 }
             }
 
@@ -779,7 +785,7 @@ public class MainActivity extends AppCompatActivity {
         bookShelves.add(0, allBookShelf);
         ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<>(
                 this, R.layout.spinner_item_white, bookShelves);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_drop_down_white);
         mSpinner.setAdapter(arrayAdapter);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

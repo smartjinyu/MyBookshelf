@@ -161,10 +161,8 @@
         <item>出版时间</item>
     </string-array>
     <string-array name="settings_web_services_entries">
-        <item>Douban.com</item>
-    </string-array>
-    <string-array name="settings_web_services_entry_values">
-        <item>1</item>
+        <item>DouBan.com</item>
+        <item>OpenLibrary.org</item>
     </string-array>
     <string name="storage_permission_toast1">请授予“存储空间”权限以便更改您的备份目录！</string>
     <string name="storage_permission_toast2">请授予“存储空间”权限以便保存您的备份！</string>
@@ -194,7 +192,7 @@
     <string name="rating_dialog_neutral">不再提醒</string>
     <string name="rating_dialog_positive">评分</string>
     <string name="rating_dialog_title">评分</string>
-    <string name="separator_text_view" translatable="false">详情(来源: %1$s)</string>
+    <string name="separator_text_view">详情(来源: %1$s)</string>
     <string name="settings_web_services_min_toast">请至少选择一个网络服务！</string>
 
 

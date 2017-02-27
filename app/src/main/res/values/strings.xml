@@ -184,7 +184,7 @@
     <string name="settings_info_retrieval">Book Info Retrieval</string>
     <string-array name="settings_web_services_entries">
         <item>DouBan.com</item>
-        <item>OpenLibrary.com</item>
+        <item>OpenLibrary.org</item>
     </string-array>
     <string name="settings_web_services_title">Web Services</string>
     <string name="settings_web_services_min_toast">You have to choose at least one service!</string>

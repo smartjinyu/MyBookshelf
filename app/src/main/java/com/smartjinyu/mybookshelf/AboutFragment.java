@@ -11,12 +11,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.mikepenz.materialize.color.Material;
+
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 /**
  * about fragment
@@ -43,17 +52,109 @@ public class AboutFragment extends PreferenceFragment {
         donatePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ClipboardManager clipboardManager =
-                        (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                Toast.makeText(
-                        getActivity(),
-                        getResources().getString(R.string.about_preference_donate_toast),
-                        Toast.LENGTH_SHORT)
-                        .show();
-                ClipData clipData = ClipData.newPlainText(
-                        getString(R.string.app_name),
-                        "smartjinyu@gmail.com");
-                clipboardManager.setPrimaryClip(clipData);
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Donate")
+                        .putContentId("2020")
+                        .putCustomAttribute("Donate Clicked", "Donate Clicked"));
+                boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(getActivity());
+                if(hasInstalledAlipayClient){
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.about_preference_rate_title)
+                            .content(R.string.about_donate_dialog_content)
+                            .positiveText(R.string.about_donate_dialog_positive0)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    AlipayZeroSdk.startAlipayClient(getActivity(), getString(R.string.about_donate_alipay_qrcode));
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Donate")
+                                            .putContentId("2021")
+                                            .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
+                                    dialog.dismiss();
+                                }
+                            })
+                            .negativeText(R.string.about_donate_dialog_negative0)
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    ClipboardManager clipboardManager =
+                                            (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    Toast.makeText(
+                                            getActivity(),
+                                            getResources().getString(R.string.about_preference_donate_toast),
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                    ClipData clipData = ClipData.newPlainText(
+                                            getString(R.string.app_name),
+                                            "smartjinyu@gmail.com");
+                                    clipboardManager.setPrimaryClip(clipData);
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Donate")
+                                            .putContentId("2022")
+                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                    dialog.dismiss();
+                                }
+                            })
+                            .neutralText(android.R.string.cancel)
+                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Donate")
+                                            .putContentId("2023")
+                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }else{
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.about_preference_rate_title)
+                            .content(R.string.about_donate_dialog_content)
+                            .positiveText(R.string.about_donate_dialog_negative0)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    ClipboardManager clipboardManager =
+                                            (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    Toast.makeText(
+                                            getActivity(),
+                                            getResources().getString(R.string.about_preference_donate_toast),
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                    ClipData clipData = ClipData.newPlainText(
+                                            getString(R.string.app_name),
+                                            "smartjinyu@gmail.com");
+                                    clipboardManager.setPrimaryClip(clipData);
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Donate")
+                                            .putContentId("2022")
+                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                    dialog.dismiss();
+                                }
+                            })
+                            .negativeText(android.R.string.cancel)
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Donate")
+                                            .putContentId("2023")
+                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+
+                }
                 return true;
             }
         });

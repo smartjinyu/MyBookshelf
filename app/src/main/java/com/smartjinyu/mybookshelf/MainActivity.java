@@ -1,5 +1,8 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -36,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -58,6 +62,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
 import io.fabric.sdk.android.Fabric;
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -514,6 +520,120 @@ public class MainActivity extends AppCompatActivity {
                             }else if(drawerItem.getIdentifier() == 5){
                                 Intent i = new Intent(MainActivity.this,AboutActivity.class);
                                 startActivity(i);
+                            }else if(drawerItem.getIdentifier() == 6){
+                                defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                                Answers.getInstance().logContentView(new ContentViewEvent()
+                                        .putContentName(TAG)
+                                        .putContentType("Donate")
+                                        .putContentId("2030")
+                                        .putCustomAttribute("Donate Clicked", "Donate Clicked"));
+
+
+                                boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
+                                if(hasInstalledAlipayClient){
+                                    new MaterialDialog.Builder(MainActivity.this)
+                                            .title(R.string.about_preference_rate_title)
+                                            .content(R.string.about_donate_dialog_content)
+                                            .positiveText(R.string.about_donate_dialog_positive0)
+                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
+                                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                                            .putContentName(TAG)
+                                                            .putContentType("Donate")
+                                                            .putContentId("2031")
+                                                            .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
+                                                    dialog.dismiss();
+                                                    setDrawer(mDrawer.getCurrentSelection());
+                                                }
+                                            })
+                                            .negativeText(R.string.about_donate_dialog_negative0)
+                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    ClipboardManager clipboardManager =
+                                                            (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                                                    Toast.makeText(
+                                                            MainActivity.this,
+                                                            getResources().getString(R.string.about_preference_donate_toast),
+                                                            Toast.LENGTH_SHORT)
+                                                            .show();
+                                                    ClipData clipData = ClipData.newPlainText(
+                                                            getString(R.string.app_name),
+                                                            "smartjinyu@gmail.com");
+                                                    clipboardManager.setPrimaryClip(clipData);
+                                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                                            .putContentName(TAG)
+                                                            .putContentType("Donate")
+                                                            .putContentId("2032")
+                                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                                    dialog.dismiss();
+                                                    setDrawer(mDrawer.getCurrentSelection());
+                                                }
+                                            })
+                                            .neutralText(android.R.string.cancel)
+                                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                                            .putContentName(TAG)
+                                                            .putContentType("Donate")
+                                                            .putContentId("2033")
+                                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                                                    dialog.dismiss();
+                                                    setDrawer(mDrawer.getCurrentSelection());
+
+                                                }
+                                            })
+                                            .show();
+                                }else{
+                                    new MaterialDialog.Builder(MainActivity.this)
+                                            .title(R.string.about_preference_rate_title)
+                                            .content(R.string.about_donate_dialog_content)
+                                            .positiveText(R.string.about_donate_dialog_negative0)
+                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    ClipboardManager clipboardManager =
+                                                            (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                                    Toast.makeText(
+                                                            MainActivity.this,
+                                                            getResources().getString(R.string.about_preference_donate_toast),
+                                                            Toast.LENGTH_SHORT)
+                                                            .show();
+                                                    ClipData clipData = ClipData.newPlainText(
+                                                            getString(R.string.app_name),
+                                                            "smartjinyu@gmail.com");
+                                                    clipboardManager.setPrimaryClip(clipData);
+                                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                                            .putContentName(TAG)
+                                                            .putContentType("Donate")
+                                                            .putContentId("2032")
+                                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                                    dialog.dismiss();
+                                                    setDrawer(mDrawer.getCurrentSelection());
+
+                                                }
+                                            })
+                                            .negativeText(android.R.string.cancel)
+                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                                            .putContentName(TAG)
+                                                            .putContentType("Donate")
+                                                            .putContentId("2033")
+                                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                                                    dialog.dismiss();
+                                                    setDrawer(mDrawer.getCurrentSelection());
+
+                                                }
+                                            })
+                                            .show();
+
+                                }
+
                             }
                         }
                         return false;
@@ -522,7 +642,17 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         //.withSavedInstance(savedInstanceState) do not use this
-                // because we add items after .build()
+                // because we will add items after .build()
+        // donate
+        boolean isDonateShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow",true);
+        if(isDonateShow){
+            IDrawerItem drawerItem = new PrimaryDrawerItem()
+                    .withName(R.string.drawer_item_donate)
+                    .withIcon(R.drawable.ic_donate)
+                    .withIdentifier(6)// identifier begin from 10
+                    .withSelectable(false);
+            mDrawer.addItemAtPosition(drawerItem,6);
+        }
         /**
          * About position
          * begin at 1

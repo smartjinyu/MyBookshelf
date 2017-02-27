@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -26,7 +27,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +94,16 @@ public class BatchAddActivity extends AppCompatActivity {
                 dialogBeforeDiscard();
             }
         });
+
+        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices",null);
+        if(rawWS!=null){
+            Type type = new TypeToken<Integer[]>(){}.getType();
+            Gson gson = new Gson();
+            selectedServices = gson.fromJson(rawWS,type);
+        }else{
+            selectedServices = new Integer[]{0,1}; //two webServices currently
+        }
+
     }
 
     @Override

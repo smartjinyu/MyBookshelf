@@ -1,1 +1,1 @@
-include ':app', ':searchview'
+include ':app', ':searchview', 'AlipayZeroSdk'

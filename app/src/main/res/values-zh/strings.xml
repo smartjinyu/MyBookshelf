@@ -194,6 +194,9 @@
     <string name="rating_dialog_title">评分</string>
     <string name="separator_text_view">详情(来源: %1$s)</string>
     <string name="settings_web_services_min_toast">请至少选择一个网络服务！</string>
+    <string name="about_preference_rate_title">评分</string>
+    <string name="drawer_item_donate">捐赠</string>
+    <string name="about_preference_rate_summary">如果觉得好用，请为我们打五分</string>
 
 
 </resources>

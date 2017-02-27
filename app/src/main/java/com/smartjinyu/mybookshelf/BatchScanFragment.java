@@ -2,7 +2,6 @@ package com.smartjinyu.mybookshelf;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -16,11 +15,7 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
-
-import java.lang.reflect.Type;
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -71,7 +66,6 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
         }
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
         super.onCreateOptionsMenu(menu,inflater);
-
     }
 
     @Override
@@ -130,15 +124,6 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
 
     private void beginFetcher(String isbn){
         BatchAddActivity.indexOfServiceTested = 0;
-        String rawWS = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("webServices",null);
-        if(rawWS!=null){
-            Type type = new TypeToken<Integer[]>(){}.getType();
-            Gson gson = new Gson();
-            BatchAddActivity.selectedServices = gson.fromJson(rawWS,type);
-        }else{
-            BatchAddActivity.selectedServices = new Integer[]{0,1}; //two webServices currently
-        }
-
         if(BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 0){
             DoubanFetcher fetcher = new DoubanFetcher();
             fetcher.getBookInfo(getActivity(),isbn,1);

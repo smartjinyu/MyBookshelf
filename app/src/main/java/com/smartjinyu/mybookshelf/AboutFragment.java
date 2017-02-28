@@ -46,7 +46,7 @@ public class AboutFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.about_preference);
 
         namePreference = findPreference("about_pref_name");
-        namePreference.setSummary(BuildConfig.VERSION_NAME);
+        namePreference.setSummary(BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")");
 
         donatePreference = findPreference("about_pref_donate");
         donatePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

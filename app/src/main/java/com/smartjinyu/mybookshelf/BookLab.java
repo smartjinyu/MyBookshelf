@@ -175,6 +175,9 @@ public class BookLab {
         List<Book> books = new ArrayList<>();
         String whereClause;
         String[] whereArgs;
+        if(keyword==null){
+            return getBooks(bookshelfID,null);
+        }
         // in sql, "GLOB" is case-sensitive while "LIKE" is case-insensitive
         if(bookshelfID==null){
             // on all bookshelves

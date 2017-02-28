@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String drawerSelected = "drawerSelected";
     private static final String SORT_METHOD = "SORT_METHOD";
+    private static final String ACTION_SEARCH ="com.smartjinyu.mybookshelf.ACTION_SEARCH";
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean showLabelMenuItem = false;
     private int sortMethod;
     private SharedPreferences defaultSharedPreferences;
+    private boolean actionSearch = false;
 
 
     @Override
@@ -130,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         }
         setDrawer(drawerSelection);
         setSearchView();
+        if(getIntent().getAction().equals(ACTION_SEARCH)){
+            actionSearch = true;
+        }
+
+
 
 
 
@@ -1048,13 +1055,20 @@ public class MainActivity extends AppCompatActivity {
             setDrawer(mDrawer.getCurrentSelection());
         }
 
-        if(mSearchView!=null && mSearchView.isSearchOpen()){
-            // bug in searchview lib, if we remove focus from it,
-            // isSearchOpen will return false no matter it is expanded or not
-            updateUI(true,mSearchView.getQuery().toString());
-        }else{
-            updateUI(true,null);
+
+//        if(mSearchView!=null && mSearchView.isSearchOpen()){
+//            updateUI(true,mSearchView.getQuery().toString());
+//        }else{
+//            updateUI(true,null);
+//        }
+        updateUI(true,null);
+        Log.d(TAG,"ACTION_SEARCH = " + actionSearch);
+        if(actionSearch){
+            mSearchView.open(true);
+            actionSearch = false;
         }
+
+
     }
 
 

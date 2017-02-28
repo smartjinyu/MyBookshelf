@@ -244,5 +244,9 @@
     <string name="batch_add_delete_book_dialog_positive">Delete</string>
     <string name="batch_add_menu_item_save">Save</string>
 
+    <!--App shortcuts-->
+    <string name="shortcut_name_add">Add Book</string>
+    <string name="shortcut_name_search">Search</string>
+
 
 </resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shortcut_add"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add"
+        android:shortcutShortLabel="@string/shortcut_name_add"
+        android:shortcutLongLabel="@string/shortcut_name_add">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.smartjinyu.mybookshelf"
+            android:targetClass="com.smartjinyu.mybookshelf.SingleAddActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_search"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_search"
+        android:shortcutShortLabel="@string/shortcut_name_search"
+        android:shortcutLongLabel="@string/shortcut_name_search">
+        <intent
+            android:action="com.smartjinyu.mybookshelf.ACTION_SEARCH"
+            android:targetPackage="com.smartjinyu.mybookshelf"
+            android:targetClass="com.smartjinyu.mybookshelf.MainActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+</shortcuts>

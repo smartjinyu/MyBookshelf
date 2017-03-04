@@ -5,12 +5,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -72,6 +72,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String drawerSelected = "drawerSelected";
@@ -121,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
 
-
         setRecyclerView();
         setFloatingActionButton();
         setToolbar();
@@ -135,10 +135,13 @@ public class MainActivity extends AppCompatActivity {
         if(getIntent().getAction().equals(ACTION_SEARCH)){
             actionSearch = true;
         }
-
-
-
-
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new UpdateCheck(MainActivity.this);
+            }
+        },3000);
 
     }
 
@@ -400,7 +403,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void setDrawer(long selectionIdentifier){
         final List<Label> labels = LabelLab.get(this).getLabels();
@@ -715,7 +717,6 @@ public class MainActivity extends AppCompatActivity {
         mActionAddButton.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(this,R.anim.hide_to_bottom));
     }
 
-
     private void setRecyclerView(){
         mRecyclerView = (RecyclerView) findViewById(R.id.booklist_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -1025,7 +1026,6 @@ public class MainActivity extends AppCompatActivity {
                 .putInt(SORT_METHOD,sortMethod).apply();
     }
 
-
     /**
      *
      * @param updateBooksList whether to retrieve a new List<Book> mBooks
@@ -1071,7 +1071,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void multiSelect(int position){
         //Add/Remove items from list
         if(mActionMode!=null){
@@ -1093,7 +1092,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 
     private boolean showFAM = true;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -1346,10 +1344,6 @@ public class MainActivity extends AppCompatActivity {
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
     };
-
-
-
-
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {

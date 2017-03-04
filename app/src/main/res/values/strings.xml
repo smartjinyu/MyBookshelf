@@ -66,6 +66,11 @@
     <string name="rating_dialog_neutral">Don\'t remind</string>
     <string name="rating_dialog_negative">Cancel</string>
     <string name="rating_dialog_positive">Rating</string>
+    <string name="new_version_find_dialog_title">New Version Available</string>
+    <string name="new_version_find_dialog_content">New version of Bookshelf is available now! \nThe newest version is %1$s.\nWe highly recommend to update this app.If you cannot find it in the market, please refer to my Blog.</string>
+    <string name="new_version_find_dialog_positive">Market</string>
+    <string name="new_version_find_dialog_negative">My Blog</string>
+    
 
 
     <!--SingleAddActivity-->

@@ -36,4 +36,19 @@ public class BookShelf {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof BookShelf)){
+            return false;
+        }
+        BookShelf bookshelf = (BookShelf) o;
+        return bookshelf.getId().equals(id);
+    }
+
+    @Override
+    public int hashCode(){
+        return id.hashCode();
+    }
+
 }

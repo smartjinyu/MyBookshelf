@@ -530,67 +530,6 @@ public class BookEditActivity extends AppCompatActivity{
                                 }
                             })
                             .show();
-
-
-                    /* Default Dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mBookEditActivity);
-                    final EditText editText = new EditText(mBookEditActivity);
-                    editText.setHint(R.string.custom_book_shelf_dialog_edit_text);
-                    builder.setTitle(R.string.custom_book_shelf_dialog_title);
-                    builder.setView(editText);
-                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            BookShelf bookShelf = new BookShelf();
-                            bookShelf.setTitle(editText.getText().toString());
-                            bookShelfLab.addBookShelf(bookShelf);
-                            mBook.setBookshelfID(bookShelf.getId());
-                            Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());
-                            setBookShelf();
-                        }
-                    });
-
-                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            bookshelfSpinner.setSelection(curBookshelfPos);
-                        }
-                    });
-                    final AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    final Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positiveButton.setEnabled(false);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if(editable.toString().length()==0){
-                                positiveButton.setEnabled(false);
-                            }else{
-                                positiveButton.setEnabled(true);
-                            }
-                        }
-                    });
-                    alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                            if(i == KeyEvent.KEYCODE_BACK){
-                                bookshelfSpinner.setSelection(curBookshelfPos);
-                                dialogInterface.dismiss();
-                            }
-                            return true;
-                        }
-                    });
-                    */
                 }else{
                     Log.i(TAG,"set bookshelf " + selectedBS.getTitle());
                     curBookshelfPos = pos;

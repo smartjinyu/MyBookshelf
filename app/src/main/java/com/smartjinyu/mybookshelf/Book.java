@@ -248,6 +248,20 @@ public class Book implements Serializable{
         }
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Book)){
+            return false;
+        }
+        Book book = (Book) o;
+        return book.getId().equals(id);
+    }
+
+    @Override
+    public int hashCode(){
+        return id.hashCode();
+    }
+
 
 
 

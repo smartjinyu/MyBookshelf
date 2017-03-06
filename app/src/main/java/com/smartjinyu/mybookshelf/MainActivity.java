@@ -639,6 +639,7 @@ public class MainActivity extends AppCompatActivity {
                         if(mActionAddButton.isOpened()){
                             mActionAddButton.close(true);
                         }else{
+                            Log.d(TAG,"Clicked Book's hashcode is " + mBooks.get(position-1).hashCode());
                             Intent i = new Intent(MainActivity.this,BookDetailActivity.class);
                             i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position-1));
                             startActivity(i);
@@ -664,7 +665,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class BookHolder extends RecyclerView.ViewHolder {
+    private class BookHolder extends RecyclerView.ViewHolder {
 
         private ImageView mCoverImageView;
         private TextView mTitleTextView;
@@ -736,7 +737,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+    private class HeaderViewHolder extends RecyclerView.ViewHolder{
         private TextView mTextView;
         public HeaderViewHolder(View itemView){
             super(itemView);
@@ -748,7 +749,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         // implement header
         private static final int TYPE_HEADER = 0;
         private static final int TYPE_ITEM = 1;

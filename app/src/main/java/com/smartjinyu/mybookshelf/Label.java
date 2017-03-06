@@ -34,4 +34,19 @@ public class Label {
         this.title = title;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Label)){
+            return false;
+        }
+        Label book = (Label) o;
+        return book.getId().equals(id);
+    }
+
+    @Override
+    public int hashCode(){
+        return id.hashCode();
+    }
+
+
 }

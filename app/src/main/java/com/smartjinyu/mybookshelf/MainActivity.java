@@ -530,119 +530,7 @@ public class MainActivity extends AppCompatActivity {
                                 Intent i = new Intent(MainActivity.this,AboutActivity.class);
                                 startActivity(i);
                             }else if(drawerItem.getIdentifier() == 6){
-                                defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
-                                Answers.getInstance().logContentView(new ContentViewEvent()
-                                        .putContentName(TAG)
-                                        .putContentType("Donate")
-                                        .putContentId("2030")
-                                        .putCustomAttribute("Donate Clicked", "Donate Clicked"));
-
-
-                                boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
-                                if(hasInstalledAlipayClient){
-                                    new MaterialDialog.Builder(MainActivity.this)
-                                            .title(R.string.about_preference_rate_title)
-                                            .content(R.string.about_donate_dialog_content)
-                                            .positiveText(R.string.about_donate_dialog_positive0)
-                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
-                                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                                            .putContentName(TAG)
-                                                            .putContentType("Donate")
-                                                            .putContentId("2031")
-                                                            .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
-                                                    dialog.dismiss();
-                                                    setDrawer(mDrawer.getCurrentSelection());
-                                                }
-                                            })
-                                            .negativeText(R.string.about_donate_dialog_negative0)
-                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    ClipboardManager clipboardManager =
-                                                            (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
-                                                    Toast.makeText(
-                                                            MainActivity.this,
-                                                            getResources().getString(R.string.about_preference_donate_toast),
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    ClipData clipData = ClipData.newPlainText(
-                                                            getString(R.string.app_name),
-                                                            "smartjinyu@gmail.com");
-                                                    clipboardManager.setPrimaryClip(clipData);
-                                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                                            .putContentName(TAG)
-                                                            .putContentType("Donate")
-                                                            .putContentId("2032")
-                                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                                                    dialog.dismiss();
-                                                    setDrawer(mDrawer.getCurrentSelection());
-                                                }
-                                            })
-                                            .neutralText(android.R.string.cancel)
-                                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                                            .putContentName(TAG)
-                                                            .putContentType("Donate")
-                                                            .putContentId("2033")
-                                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
-                                                    dialog.dismiss();
-                                                    setDrawer(mDrawer.getCurrentSelection());
-
-                                                }
-                                            })
-                                            .show();
-                                }else{
-                                    new MaterialDialog.Builder(MainActivity.this)
-                                            .title(R.string.about_preference_rate_title)
-                                            .content(R.string.about_donate_dialog_content)
-                                            .positiveText(R.string.about_donate_dialog_negative0)
-                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    ClipboardManager clipboardManager =
-                                                            (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                                    Toast.makeText(
-                                                            MainActivity.this,
-                                                            getResources().getString(R.string.about_preference_donate_toast),
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    ClipData clipData = ClipData.newPlainText(
-                                                            getString(R.string.app_name),
-                                                            "smartjinyu@gmail.com");
-                                                    clipboardManager.setPrimaryClip(clipData);
-                                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                                            .putContentName(TAG)
-                                                            .putContentType("Donate")
-                                                            .putContentId("2032")
-                                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                                                    dialog.dismiss();
-                                                    setDrawer(mDrawer.getCurrentSelection());
-
-                                                }
-                                            })
-                                            .negativeText(android.R.string.cancel)
-                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                                            .putContentName(TAG)
-                                                            .putContentType("Donate")
-                                                            .putContentId("2033")
-                                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
-                                                    dialog.dismiss();
-                                                    setDrawer(mDrawer.getCurrentSelection());
-
-                                                }
-                                            })
-                                            .show();
-
-                                }
-
+                                showDonateDialog();
                             }
                         }
                         return false;
@@ -1366,64 +1254,17 @@ public class MainActivity extends AppCompatActivity {
                 defaultSharedPreferences.edit().putInt("launchTimes",startTimes + 1).apply();
                 boolean muteRatings = defaultSharedPreferences.getBoolean("muteRatings",false);
                 boolean isRated = defaultSharedPreferences.getBoolean("isRated",false);
+                boolean isDonateItemShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow",true);
                 Log.i(TAG,"rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
                 if(!muteRatings &&
                         !isRated &&
                         startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
                         mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)){
                     // show ratings dialog
-                    Answers.getInstance().logContentView(new ContentViewEvent()
-                            .putContentName(TAG)
-                            .putContentType("Rating")
-                            .putContentId("2100")
-                            .putCustomAttribute("Rating Dialog show", 1));
-
-                    new MaterialDialog.Builder(this)
-                            .title(R.string.rating_dialog_title)
-                            .content(R.string.rating_dialog_content)
-                            .positiveText(R.string.rating_dialog_positive)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    defaultSharedPreferences.edit().putBoolean("isRated",true).apply();
-                                    Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
-                                    startActivity(i);
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Rating")
-                                            .putContentId("2101")
-                                            .putCustomAttribute("Go to Store", 1));
-
-                                    MainActivity.super.onBackPressed();
-                                }
-                            })
-                            .negativeText(R.string.rating_dialog_negative)
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Rating")
-                                            .putContentId("2102")
-                                            .putCustomAttribute("Cancel Rating", 1));
-                                    MainActivity.super.onBackPressed();
-                                }
-                            })
-                            .neutralText(R.string.rating_dialog_neutral)
-                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    defaultSharedPreferences.edit().putBoolean("muteRatings",true).apply();
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Rating")
-                                            .putContentId("2102")
-                                            .putCustomAttribute("Mute Rating", 1));
-                                    MainActivity.super.onBackPressed();
-                                }
-                            })
-                            .show();
+                    showRatingDialog();
+                }else if(isDonateItemShow &&
+                        startTimes % getResources().getInteger(R.integer.donate_after_start_times)==0) {
+                    showDonateDialog();
                 }else{
                     super.onBackPressed();
                 }
@@ -1431,6 +1272,174 @@ public class MainActivity extends AppCompatActivity {
                 super.onBackPressed();
             }
         }
+    }
+    private void showRatingDialog(){
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Rating")
+                .putContentId("2100")
+                .putCustomAttribute("Rating Dialog show", 1));
+
+        new MaterialDialog.Builder(this)
+                .title(R.string.rating_dialog_title)
+                .content(R.string.rating_dialog_content)
+                .positiveText(R.string.rating_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        defaultSharedPreferences.edit().putBoolean("isRated",true).apply();
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
+                        startActivity(i);
+                        Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentName(TAG)
+                                .putContentType("Rating")
+                                .putContentId("2101")
+                                .putCustomAttribute("Go to Store", 1));
+
+                        MainActivity.super.onBackPressed();
+                    }
+                })
+                .negativeText(R.string.rating_dialog_negative)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentName(TAG)
+                                .putContentType("Rating")
+                                .putContentId("2102")
+                                .putCustomAttribute("Cancel Rating", 1));
+                        MainActivity.super.onBackPressed();
+                    }
+                })
+                .neutralText(R.string.rating_dialog_neutral)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        defaultSharedPreferences.edit().putBoolean("muteRatings",true).apply();
+                        Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentName(TAG)
+                                .putContentType("Rating")
+                                .putContentId("2102")
+                                .putCustomAttribute("Mute Rating", 1));
+                        MainActivity.super.onBackPressed();
+                    }
+                })
+                .show();
+
+    }
+
+    private void showDonateDialog(){
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Donate")
+                .putContentId("2030")
+                .putCustomAttribute("Donate Clicked", "Donate Clicked"));
+        Log.i(TAG,"Donate Dialog show");
+        boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
+        if(hasInstalledAlipayClient){
+            new MaterialDialog.Builder(MainActivity.this)
+                    .title(R.string.about_preference_donate_title)
+                    .content(R.string.about_donate_dialog_content)
+                    .positiveText(R.string.about_donate_dialog_positive0)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName(TAG)
+                                    .putContentType("Donate")
+                                    .putContentId("2031")
+                                    .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            dialog.dismiss();
+                            setDrawer(mDrawer.getCurrentSelection());
+                        }
+                    })
+                    .negativeText(R.string.about_donate_dialog_negative0)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            ClipboardManager clipboardManager =
+                                    (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    getResources().getString(R.string.about_preference_donate_toast),
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                            ClipData clipData = ClipData.newPlainText(
+                                    getString(R.string.app_name),
+                                    "smartjinyu@gmail.com");
+                            clipboardManager.setPrimaryClip(clipData);
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName(TAG)
+                                    .putContentType("Donate")
+                                    .putContentId("2032")
+                                    .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            dialog.dismiss();
+                            setDrawer(mDrawer.getCurrentSelection());
+                        }
+                    })
+                    .neutralText(android.R.string.cancel)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName(TAG)
+                                    .putContentType("Donate")
+                                    .putContentId("2033")
+                                    .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }else{
+            new MaterialDialog.Builder(MainActivity.this)
+                    .title(R.string.about_preference_donate_title)
+                    .content(R.string.about_donate_dialog_content)
+                    .positiveText(R.string.about_donate_dialog_negative0)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            ClipboardManager clipboardManager =
+                                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    getResources().getString(R.string.about_preference_donate_toast),
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                            ClipData clipData = ClipData.newPlainText(
+                                    getString(R.string.app_name),
+                                    "smartjinyu@gmail.com");
+                            clipboardManager.setPrimaryClip(clipData);
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName(TAG)
+                                    .putContentType("Donate")
+                                    .putContentId("2032")
+                                    .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            dialog.dismiss();
+                            setDrawer(mDrawer.getCurrentSelection());
+
+                        }
+                    })
+                    .negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName(TAG)
+                                    .putContentType("Donate")
+                                    .putContentId("2033")
+                                    .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+        }
+
     }
 
     @Override

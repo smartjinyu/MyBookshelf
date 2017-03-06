@@ -5,5 +5,6 @@
 
     <!-- show rating dialog after start mod x times when book number is more than y -->
     <integer name="rating_after_start_times">3</integer>
-    <integer name="rating_if_books_more_than">3</integer>
+    <integer name="rating_if_books_more_than">2</integer>
+    <integer name="donate_after_start_times">7</integer>
 </resources>

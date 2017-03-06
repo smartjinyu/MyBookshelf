@@ -60,7 +60,7 @@ public class AboutFragment extends PreferenceFragment {
                 boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(getActivity());
                 if(hasInstalledAlipayClient){
                     new MaterialDialog.Builder(getActivity())
-                            .title(R.string.about_preference_rate_title)
+                            .title(R.string.about_preference_donate_title)
                             .content(R.string.about_donate_dialog_content)
                             .positiveText(R.string.about_donate_dialog_positive0)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {

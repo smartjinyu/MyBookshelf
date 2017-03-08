@@ -205,11 +205,12 @@
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
     <string name="settings_backup_category">Backup</string>
     <string name="settings_backup_location_title">Backup Location</string>
-    <string name="settings_backup_title">Backup Bookshelf</string>
-    <string name="settings_restore_title">Restore Bookshelf</string>
+    <string name="settings_backup_title">Backup BookShelf</string>
+    <string name="settings_restore_title">Restore BookShelf</string>
     <string name="storage_permission_toast1">You have to grant STORAGE permission so that you can choose backup location!</string>
     <string name="storage_permission_toast2">You have to grant STORAGE permission so that we can backup your books!</string>
     <string name="storage_permission_toast3">You have to grant STORAGE permission so that we can restore your books!</string>
+    <string name="storage_permission_toast5">You have to grant STORAGE permission so that we can export your books!</string>
     <string name="backup_succeed_toast">Backup Succeeded! File Path: %1$s</string>
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
     <string name="backup_progress_dialog_title">Backing Up Bookshelf</string>
@@ -224,7 +225,30 @@
     <string name="restore_delete_dialog_content">Are you sure to delete this backup?</string>
     <string name="restore_no_backup_toast">It seems that there are not any backups in your folder…</string>
     <string name="restore_confirm_dialog_title">Caution</string>
-    <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in Bookshelf currently. yOU CANNOT recover them after this aciton. Are you sure to continue to restore?</string>
+    <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in Bookshelf currently. You CANNOT recover them after this action. Are you sure to continue to restore?</string>
+    <string name="settings_export_to_csv_title">Export to .csv file</string>
+    <string name="settings_export_to_csv_summary">Export BookShelf to .csv file for further management</string>
+    <string name="export_progress_dialog_title">Exporting BookShelf</string>
+    <string name="export_progress_dialog_content">Please wait…</string>
+    <string name="export_csv_dialog_title">Choose Items to Export</string>
+    <string-array name="export_csv_dialog_list">
+        <item>Title</item>
+        <item>Authors</item>
+        <item>Translators</item>
+        <item>Publisher</item>
+        <item>PubTime</item>
+        <item>ISBN</item>
+        <item>ReadingStatus</item>
+        <item>Bookshelves</item>
+        <item>Labels</item>
+        <item>Notes</item>
+        <item>Website</item>
+    </string-array>
+    <string name="export_csv_file_order">No.</string>
+    <string name="export_csv_file_end">Exported from BookShelf (https://play.google.com/store/apps/details?id=com.smartjinyu.mybookshelf)</string>
+    <string name="export_csv_dialog_at_least_toast">You have to choose at least ONE item!</string>
+    <string name="export_csv_export_succeed_toast">Export Succeeded! File Path: %1$s</string>
+    <string name="export_csv_export_fail_toast">Export Failed! Please check logs and contact the developer!</string>
 
 
 

@@ -1326,6 +1326,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.super.onBackPressed();
                     }
                 })
+                .canceledOnTouchOutside(false)
                 .show();
 
     }
@@ -1394,6 +1395,7 @@ public class MainActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                     })
+                    .canceledOnTouchOutside(false)
                     .show();
         }else{
             new MaterialDialog.Builder(MainActivity.this)
@@ -1437,6 +1439,7 @@ public class MainActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                     })
+                    .canceledOnTouchOutside(false)
                     .show();
 
         }

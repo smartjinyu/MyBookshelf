@@ -74,7 +74,7 @@ dependencies {
     }
     compile 'com.github.promeg:tinypinyin:2.0.1'
     compile project (':searchview')
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true;
     }
     compile project (':AlipayZeroSdk')
@@ -83,6 +83,8 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
+    compile files('libs/opencsv-3.9.jar')
+
 
 
 

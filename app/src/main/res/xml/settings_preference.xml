@@ -22,5 +22,10 @@
         <Preference
             android:title="@string/settings_restore_title"
             android:key="settings_pref_restore"/>
+        <Preference
+            android:title="@string/settings_export_to_csv_title"
+            android:summary="@string/settings_export_to_csv_summary"
+            android:key="settings_pref_export_to_csv"/>
     </PreferenceCategory>
+
 </PreferenceScreen>

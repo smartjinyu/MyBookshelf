@@ -61,6 +61,10 @@ public class Book implements Serializable{
     public String getCoverPhotoFileName(){
         return "Cover_"+id.toString()+".jpg";
     }
+    public String getCoverPhotoFileNameWithoutExtension(){
+        return "Cover_"+id.toString();
+    }
+
 
     public Calendar getAddTime() {
         return addTime;

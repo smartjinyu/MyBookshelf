@@ -144,6 +144,14 @@
     <string name="book_edit_activity_discard_dialog_title">Discard the Book</string>
     <string name="book_edit_activity_discard_dialog_content">We won\'t save your book and changes will be discarded.</string>
     <string name="book_edit_activity_discard_dialog_positive">Discard</string>
+    <string name="cover_change_dialog_title">Change Book Cover</string>
+    <string-array name="cover_change_dialog_list">
+        <item>Take New Picture</item>
+        <item>Choose Picture from Gallery</item>
+    </string-array>
+    <string name="cover_change_no_camera_app">No Camera app installed!</string>
+    <string name="cover_change_camera_permission_denied">You need to grant Camera permission to take new pictures!</string>
+    <string name="cover_change_fail">Something wrong when processing image! Please check the log and contact the developer!</string>
 
     <!--BookShelfLab-->
     <string name="default_book_shelf_name">Default BookShelf</string>

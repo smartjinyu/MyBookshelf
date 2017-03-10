@@ -1,13 +1,20 @@
 package com.smartjinyu.mybookshelf;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,6 +37,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -37,17 +46,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import id.zelory.compressor.Compressor;
+import id.zelory.compressor.FileUtil;
+
+
 /**
  * Created by smartjinyu on 2017/1/19.
  * This activity is to edit book details.
  */
 
-public class BookEditActivity extends AppCompatActivity{
+public class BookEditActivity extends AppCompatActivity {
     private static final String TAG = "BookEditActivity";
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_CHOOSE_IMAGE = 2;
+    private static final int CAMERA_PERMISSION = 5;
 
-    public static String BOOK ="BOOKTOEDIT";
+    public static String BOOK = "BOOKTOEDIT";
     public static String downloadCover = "DOWNLOADCOVER";
     public static String imageURL = "IMAGEURL";
+
+    private String customPhotoName = null;
 
 
     private Book mBook;
@@ -71,7 +89,7 @@ public class BookEditActivity extends AppCompatActivity{
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_edit);
 
@@ -93,104 +111,100 @@ public class BookEditActivity extends AppCompatActivity{
         setLabels();
 
 
-
         coverImageView = (ImageView) findViewById(R.id.book_cover_image_view);
-        if(i.getBooleanExtra(downloadCover,false)){
-            CoverDownloader coverDownloader = new CoverDownloader(this,mBook,0);
-            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
-            coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL),path);
-        }else if(mBook.isHasCover()){
-            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
-            Bitmap src = BitmapFactory.decodeFile(path);
-            coverImageView.setImageBitmap(src);
+        if (i.getBooleanExtra(downloadCover, false)) {
+            CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 0);
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
+            coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL), path);
+        } else {
+            setBookCover();
         }
-
+        setCoverChange();
 
 
         notesEditText = (EditText) findViewById(R.id.book_notes_edit_text);
-        if(mBook.getNotes()!=null){
+        if (mBook.getNotes() != null) {
             notesEditText.setText(mBook.getNotes());
         }
 
         websiteEditText = (EditText) findViewById(R.id.book_website_edit_text);
-        if(mBook.getWebsite()!=null){
+        if (mBook.getWebsite() != null) {
             websiteEditText.setText(mBook.getWebsite());
         }
 
     }
 
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_bookedit,menu);
+        inflater.inflate(R.menu.menu_bookedit, menu);
         return true;
     }
 
     /**
      * save book information.
      * no attribute of book should be null after this method finishing
+     *
      * @return true if save successfully, false means it needs to edit
      */
-    private boolean saveBook(){
+    private boolean saveBook() {
         int month;
-        if(pubmonthEditText.getText().length()== 0){
+        if (pubmonthEditText.getText().length() == 0) {
             month = 1;//if pass month = 12 in Calendar.set(), it will be changed to default value 0
-        }else {
+        } else {
             month = Integer.parseInt(pubmonthEditText.getText().toString());
         }
-        if(month>12 || month <1){
-            Toast.makeText(this,R.string.month_invalid,Toast.LENGTH_LONG).show();
+        if (month > 12 || month < 1) {
+            Toast.makeText(this, R.string.month_invalid, Toast.LENGTH_LONG).show();
             pubmonthEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(pubmonthEditText,InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(pubmonthEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
-        } else if(isbnEditText.getText().toString().length()!=10 && isbnEditText.getText().toString().length()!=13){
+        } else if (isbnEditText.getText().toString().length() != 10 && isbnEditText.getText().toString().length() != 13) {
             // isbn should be 10 or 13 digits
-            Log.i(TAG,"Invalid isbn = " + isbnEditText.getText()+", length = " +isbnEditText.getText().length());
-            Toast.makeText(this,R.string.isbn_invalid,Toast.LENGTH_LONG).show();
+            Log.i(TAG, "Invalid isbn = " + isbnEditText.getText() + ", length = " + isbnEditText.getText().length());
+            Toast.makeText(this, R.string.isbn_invalid, Toast.LENGTH_LONG).show();
             isbnEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(isbnEditText,InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
-        } else if(titleEditText.getText().toString().length() == 0){
-            Log.i(TAG,"Title Empty problem.");
-            Toast.makeText(this,R.string.title_empty,Toast.LENGTH_LONG).show();
+        } else if (titleEditText.getText().toString().length() == 0) {
+            Log.i(TAG, "Title Empty problem.");
+            Toast.makeText(this, R.string.title_empty, Toast.LENGTH_LONG).show();
             titleEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(isbnEditText,InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
-        }
-        else {
+        } else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
             String authors = authorEditText.getText().toString();
             String[] authorArray;
-            if(authors.contains("、")){
+            if (authors.contains("、")) {
                 authorArray = authors.split("、");
-            }else if(authors.contains(",")){
+            } else if (authors.contains(",")) {
                 authorArray = authors.split(",");
-            }else if(authors.contains("，")){
+            } else if (authors.contains("，")) {
                 authorArray = authors.split("，");
-            }else{
+            } else {
                 authorArray = new String[]{authors};
             }
             List<String> authorList = new ArrayList<>(Arrays.asList(authorArray));
             mBook.setAuthors(authorList);
             //
             //translators
-            if(translator_layout.getVisibility()!= View.GONE){
+            if (translator_layout.getVisibility() != View.GONE) {
                 String translators = translatorEditText.getText().toString();
                 String[] translatorArray;
-                if(translators.contains("、")){
+                if (translators.contains("、")) {
                     translatorArray = translators.split("、");
-                }else {
+                } else {
                     translatorArray = translators.split(" ");
                 }
                 List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
                 mBook.setTranslators(translatorList);
-            }else{
+            } else {
                 List<String> list = new ArrayList<>();
                 mBook.setTranslators(list);
             }
@@ -198,13 +212,13 @@ public class BookEditActivity extends AppCompatActivity{
             mBook.setPublisher(publisherEditText.getText().toString());
             //pubDate
             int year;
-            if(pubyearEditText.getText().toString().length() == 0){
+            if (pubyearEditText.getText().toString().length() == 0) {
                 year = 9999;//default year
-            }else {
+            } else {
                 year = Integer.parseInt(pubyearEditText.getText().toString());
             }
             Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month-1, 1);
+            calendar.set(year, month - 1, 1);
             mBook.setPubTime(calendar);
             //
             mBook.setIsbn(isbnEditText.getText().toString());
@@ -218,10 +232,10 @@ public class BookEditActivity extends AppCompatActivity{
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.menu_book_edit_save:
-                if(saveBook()){
+                if (saveBook()) {
                     finish();
                 }
 
@@ -231,11 +245,11 @@ public class BookEditActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         dialogBeforeDiscard();
     }
 
-    private void dialogBeforeDiscard(){
+    private void dialogBeforeDiscard() {
         new MaterialDialog.Builder(this)
                 .title(R.string.book_edit_activity_discard_dialog_title)
                 .content(R.string.book_edit_activity_discard_dialog_content)
@@ -256,31 +270,31 @@ public class BookEditActivity extends AppCompatActivity{
                 .show();
     }
 
-    private void setLabels(){
+    private void setLabels() {
         StringBuilder labelsTitle = new StringBuilder();
         final LabelLab labelLab = LabelLab.get(this);
         labelsEditText = (EditText) findViewById(R.id.book_labels_edit_text);
         final List<Label> labels = labelLab.getLabels();
         List<Integer> existsLabelIndex = new ArrayList<>();
-        if(mBook.getLabelID()!=null && mBook.getLabelID().size()!=0){
-            for(UUID labelID : mBook.getLabelID()){
+        if (mBook.getLabelID() != null && mBook.getLabelID().size() != 0) {
+            for (UUID labelID : mBook.getLabelID()) {
                 Label curLabel = labelLab.getLabel(labelID);
                 labelsTitle.append(curLabel.getTitle());
                 labelsTitle.append(",");
                 // set EditText, show already selected labels
 
                 //set already selected labels in dialog
-                for(int i = 0;i<labels.size();i++){
-                    if(labels.get(i).getId().equals(labelID)){
+                for (int i = 0; i < labels.size(); i++) {
+                    if (labels.get(i).getId().equals(labelID)) {
                         existsLabelIndex.add(i);
                         break;
                     }
                 }
 
             }
-            labelsTitle.deleteCharAt(labelsTitle.length()-1);
+            labelsTitle.deleteCharAt(labelsTitle.length() - 1);
             labelsEditText.setText(labelsTitle);
-        }else{
+        } else {
             labelsEditText.setText("");
         }
         final Integer[] selectedItemIndex = existsLabelIndex.toArray(new Integer[existsLabelIndex.size()]);
@@ -292,40 +306,40 @@ public class BookEditActivity extends AppCompatActivity{
                         .title(R.string.label_choice_dialog_title)
                         .items(labels)
                         .itemsCallbackMultiChoice(selectedItemIndex,
-                                new MaterialDialog.ListCallbackMultiChoice(){
-                            @Override
-                            public  boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text){
-                                // set mBook labels
-                                List<CharSequence> allItems = dialog.getItems();
-                                List<Integer> whichList = Arrays.asList(which);
-                                List<Label> labels = labelLab.getLabels();
-                                // refresh label list for that user may add label
-                                for(int i = 0; i < allItems.size(); i++){
-                                    if(whichList.contains(i)){
-                                        // the item is selected, add it to mBook label list
-                                        for(Label label : labels){
-                                            if(label.getTitle().equals(allItems.get(i).toString())){
-                                                // the label corresponding to the item
-                                                mBook.addLabel(label);
-                                                break;
-                                            }
-                                        }
+                                new MaterialDialog.ListCallbackMultiChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                        // set mBook labels
+                                        List<CharSequence> allItems = dialog.getItems();
+                                        List<Integer> whichList = Arrays.asList(which);
+                                        List<Label> labels = labelLab.getLabels();
+                                        // refresh label list for that user may add label
+                                        for (int i = 0; i < allItems.size(); i++) {
+                                            if (whichList.contains(i)) {
+                                                // the item is selected, add it to mBook label list
+                                                for (Label label : labels) {
+                                                    if (label.getTitle().equals(allItems.get(i).toString())) {
+                                                        // the label corresponding to the item
+                                                        mBook.addLabel(label);
+                                                        break;
+                                                    }
+                                                }
 
-                                    }else{
-                                        // the item is not selected, remove it from mBook label list
-                                        for(Label label : labels){
-                                            if(label.getTitle().equals(allItems.get(i).toString())){
-                                                // the label corresponding to the item
-                                                mBook.removeLabel(label);
-                                                break;
+                                            } else {
+                                                // the item is not selected, remove it from mBook label list
+                                                for (Label label : labels) {
+                                                    if (label.getTitle().equals(allItems.get(i).toString())) {
+                                                        // the label corresponding to the item
+                                                        mBook.removeLabel(label);
+                                                        break;
+                                                    }
+                                                }
                                             }
                                         }
+                                        setLabels();
+                                        return true;
                                     }
-                                }
-                                setLabels();
-                                return true;
-                            }
-                        })
+                                })
                         .neutralText(R.string.label_choice_dialog_neutral)
                         .onNeutral(new MaterialDialog.SingleButtonCallback() {
                             @Override
@@ -333,23 +347,23 @@ public class BookEditActivity extends AppCompatActivity{
                                 // create new label
                                 new MaterialDialog.Builder(BookEditActivity.this)
                                         .title(R.string.label_add_new_dialog_title)
-                                        .inputRange(1,getResources().getInteger(R.integer.label_name_max_length))
+                                        .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
                                         .input(
                                                 R.string.label_add_new_dialog_edit_text,
                                                 0,
                                                 new MaterialDialog.InputCallback() {
-                                            @Override
-                                            public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
-                                                // nothing to do here
-                                            }
-                                        })
+                                                    @Override
+                                                    public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                                                        // nothing to do here
+                                                    }
+                                                })
                                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
                                             public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
                                                 Label labelToAdd = new Label();
                                                 labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
                                                 labelLab.addLabel(labelToAdd);
-                                                Log.i(TAG,"New label created " + labelToAdd.getTitle());
+                                                Log.i(TAG, "New label created " + labelToAdd.getTitle());
                                                 multiChoiceDialog.getItems().add(labelToAdd.getTitle());
                                                 multiChoiceDialog.notifyItemInserted(multiChoiceDialog.getItems().size() - 1);
                                             }
@@ -380,7 +394,7 @@ public class BookEditActivity extends AppCompatActivity{
     }
 
 
-    private void setBookInfo(){
+    private void setBookInfo() {
         titleEditText = (EditText) findViewById(R.id.book_title_edit_text);
         authorEditText = (EditText) findViewById(R.id.book_author_edit_text);
         translatorEditText = (EditText) findViewById(R.id.book_translator_edit_text);
@@ -393,37 +407,37 @@ public class BookEditActivity extends AppCompatActivity{
 
         titleEditText.setText(mBook.getTitle());
 
-        if(mBook.getAuthors()!=null && mBook.getAuthors().size()!=0){
+        if (mBook.getAuthors() != null && mBook.getAuthors().size() != 0) {
             StringBuilder stringBuilder1 = new StringBuilder();
-            for(String author: mBook.getAuthors()){
+            for (String author : mBook.getAuthors()) {
                 stringBuilder1.append(author);
                 stringBuilder1.append(",");
             }
-            if(stringBuilder1.length()!=0){
-                stringBuilder1.deleteCharAt(stringBuilder1.length()-1);
+            if (stringBuilder1.length() != 0) {
+                stringBuilder1.deleteCharAt(stringBuilder1.length() - 1);
             }
             authorEditText.setText(stringBuilder1);
         }
 
-        if(mBook.getTranslators()!=null && mBook.getTranslators().size()!=0){
+        if (mBook.getTranslators() != null && mBook.getTranslators().size() != 0) {
             translator_layout.setVisibility(View.VISIBLE);
             StringBuilder stringBuilder2 = new StringBuilder();
-            for(String translator: mBook.getTranslators()){
+            for (String translator : mBook.getTranslators()) {
                 stringBuilder2.append(translator);
                 stringBuilder2.append(",");
             }
-            if(stringBuilder2.length()!=0){
-                stringBuilder2.deleteCharAt(stringBuilder2.length()-1);
+            if (stringBuilder2.length() != 0) {
+                stringBuilder2.deleteCharAt(stringBuilder2.length() - 1);
             }
             translatorEditText.setText(stringBuilder2);
         }
 
         publisherEditText.setText(mBook.getPublisher());
-        if(mBook.getPubTime()!=null){
+        if (mBook.getPubTime() != null) {
             int year = mBook.getPubTime().get(Calendar.YEAR);
             int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
             StringBuilder month = new StringBuilder();
-            if(mon < 10){
+            if (mon < 10) {
                 month.append("0");
             }
             month.append(String.valueOf(mon));
@@ -434,37 +448,38 @@ public class BookEditActivity extends AppCompatActivity{
 
         isbnEditText.setText(mBook.getIsbn());
         boolean isManually = false;
-        Map<String,String> webIds = mBook.getWebIds();
-        if(webIds == null || webIds.size() ==0 ){
+        Map<String, String> webIds = mBook.getWebIds();
+        if (webIds == null || webIds.size() == 0) {
             isManually = true;
-        }else{
-            for(String key: webIds.keySet()){
-                if(key.equals("douban")){
+        } else {
+            for (String key : webIds.keySet()) {
+                if (key.equals("douban")) {
                     isManually = false;
-                    String detailBarText = String.format(getString(R.string.separator_text_view),"DouBan.com");
+                    String detailBarText = String.format(getString(R.string.separator_text_view), "DouBan.com");
                     detailBarTextView.setText(detailBarText);
                     continue;
                 }
-                if(key.equals("openLibrary")){
+                if (key.equals("openLibrary")) {
                     isManually = false;
-                    String detailBarText = String.format(getString(R.string.separator_text_view),"OpenLibrary.org");
+                    String detailBarText = String.format(getString(R.string.separator_text_view), "OpenLibrary.org");
                     detailBarTextView.setText(detailBarText);
                 }
             }
         }
-        if(isManually){
-            String detailBarText = String.format(getString(R.string.separator_text_view),"Manually");
+        if (isManually) {
+            String detailBarText = String.format(getString(R.string.separator_text_view), "Manually");
             detailBarTextView.setText(detailBarText);
         }
     }
 
     private int curBookshelfPos;
-    private void setBookShelf(){
+
+    private void setBookShelf() {
         bookshelfSpinner = (Spinner) findViewById(R.id.book_shelf_spinner);
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
         final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
-                this,R.layout.spinner_item,bookShelves);
+                this, R.layout.spinner_item, bookShelves);
         //overload toString method in BookShelf
         BookShelf customShelf = new BookShelf();
         customShelf.setTitle(getResources().getString(R.string.custom_spinner_item));
@@ -474,8 +489,8 @@ public class BookEditActivity extends AppCompatActivity{
         bookshelfSpinner.setAdapter(arrayAdapter);
 
         BookShelf curBookshelf = bookShelves.get(0);//default
-        for(BookShelf bookShelf: bookShelves){
-            if(bookShelf.getId().equals(mBook.getBookshelfID())){
+        for (BookShelf bookShelf : bookShelves) {
+            if (bookShelf.getId().equals(mBook.getBookshelfID())) {
                 curBookshelf = bookShelf;
                 break;
             }
@@ -485,16 +500,16 @@ public class BookEditActivity extends AppCompatActivity{
         // because even the same bookshelf object in two different lists will not regard equals() = true
         curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
         bookshelfSpinner.setSelection(curBookshelfPos);
-        bookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        bookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
                 BookShelf selectedBS = (BookShelf) bookshelfSpinner.getSelectedItem();
                 String selectedName = selectedBS.toString();
-                if(selectedName.equals(getResources().getString(R.string.custom_spinner_item))){
-                    Log.i(TAG,"Custom Bookshelf clicked");
+                if (selectedName.equals(getResources().getString(R.string.custom_spinner_item))) {
+                    Log.i(TAG, "Custom Bookshelf clicked");
                     MaterialDialog inputDialog = new MaterialDialog.Builder(BookEditActivity.this)
                             .title(R.string.custom_book_shelf_dialog_title)
-                            .inputRange(1,getResources().getInteger(R.integer.bookshelf_name_max_length))
+                            .inputRange(1, getResources().getInteger(R.integer.bookshelf_name_max_length))
                             .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -505,14 +520,14 @@ public class BookEditActivity extends AppCompatActivity{
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     BookShelf bookShelf = new BookShelf();
-                                    if(dialog.getInputEditText().getText()!=null){
+                                    if (dialog.getInputEditText().getText() != null) {
                                         bookShelf.setTitle(dialog.getInputEditText().getText().toString());
-                                    }else{
+                                    } else {
                                         bookShelf.setTitle("");
                                     }
                                     bookShelfLab.addBookShelf(bookShelf);
                                     mBook.setBookshelfID(bookShelf.getId());
-                                    Log.i(TAG,"New and set Bookshelf = " +bookShelf.getTitle());
+                                    Log.i(TAG, "New and set Bookshelf = " + bookShelf.getTitle());
                                     setBookShelf();
                                 }
                             })
@@ -530,8 +545,8 @@ public class BookEditActivity extends AppCompatActivity{
                                 }
                             })
                             .show();
-                }else{
-                    Log.i(TAG,"set bookshelf " + selectedBS.getTitle());
+                } else {
+                    Log.i(TAG, "set bookshelf " + selectedBS.getTitle());
                     curBookshelfPos = pos;
                     mBook.setBookshelfID(selectedBS.getId());
                 }
@@ -543,13 +558,12 @@ public class BookEditActivity extends AppCompatActivity{
         });
 
 
-
     }
 
-    private void setReadingStatus(){
+    private void setReadingStatus() {
         readingStatusSpinner = (Spinner) findViewById(R.id.reading_status_spinner);
         ArrayAdapter<CharSequence> readingStatusArrayAdapter = ArrayAdapter.createFromResource(
-                this,R.array.reading_status_array,R.layout.spinner_item);
+                this, R.array.reading_status_array, R.layout.spinner_item);
         readingStatusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         readingStatusSpinner.setAdapter(readingStatusArrayAdapter);
         readingStatusSpinner.setSelection(mBook.getReadingStatus());
@@ -557,7 +571,7 @@ public class BookEditActivity extends AppCompatActivity{
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mBook.setReadingStatus(i);
-                Log.i(TAG,"Click and set Reading status " + i);
+                Log.i(TAG, "Click and set Reading status " + i);
             }
 
             @Override
@@ -567,15 +581,93 @@ public class BookEditActivity extends AppCompatActivity{
         });
     }
 
-    public void setBookCover(){
-        if(coverImageView!=null && mBook.isHasCover()){
-            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
+    public void setBookCover() {
+        if (coverImageView != null && mBook.isHasCover()) {
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
             Bitmap bitmap1 = BitmapFactory.decodeFile(path);
             coverImageView.setImageBitmap(bitmap1);
         }
     }
 
-    private void setToolbar(){
+    private void setCoverChange() {
+        coverImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Change Cover")
+                        .putContentId("2050")
+                        .putCustomAttribute("Change Cover", 1));
+
+                new MaterialDialog.Builder(BookEditActivity.this)
+                        .title(R.string.cover_change_dialog_title)
+                        .items(R.array.cover_change_dialog_list)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                if (position == 0) {
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName(TAG)
+                                            .putContentType("Take New Picture")
+                                            .putContentId("2051")
+                                            .putCustomAttribute("Take New Picture", 1));
+                                    if (ContextCompat.checkSelfPermission(BookEditActivity.this, Manifest.permission.CAMERA)
+                                            != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(BookEditActivity.this,
+                                                new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
+                                    }else{
+                                        takePictureIntent();
+                                    }
+
+                                } else if (position == 1) {
+                                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                                    i.setType("image/*");
+                                    startActivityForResult(i,REQUEST_CHOOSE_IMAGE);
+
+                                }
+                            }
+                        })
+                        .show();
+
+            }
+        });
+    }
+
+    private void takePictureIntent(){
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (i.resolveActivity(getPackageManager()) != null) {
+            try{
+                File photoFile = createImageFile();
+                Uri photoUri = FileProvider.getUriForFile(
+                        this,
+                        "com.smartjinyu.mybookshelf.provider",
+                        photoFile);
+                i.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
+                startActivityForResult(i,REQUEST_IMAGE_CAPTURE);
+            }catch (IOException ioe){
+                Log.e(TAG,"createImageFile ioe = " + ioe.toString());
+            }
+        } else {
+            Log.e(TAG, "Camera App Not Installed");
+            Toast.makeText(BookEditActivity.this, getString(R.string.cover_change_no_camera_app), Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private File createImageFile() throws IOException{
+        // Create a new image file for camera to save
+        String fileName = "Temp_" + Calendar.getInstance().getTimeInMillis();
+        File storageDir = getExternalFilesDir("Temp");
+        File image = File.createTempFile(
+                fileName, // prefix
+                ".jpg", // suffix
+                storageDir // directory
+        );
+        customPhotoName = image.getAbsolutePath();
+        return image;
+    }
+
+    private void setToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.bookedit_toolbar);
         mToolbar.setTitle(R.string.book_edit_activity_title);
         setSupportActionBar(mToolbar);
@@ -588,6 +680,69 @@ public class BookEditActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case CAMERA_PERMISSION:
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_camera_permission_denied),
+                            Toast.LENGTH_LONG)
+                            .show();
+                }else{
+                    takePictureIntent();
+                }
+        }
+    }
+
+    private void compressCustomCover(File imageFile){
+        new Compressor.Builder(this)
+                .setMaxHeight(450)
+                .setMaxWidth(400)
+                .setQuality(75)
+                .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                // we force the library to change .jpeg to .jpg in library code
+                .setDestinationDirectoryPath(
+                        getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                .setFileName(mBook.getCoverPhotoFileNameWithoutExtension())
+                .build()
+                .compressToFile(imageFile);
+        mBook.setHasCover(true);
+        setBookCover();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            if(customPhotoName == null){
+                Log.e(TAG,"Error when taking a new picture");
+                Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_fail),Toast.LENGTH_LONG)
+                        .show();
+            }else{
+                File imageFile = new File(customPhotoName);
+                compressCustomCover(imageFile);
+                imageFile.delete();
+                customPhotoName = null;
+            }
+
+        }else if(requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK){
+            if(data==null){
+                Log.e(TAG,"Error when choosing a picture");
+                Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_fail),Toast.LENGTH_LONG)
+                        .show();
+            }else {
+                try {
+                    File imageFile = FileUtil.from(this, data.getData());
+                    compressCustomCover(imageFile);
+                } catch (IOException ioe) {
+                    Toast.makeText(BookEditActivity.this, getString(R.string.cover_change_fail), Toast.LENGTH_LONG)
+                            .show();
+                    Log.e(TAG, "FileUtil.from ioe = " + ioe.toString());
+                }
+            }
+        }
     }
 
 

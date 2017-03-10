@@ -17,7 +17,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         Answers.getInstance().logContentView(new ContentViewEvent()
@@ -28,19 +28,19 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(mToolbar);
-        if(getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.settings_settings);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             SettingsFragment settingsFragment = new SettingsFragment();
-            getFragmentManager().beginTransaction().replace(R.id.activity_settings_container,settingsFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.activity_settings_container, settingsFragment).commit();
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;

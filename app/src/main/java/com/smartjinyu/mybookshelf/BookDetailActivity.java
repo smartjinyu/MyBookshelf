@@ -10,9 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
-import android.text.format.DateFormat;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -63,28 +61,27 @@ public class BookDetailActivity extends SlidingActivity {
     private TextView websiteTextView;
 
 
-
     @Override
-    public void init(Bundle savedInstanceState){
+    public void init(Bundle savedInstanceState) {
         // Instead of overriding onCreate(), we should override init().
         // Intent will pass in savedInstanceState
         Intent intent = getIntent();
-        mBook = (Book)intent.getSerializableExtra(Intent_Book_ToEdit);
+        mBook = (Book) intent.getSerializableExtra(Intent_Book_ToEdit);
         setTitle(mBook.getTitle());
         setPrimaryColors(
-                ContextCompat.getColor(this,R.color.colorPrimary),
-                ContextCompat.getColor(this,R.color.colorPrimaryDark)
+                ContextCompat.getColor(this, R.color.colorPrimary),
+                ContextCompat.getColor(this, R.color.colorPrimaryDark)
         );
         setContent(R.layout.activity_book_detail_content);
         setHeaderContent(R.layout.activity_book_detail_header);
         setFab(
-                ContextCompat.getColor(this,R.color.colorAccent),
+                ContextCompat.getColor(this, R.color.colorAccent),
                 R.drawable.ic_edit,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(BookDetailActivity.this,BookEditActivity.class);
-                        i.putExtra(BookEditActivity.BOOK,mBook);
+                        Intent i = new Intent(BookDetailActivity.this, BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK, mBook);
                         startActivity(i);
                         finish();
                     }
@@ -97,13 +94,14 @@ public class BookDetailActivity extends SlidingActivity {
 
 
     }
-    private void setHeader(){
+
+    private void setHeader() {
         coverImageView = (ImageView) findViewById(R.id.book_detail_header_cover_image_view);
-        if(mBook.isHasCover()){
-            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
+        if (mBook.isHasCover()) {
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
             Bitmap src = BitmapFactory.decodeFile(path);
             coverImageView.setImageBitmap(src);
-            coverImageView.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white));
+            coverImageView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
         }
         addtimeTextView = (TextView) findViewById(R.id.book_detail_header_addtime_text_view);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE z");
@@ -111,7 +109,8 @@ public class BookDetailActivity extends SlidingActivity {
         addtimeTextView.setText(addTimeString);
 
     }
-    private void setBookInfo(){
+
+    private void setBookInfo() {
         authorRelativeLayout = (RelativeLayout) findViewById(R.id.book_info_author_item);
         authorTextView = (TextView) findViewById(R.id.book_info_author_text_view);
         translatorRelativeLayout = (RelativeLayout) findViewById(R.id.book_info_translator_item);
@@ -127,14 +126,14 @@ public class BookDetailActivity extends SlidingActivity {
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
-        if(mBook.getAuthors().size()!=0){
+        if (mBook.getAuthors().size() != 0) {
             StringBuilder authors = new StringBuilder();
-            for(String author: mBook.getAuthors()){
+            for (String author : mBook.getAuthors()) {
                 authors.append(author);
                 authors.append(",");
             }
-            if(authors.length()!=0){
-                authors.deleteCharAt(authors.length()-1);
+            if (authors.length() != 0) {
+                authors.deleteCharAt(authors.length() - 1);
             }
             authorTextView.setText(authors);
             authorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -153,18 +152,18 @@ public class BookDetailActivity extends SlidingActivity {
                     return true;
                 }
             });
-        }else{
+        } else {
             authorRelativeLayout.setVisibility(View.GONE);
         }
 
-        if(mBook.getTranslators().size()!=0){
+        if (mBook.getTranslators().size() != 0) {
             StringBuilder translators = new StringBuilder();
-            for(String translator: mBook.getTranslators()){
+            for (String translator : mBook.getTranslators()) {
                 translators.append(translator);
                 translators.append(",");
             }
-            if(translators.length()!=0){
-                translators.deleteCharAt(translators.length()-1);
+            if (translators.length() != 0) {
+                translators.deleteCharAt(translators.length() - 1);
             }
             translatorTextView.setText(translators);
             translatorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -184,11 +183,11 @@ public class BookDetailActivity extends SlidingActivity {
                 }
             });
 
-        }else{
+        } else {
             translatorRelativeLayout.setVisibility(View.GONE);
         }
 
-        if(mBook.getPublisher().length()!=0){
+        if (mBook.getPublisher().length() != 0) {
             publisherTextView.setText(mBook.getPublisher());
             publisherRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -206,15 +205,15 @@ public class BookDetailActivity extends SlidingActivity {
                     return true;
                 }
             });
-        }else{
+        } else {
             publisherRelativeLayout.setVisibility(View.GONE);
         }
 
         Calendar calendar = mBook.getPubTime();
         int year = calendar.get(Calendar.YEAR);
-        if(year == 9999){
+        if (year == 9999) {
             pubtimeRelativeLayout.setVisibility(View.GONE);
-        }else{
+        } else {
             int month = calendar.get(Calendar.MONTH) + 1;
             StringBuilder pubtime = new StringBuilder();
             pubtime.append(year);
@@ -238,7 +237,7 @@ public class BookDetailActivity extends SlidingActivity {
                 }
             });
         }
-        if(mBook.getIsbn().length()!=0){
+        if (mBook.getIsbn().length() != 0) {
             isbnTextView.setText(mBook.getIsbn());
             isbnRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -256,40 +255,38 @@ public class BookDetailActivity extends SlidingActivity {
                     return true;
                 }
             });
-        }else{
+        } else {
             isbnRelativeLayout.setVisibility(View.GONE);
         }
 
         boolean isManually = false;
-        Map<String,String> webIds = mBook.getWebIds();
-        if(webIds == null || webIds.size() ==0 ){
+        Map<String, String> webIds = mBook.getWebIds();
+        if (webIds == null || webIds.size() == 0) {
             isManually = true;
-        }else{
-            for(String key: webIds.keySet()){
-                if(key.equals("douban")){
+        } else {
+            for (String key : webIds.keySet()) {
+                if (key.equals("douban")) {
                     isManually = false;
-                    String detailBarText = String.format(getString(R.string.book_info_title),"DouBan.com");
+                    String detailBarText = String.format(getString(R.string.book_info_title), "DouBan.com");
                     infoTitleTextView.setText(detailBarText);
                     continue;
                 }
-                if(key.equals("openLibrary")){
+                if (key.equals("openLibrary")) {
                     isManually = false;
-                    String detailBarText = String.format(getString(R.string.book_info_title),"OpenLibrary.org");
+                    String detailBarText = String.format(getString(R.string.book_info_title), "OpenLibrary.org");
                     infoTitleTextView.setText(detailBarText);
                 }
             }
         }
-        if(isManually){
-            String detailBarText = String.format(getString(R.string.book_info_title),"Manually");
+        if (isManually) {
+            String detailBarText = String.format(getString(R.string.book_info_title), "Manually");
             infoTitleTextView.setText(detailBarText);
         }
 
 
-
-
     }
 
-    private void setBookDetails(){
+    private void setBookDetails() {
         readingStatusRelativeLayout = (RelativeLayout) findViewById(R.id.book_detail_reading_status_item);
         readingStatusTextView = (TextView) findViewById(R.id.book_detail_reading_status_text_view);
         bookshelfRelativeLayout = (RelativeLayout) findViewById(R.id.book_detail_bookshelf_item);
@@ -330,7 +327,7 @@ public class BookDetailActivity extends SlidingActivity {
         BookShelf bookShelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
         bookshelfTextView.setText(bookShelf.getTitle());
 
-        if(mBook.getNotes().length()!=0){
+        if (mBook.getNotes().length() != 0) {
             notesTextView.setText(mBook.getNotes());
             notesRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -343,36 +340,36 @@ public class BookDetailActivity extends SlidingActivity {
                     return true;
                 }
             });
-        }else{
+        } else {
             notesRelativeLayout.setVisibility(View.GONE);
         }
 
         List<UUID> labelID = mBook.getLabelID();
-       if(labelID.size()!=0){
-           StringBuilder labelsTitle = new StringBuilder();
-           for(UUID id : labelID){
-               labelsTitle.append(LabelLab.get(this).getLabel(id).getTitle());
-               labelsTitle.append(",");
-           }
-           labelsTitle.deleteCharAt(labelsTitle.length()-1);
-           labelsTextView.setText(labelsTitle);
-           labelsRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
-               @Override
-               public boolean onLongClick(View view) {
-                   Toast.makeText(
-                           BookDetailActivity.this,
-                           getResources().getString(R.string.book_detail_labels_image_view),
-                           Toast.LENGTH_SHORT)
-                           .show();
-                   return true;
-               }
-           });
+        if (labelID.size() != 0) {
+            StringBuilder labelsTitle = new StringBuilder();
+            for (UUID id : labelID) {
+                labelsTitle.append(LabelLab.get(this).getLabel(id).getTitle());
+                labelsTitle.append(",");
+            }
+            labelsTitle.deleteCharAt(labelsTitle.length() - 1);
+            labelsTextView.setText(labelsTitle);
+            labelsRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(
+                            BookDetailActivity.this,
+                            getResources().getString(R.string.book_detail_labels_image_view),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
+            });
 
-       }else{
-           labelsRelativeLayout.setVisibility(View.GONE);
-       }
+        } else {
+            labelsRelativeLayout.setVisibility(View.GONE);
+        }
 
-        if(mBook.getWebsite().length()!=0){
+        if (mBook.getWebsite().length() != 0) {
             websiteTextView.setText(mBook.getWebsite());
             websiteRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -393,20 +390,20 @@ public class BookDetailActivity extends SlidingActivity {
                     startActivity(i);
                 }
             });
-        }else{
+        } else {
             websiteRelativeLayout.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_bookdetail,menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_bookdetail, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.book_detail_menu_delete:
                 BookLab.get(BookDetailActivity.this)
                         .deleteBook(mBook);
@@ -422,7 +419,6 @@ public class BookDetailActivity extends SlidingActivity {
         }
         return true;
     }
-
 
 
 }

@@ -1,6 +1,5 @@
 package com.smartjinyu.mybookshelf;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AndroidException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,17 +34,18 @@ public class BatchListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-        Log.d(TAG,"onCreateView");
-        View view = inflater.inflate(R.layout.fragment_batch_list,container,false);
+                             Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
+        View view = inflater.inflate(R.layout.fragment_batch_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.bachlist_recycler_view);
         setRecyclerView();
         return view;
     }
 
-    private void setRecyclerView(){
+    private void setRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(),
                 mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
@@ -64,10 +63,10 @@ public class BatchListFragment extends Fragment {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                if(BatchAddActivity.mBooks.get(position).isHasCover()){
-                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" +BatchAddActivity.mBooks.get(position).getCoverPhotoFileName());
+                                if (BatchAddActivity.mBooks.get(position).isHasCover()) {
+                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + BatchAddActivity.mBooks.get(position).getCoverPhotoFileName());
                                     boolean succeeded = file.delete();
-                                    Log.i(TAG,"Remove cover result = " + succeeded);
+                                    Log.i(TAG, "Remove cover result = " + succeeded);
                                 }
                                 BatchAddActivity.mBooks.remove(position);
                                 mRecyclerViewAdapter.notifyDataSetChanged();
@@ -90,19 +89,19 @@ public class BatchListFragment extends Fragment {
 
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser){
+    public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
             updateUI();
 
         }
     }
 
-    public void updateUI(){
-        if(mRecyclerViewAdapter ==null){
+    public void updateUI() {
+        if (mRecyclerViewAdapter == null) {
             mRecyclerViewAdapter = new BookAdapter(BatchAddActivity.mBooks);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        }else{
+        } else {
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
@@ -115,7 +114,7 @@ public class BatchListFragment extends Fragment {
         private TextView mPubtimeTextView;
         private RelativeLayout mRelativeLayout;
 
-        public BookHolder(View itemView){
+        public BookHolder(View itemView) {
             super(itemView);
             mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
@@ -124,20 +123,20 @@ public class BatchListFragment extends Fragment {
             mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
         }
 
-        public void bindBook(Book book){
+        public void bindBook(Book book) {
             mTitleTextView.setText(book.getTitle());
 
             StringBuilder authorAndPub = new StringBuilder();
-            for(String author : book.getAuthors()){
+            for (String author : book.getAuthors()) {
                 authorAndPub.append(author);
                 authorAndPub.append(",");
             }
-            if(authorAndPub.length()!=0){
-                authorAndPub.deleteCharAt(authorAndPub.length()-1);
+            if (authorAndPub.length() != 0) {
+                authorAndPub.deleteCharAt(authorAndPub.length() - 1);
             }
 
-            if(book.getPublisher().length()!=0){
-                if(authorAndPub.length()!=0){
+            if (book.getPublisher().length() != 0) {
+                if (authorAndPub.length() != 0) {
                     authorAndPub.append(" ");
                     authorAndPub.append(getResources().getString(R.string.author_suffix));
                     authorAndPub.append(",   ");
@@ -149,54 +148,54 @@ public class BatchListFragment extends Fragment {
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             StringBuilder pubDate = new StringBuilder();
-            if(year == 9999){
+            if (year == 9999) {
                 pubDate.append(getResources().getString(R.string.pubdate_unset));
-            }else{
+            } else {
                 pubDate.append(year);
                 pubDate.append("-");
-                if(month<9){
+                if (month < 9) {
                     pubDate.append("0");
                 }
-                pubDate.append(month+1);
+                pubDate.append(month + 1);
             }
 
             mPubtimeTextView.setText(pubDate);
             mRelativeLayout.setBackgroundColor(Color.WHITE);
-            if(book.isHasCover()){
+            if (book.isHasCover()) {
                 String path =
-                        getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
+                        getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
                 Bitmap src = BitmapFactory.decodeFile(path);
                 mCoverImageView.setImageBitmap(src);
             }
 
         }
     }
-    public class BookAdapter extends RecyclerView.Adapter<BookHolder>{
-        public BookAdapter(List<Book> books){
+
+    public class BookAdapter extends RecyclerView.Adapter<BookHolder> {
+        public BookAdapter(List<Book> books) {
             BatchAddActivity.mBooks = books;
         }
 
         @Override
-        public BookHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview,parent,false);
+            View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview, parent, false);
             return new BookHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(BookHolder holder,int position){
+        public void onBindViewHolder(BookHolder holder, int position) {
             Book book = BatchAddActivity.mBooks.get(position);
             holder.bindBook(book);
-            Log.d(TAG,"onBindViewHolder " + position);
+            Log.d(TAG, "onBindViewHolder " + position);
         }
 
         @Override
-        public int getItemCount(){
+        public int getItemCount() {
             return BatchAddActivity.mBooks.size();
         }
 
     }
-
 
 
 }

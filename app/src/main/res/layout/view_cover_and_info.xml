@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginStart="12dp"
-              android:layout_marginEnd="12dp"
-              android:layout_marginTop="16dp">
-
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="16dp">
 
 
     <LinearLayout
@@ -22,7 +21,7 @@
             android:scaleType="fitXY"
             android:background="@android:color/darker_gray"
             android:contentDescription="@string/book_cover_image_view_hint"
-            android:cropToPadding="true"/>
+            android:cropToPadding="true" />
 
 
     </LinearLayout>
@@ -43,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_title_text_view"
-                android:labelFor="@+id/book_title_edit_text"/>
+                android:labelFor="@+id/book_title_edit_text" />
 
             <EditText
                 android:id="@id/book_title_edit_text"
@@ -53,7 +52,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:hint="@string/book_title_edit_text_hint"
-                android:inputType="text"/>
+                android:inputType="text" />
         </LinearLayout>
 
         <LinearLayout
@@ -66,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_author_text_view"
-                android:labelFor="@+id/book_author_edit_text"/>
+                android:labelFor="@+id/book_author_edit_text" />
 
             <EditText
                 android:id="@id/book_author_edit_text"
@@ -76,7 +75,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:inputType="text"
-                android:hint="@string/book_author_edit_text_hint"/>
+                android:hint="@string/book_author_edit_text_hint" />
         </LinearLayout>
 
         <LinearLayout
@@ -91,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_translator_text_view"
-                android:labelFor="@+id/book_translator_edit_text"/>
+                android:labelFor="@+id/book_translator_edit_text" />
 
             <EditText
                 android:id="@id/book_translator_edit_text"
@@ -101,7 +100,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:inputType="text"
-                android:hint="@string/book_translator_edit_text_hint"/>
+                android:hint="@string/book_translator_edit_text_hint" />
         </LinearLayout>
 
         <LinearLayout
@@ -114,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_publisher_text_view"
-                android:labelFor="@+id/book_publisher_edit_text"/>
+                android:labelFor="@+id/book_publisher_edit_text" />
 
             <EditText
                 android:id="@id/book_publisher_edit_text"
@@ -124,7 +123,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:inputType="text"
-                android:hint="@string/book_publisher_edit_text_hint"/>
+                android:hint="@string/book_publisher_edit_text_hint" />
         </LinearLayout>
 
         <LinearLayout
@@ -136,7 +135,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/book_pubdate_text_view"/>
+                android:text="@string/book_pubdate_text_view" />
 
             <EditText
                 android:id="@+id/book_pubyear_edit_text"
@@ -145,11 +144,12 @@
                 android:textSize="16sp"
                 android:layout_marginStart="8dp"
                 android:inputType="number"
-                android:hint="@string/book_pubyear_edit_text_hint"/>
+                android:hint="@string/book_pubyear_edit_text_hint" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-"/>
+                android:text="-" />
 
             <EditText
                 android:id="@+id/book_pubmonth_edit_text"
@@ -157,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:inputType="number"
-                android:hint="@string/book_pubmonth_edit_text_hint"/>
+                android:hint="@string/book_pubmonth_edit_text_hint" />
 
         </LinearLayout>
 
@@ -171,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_isbn_text_view"
-                android:labelFor="@+id/book_isbn_edit_text"/>
+                android:labelFor="@+id/book_isbn_edit_text" />
 
             <EditText
                 android:id="@id/book_isbn_edit_text"
@@ -181,11 +181,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:inputType="number"
-                android:hint="@string/book_isbn_edit_text_hint"/>
+                android:hint="@string/book_isbn_edit_text_hint" />
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

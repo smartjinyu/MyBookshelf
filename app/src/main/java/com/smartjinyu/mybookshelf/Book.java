@@ -1,7 +1,5 @@
 package com.smartjinyu.mybookshelf;
 
-import android.util.Log;
-
 import com.github.promeg.pinyinhelper.Pinyin;
 
 import java.io.Serializable;
@@ -17,14 +15,14 @@ import java.util.UUID;
  * This class represents a simple book.
  */
 
-public class Book implements Serializable{
+public class Book implements Serializable {
     private static final String TAG = "Book";
 
     private String title;
     private UUID id; // A unique id to identify each book
     private List<String> authors;
     private List<String> translators;//set null if no translator
-    private Map<String,String> WebIds;
+    private Map<String, String> WebIds;
     // "douban"
     private String publisher;
     private Calendar pubTime;
@@ -44,10 +42,11 @@ public class Book implements Serializable{
     private String website;
     private List<UUID> labelID;
 
-    public Book(){
+    public Book() {
         this(UUID.randomUUID());
     }
-    public Book(UUID uuid){
+
+    public Book(UUID uuid) {
         id = uuid;
         bookshelfID = UUID.fromString("407c4479-5a57-4371-8b94-ad038f1276fe");
         //default bookshelf id
@@ -57,12 +56,12 @@ public class Book implements Serializable{
     }
 
 
-
-    public String getCoverPhotoFileName(){
-        return "Cover_"+id.toString()+".jpg";
+    public String getCoverPhotoFileName() {
+        return "Cover_" + id.toString() + ".jpg";
     }
-    public String getCoverPhotoFileNameWithoutExtension(){
-        return "Cover_"+id.toString();
+
+    public String getCoverPhotoFileNameWithoutExtension() {
+        return "Cover_" + id.toString();
     }
 
 
@@ -178,29 +177,32 @@ public class Book implements Serializable{
         return labelID;
     }
 
-    public void addLabel(Label label){
-        if(labelID == null){
+    public void addLabel(Label label) {
+        if (labelID == null) {
             labelID = new ArrayList<>();
         }
-        if(!labelID.contains(label.getId())){
+        if (!labelID.contains(label.getId())) {
             labelID.add(label.getId());
         }
     }
-    public void addLabel(UUID labelID){
-        if(this.labelID == null){
+
+    public void addLabel(UUID labelID) {
+        if (this.labelID == null) {
             this.labelID = new ArrayList<>();
         }
-        if(!this.labelID.contains(labelID)){
+        if (!this.labelID.contains(labelID)) {
             this.labelID.add(labelID);
         }
     }
-    public void removeLabel(UUID labelID){
-        if(this.labelID !=null){
+
+    public void removeLabel(UUID labelID) {
+        if (this.labelID != null) {
             this.labelID.remove(labelID);
         }
     }
-    public void removeLabel(Label label){
-        if(labelID!=null){
+
+    public void removeLabel(Label label) {
+        if (labelID != null) {
             labelID.remove(label.getId());
         }
     }
@@ -212,27 +214,27 @@ public class Book implements Serializable{
 
     public static class titleComparator implements Comparator<Book> {
         @Override
-        public int compare(Book book1,Book book2){
+        public int compare(Book book1, Book book2) {
             // transfer to Chinese Pinyin
-            String title1 = Pinyin.toPinyin(book1.getTitle(),"");
-            String title2 = Pinyin.toPinyin(book2.getTitle(),"");
+            String title1 = Pinyin.toPinyin(book1.getTitle(), "");
+            String title2 = Pinyin.toPinyin(book2.getTitle(), "");
             return title1.compareTo(title2);
         }
     }
 
     public static class publisherComparator implements Comparator<Book> {
         @Override
-        public int compare(Book book1,Book book2){
+        public int compare(Book book1, Book book2) {
             // transfer to Chinese Pinyin
-            String publisher1 = Pinyin.toPinyin(book1.getPublisher(),"");
-            String publisher2 = Pinyin.toPinyin(book2.getPublisher(),"");
+            String publisher1 = Pinyin.toPinyin(book1.getPublisher(), "");
+            String publisher2 = Pinyin.toPinyin(book2.getPublisher(), "");
             return publisher1.compareTo(publisher2);
         }
     }
 
     public static class pubtimeComparator implements Comparator<Book> {
         @Override
-        public int compare(Book book1,Book book2){
+        public int compare(Book book1, Book book2) {
             Calendar pubtime1 = book1.getPubTime();
             Calendar pubtime2 = book2.getPubTime();
             return pubtime1.compareTo(pubtime2);
@@ -241,20 +243,20 @@ public class Book implements Serializable{
 
     public static class authorComparator implements Comparator<Book> {
         @Override
-        public int compare(Book book1,Book book2){
-            String author1 = Pinyin.toPinyin(book1.getAuthors().toString(),"");
+        public int compare(Book book1, Book book2) {
+            String author1 = Pinyin.toPinyin(book1.getAuthors().toString(), "");
             //Log.d(TAG,"Title1 = " + book1.getTitle() + ", Author1 Pinyin = " + author1);
-            String author2 = Pinyin.toPinyin(book2.getAuthors().toString(),"");
+            String author2 = Pinyin.toPinyin(book2.getAuthors().toString(), "");
             //Log.d(TAG,"Title2 = " + book2.getTitle() + ", Author2 Pinyin = " + author2);
-            int result =  author1.compareTo(author2);
+            int result = author1.compareTo(author2);
             //Log.d(TAG,"Compare result is " + result);
             return result;
         }
     }
 
     @Override
-    public boolean equals(Object o){
-        if(!(o instanceof Book)){
+    public boolean equals(Object o) {
+        if (!(o instanceof Book)) {
             return false;
         }
         Book book = (Book) o;
@@ -262,14 +264,9 @@ public class Book implements Serializable{
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id.hashCode();
     }
-
-
-
-
-
 
 
 }

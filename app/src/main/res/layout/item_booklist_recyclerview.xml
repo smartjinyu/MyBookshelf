@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/list_item_relative_layout"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="72dp"
-              android:padding="6dp"
-              android:clickable="true">
+    android:id="@+id/list_item_relative_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:padding="6dp"
+    android:clickable="true">
+
     <ImageView
         android:id="@+id/list_cover_image_view"
         android:layout_width="45dp"
@@ -15,7 +16,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:src="@drawable/book_cover_default"
-        android:contentDescription="@string/book_cover_image_view_hint"/>
+        android:contentDescription="@string/book_cover_image_view_hint" />
 
     <TextView
         android:id="@+id/list_title_text_view"
@@ -33,7 +34,7 @@
         android:layout_marginStart="72dp"
         android:layout_marginEnd="4dp"
         android:paddingBottom="5dp"
-        android:text="我是天才"/>
+        android:text="我是天才" />
 
     <!--
     <TextView
@@ -75,7 +76,7 @@
             android:textColor="@color/colorSecondaryText"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
-            android:text="机械工业出版社"/>
+            android:text="机械工业出版社" />
 
 
         <TextView

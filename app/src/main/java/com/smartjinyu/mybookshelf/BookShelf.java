@@ -1,7 +1,5 @@
 package com.smartjinyu.mybookshelf;
 
-import android.support.annotation.NonNull;
-
 import java.util.UUID;
 
 /**
@@ -13,15 +11,16 @@ public class BookShelf {
     private UUID id;
     private String title;
 
-    public BookShelf(){
+    public BookShelf() {
         id = UUID.randomUUID();
     }
-    public BookShelf(UUID uuid){
+
+    public BookShelf(UUID uuid) {
         id = uuid;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return title;
     }
 
@@ -38,8 +37,8 @@ public class BookShelf {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(!(o instanceof BookShelf)){
+    public boolean equals(Object o) {
+        if (!(o instanceof BookShelf)) {
             return false;
         }
         BookShelf bookshelf = (BookShelf) o;
@@ -47,7 +46,7 @@ public class BookShelf {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id.hashCode();
     }
 

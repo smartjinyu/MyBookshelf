@@ -16,13 +16,11 @@ repositories {
 }
 
 
-
-def static getApiKey(){
+def static getApiKey() {
     def Properties props = new Properties()
     props.load(new FileInputStream(new File('fabric.properties')))
     return props['apiKey']
 }
-
 
 
 android {
@@ -41,10 +39,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [ fabric_api_key:getApiKey()]
+            manifestPlaceholders = [fabric_api_key: getApiKey()]
         }
-        debug{
-            manifestPlaceholders = [ fabric_api_key:getApiKey()]
+        debug {
+            manifestPlaceholders = [fabric_api_key: getApiKey()]
         }
 
 
@@ -73,23 +71,18 @@ dependencies {
         transitive = true
     }
     compile 'com.github.promeg:tinypinyin:2.0.1'
-    compile project (':searchview')
+    compile project(':searchview')
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true;
     }
-    compile project (':AlipayZeroSdk')
-    compile project (':compressor')
-    compile ('com.squareup.retrofit2:converter-simplexml:2.2.0'){
+    compile project(':AlipayZeroSdk')
+    compile project(':compressor')
+    compile('com.squareup.retrofit2:converter-simplexml:2.2.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
     compile files('libs/opencsv-3.9.jar')
-
-
-
-
-
 
 
 }

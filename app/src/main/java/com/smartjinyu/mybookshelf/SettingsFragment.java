@@ -2,11 +2,9 @@ package com.smartjinyu.mybookshelf;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.icu.text.UnicodeSet;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
@@ -760,7 +757,7 @@ public class SettingsFragment extends PreferenceFragment {
                 List<String> titleBar = new ArrayList<>();
                 titleBar.add(getString(R.string.export_csv_file_order));
                 for (int i = 0; i < 11; i++) {
-                    if(items[i]==1){
+                    if (items[i] == 1) {
                         titleBar.add(getResources().getStringArray(R.array.export_csv_dialog_list)[i]);
                     }
                 }
@@ -774,9 +771,9 @@ public class SettingsFragment extends PreferenceFragment {
                         // title
                         entry.add(mBook.getTitle());
                     }
-                    if(items[1] == 1){
+                    if (items[1] == 1) {
                         // authors
-                        if(mBook.getAuthors().size()!=0) {
+                        if (mBook.getAuthors().size() != 0) {
                             StringBuilder authors = new StringBuilder();
                             for (String author : mBook.getAuthors()) {
                                 authors.append(author);
@@ -786,13 +783,13 @@ public class SettingsFragment extends PreferenceFragment {
                                 authors.deleteCharAt(authors.length() - 1);
                             }
                             entry.add(authors.toString());
-                        }else{
+                        } else {
                             entry.add("");
                         }
                     }
-                    if(items[2] == 1){
+                    if (items[2] == 1) {
                         // translators
-                        if(mBook.getTranslators().size()!=0) {
+                        if (mBook.getTranslators().size() != 0) {
                             StringBuilder translators = new StringBuilder();
                             for (String translator : mBook.getTranslators()) {
                                 translators.append(translator);
@@ -802,21 +799,21 @@ public class SettingsFragment extends PreferenceFragment {
                                 translators.deleteCharAt(translators.length() - 1);
                             }
                             entry.add(translators.toString());
-                        }else{
+                        } else {
                             entry.add("");
                         }
                     }
-                    if(items[3] == 1){
+                    if (items[3] == 1) {
                         // publisher
                         entry.add(mBook.getPublisher());
                     }
-                    if(items[4] == 1){
+                    if (items[4] == 1) {
                         // PubTime
                         Calendar calendar = mBook.getPubTime();
                         int year = calendar.get(Calendar.YEAR);
-                        if(year == 9999){
+                        if (year == 9999) {
                             entry.add("");
-                        }else {
+                        } else {
                             int month = calendar.get(Calendar.MONTH) + 1;
                             StringBuilder pubtime = new StringBuilder();
                             pubtime.append(year);
@@ -825,24 +822,24 @@ public class SettingsFragment extends PreferenceFragment {
                             entry.add(pubtime.toString());
                         }
                     }
-                    if(items[5] == 1){
+                    if (items[5] == 1) {
                         // ISBN
                         entry.add(mBook.getIsbn());
                     }
-                    if(items[6] == 1){
+                    if (items[6] == 1) {
                         // readingStatus
                         String[] readingStatus = getResources().getStringArray(R.array.reading_status_array);
                         entry.add(readingStatus[mBook.getReadingStatus()]);
                     }
-                    if(items[7] == 1){
+                    if (items[7] == 1) {
                         // bookshelf
                         BookShelf bookShelf = BookShelfLab.get(getActivity()).getBookShelf(mBook.getBookshelfID());
                         entry.add(bookShelf.getTitle());
                     }
-                    if(items[8] == 1){
+                    if (items[8] == 1) {
                         // labels
                         List<UUID> labelID = mBook.getLabelID();
-                        if(labelID.size()!=0) {
+                        if (labelID.size() != 0) {
                             StringBuilder labelsTitle = new StringBuilder();
                             for (UUID id : labelID) {
                                 labelsTitle.append(LabelLab.get(getActivity()).getLabel(id).getTitle());
@@ -850,15 +847,15 @@ public class SettingsFragment extends PreferenceFragment {
                             }
                             labelsTitle.deleteCharAt(labelsTitle.length() - 1);
                             entry.add(labelsTitle.toString());
-                        }else{
+                        } else {
                             entry.add("");
                         }
                     }
-                    if(items[9] == 1){
+                    if (items[9] == 1) {
                         // notes
                         entry.add(mBook.getNotes());
                     }
-                    if(items[10] == 1){
+                    if (items[10] == 1) {
                         // website
                         entry.add(mBook.getWebsite());
                     }
@@ -867,7 +864,7 @@ public class SettingsFragment extends PreferenceFragment {
                 csvWriter.writeNext(new String[]{""});
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE z");
                 String exportTime = format.format(mCalendar.getTime());
-                String exportTimeString = String.format(getString(R.string.export_csv_file_time),exportTime);
+                String exportTimeString = String.format(getString(R.string.export_csv_file_time), exportTime);
                 csvWriter.writeNext(new String[]{exportTimeString});
                 csvWriter.writeNext(new String[]{getString(R.string.export_csv_file_end)});
                 csvWriter.writeNext(new String[]{getString(R.string.export_csv_file_copyright)});
@@ -888,11 +885,11 @@ public class SettingsFragment extends PreferenceFragment {
                     .putContentId("2031")
                     .putCustomAttribute("Export Result = ", isSucceed.toString()));
             mDialog.dismiss();
-            if(isSucceed){
-                String toastText = String.format(getString(R.string.export_csv_export_succeed_toast),csvName);
-                Toast.makeText(getActivity(),toastText,Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(getActivity(),getString(R.string.export_csv_export_fail_toast),Toast.LENGTH_LONG).show();
+            if (isSucceed) {
+                String toastText = String.format(getString(R.string.export_csv_export_succeed_toast), csvName);
+                Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.export_csv_export_fail_toast), Toast.LENGTH_LONG).show();
             }
         }
     }

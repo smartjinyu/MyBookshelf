@@ -13,7 +13,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -23,7 +22,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
-import com.mikepenz.materialize.color.Material;
 
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
@@ -41,7 +39,7 @@ public class AboutFragment extends PreferenceFragment {
     private Preference licensePreference;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.about_preference);
 
@@ -58,7 +56,7 @@ public class AboutFragment extends PreferenceFragment {
                         .putContentId("2020")
                         .putCustomAttribute("Donate Clicked", "Donate Clicked"));
                 boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(getActivity());
-                if(hasInstalledAlipayClient){
+                if (hasInstalledAlipayClient) {
                     new MaterialDialog.Builder(getActivity())
                             .title(R.string.about_preference_donate_title)
                             .content(R.string.about_donate_dialog_content)
@@ -112,7 +110,7 @@ public class AboutFragment extends PreferenceFragment {
                                 }
                             })
                             .show();
-                }else{
+                } else {
                     new MaterialDialog.Builder(getActivity())
                             .title(R.string.about_preference_rate_title)
                             .content(R.string.about_donate_dialog_content)
@@ -165,9 +163,9 @@ public class AboutFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 Intent mail = new Intent(Intent.ACTION_SENDTO);
                 mail.setData(Uri.parse("mailto:smartjinyu@gmail.com"));
-                mail.putExtra(Intent.EXTRA_SUBJECT,"MyBookshelf Feedback");
-                String content=getEmailContent();
-                mail.putExtra(Intent.EXTRA_TEXT,content);
+                mail.putExtra(Intent.EXTRA_SUBJECT, "MyBookshelf Feedback");
+                String content = getEmailContent();
+                mail.putExtra(Intent.EXTRA_TEXT, content);
                 startActivity(mail);
                 return true;
             }
@@ -214,11 +212,11 @@ public class AboutFragment extends PreferenceFragment {
         });
     }
 
-    private String getEmailContent(){
-        String content="\n\n"+"------------------------"+"\n";
-        content+= "Package Name: "+getActivity().getPackageName()+"\n";
-        content+= "App Version: "+BuildConfig.VERSION_NAME+"\n";
-        content+= "Device Model: "+ Build.MODEL+"\n"+"Device Brand: "+Build.BRAND+"\n"+"SDK Version: "+ Build.VERSION.SDK_INT+"\n"+"------------------------";
+    private String getEmailContent() {
+        String content = "\n\n" + "------------------------" + "\n";
+        content += "Package Name: " + getActivity().getPackageName() + "\n";
+        content += "App Version: " + BuildConfig.VERSION_NAME + "\n";
+        content += "Device Model: " + Build.MODEL + "\n" + "Device Brand: " + Build.BRAND + "\n" + "SDK Version: " + Build.VERSION.SDK_INT + "\n" + "------------------------";
         return content;
 
     }

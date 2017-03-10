@@ -19,16 +19,12 @@
             android:layout_height="wrap_content" />
 
 
-
-
         <!-- The main content view where fragments are loaded -->
-            <include layout="@layout/activity_main_coordinate"/>
-
-
-
+        <include layout="@layout/activity_main_coordinate" />
 
 
     </LinearLayout>
+
     <com.lapism.searchview.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
@@ -42,8 +38,7 @@
         app:search_hide_on_keyboard_close="false"
         app:search_clear_on_open="true"
         app:search_clear_on_close="true"
-        app:search_shadow="false"/>
-
+        app:search_shadow="false" />
 
 
 </android.support.v4.widget.DrawerLayout>

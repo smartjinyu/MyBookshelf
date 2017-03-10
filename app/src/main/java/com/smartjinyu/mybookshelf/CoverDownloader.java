@@ -1,7 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -34,12 +33,11 @@ public class CoverDownloader {
     private int mode;
 
     /**
-     *
      * @param context
      * @param book
-     * @param mode = 0 Call from BookEditActivity, mode = 1 Call from BatchAddActivity
+     * @param mode    = 0 Call from BookEditActivity, mode = 1 Call from BatchAddActivity
      */
-    public CoverDownloader(Context context,Book book,int mode){
+    public CoverDownloader(Context context, Book book, int mode) {
         mBook = book;
         mContext = context;
         mHandler = new Handler(Looper.getMainLooper());
@@ -47,7 +45,7 @@ public class CoverDownloader {
     }
 
 
-    protected void downloadAndSaveImg(String url, final String path){
+    protected void downloadAndSaveImg(String url, final String path) {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://smartjinyu.com/")//no use here, will use dynamic url for request
@@ -57,14 +55,14 @@ public class CoverDownloader {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG,"Get download image response, code = " + response.code());
-                if(saveImgToDisk(response.body(),path)){
+                Log.i(TAG, "Get download image response, code = " + response.code());
+                if (saveImgToDisk(response.body(), path)) {
                     mBook.setHasCover(true);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if(mode == 0){
-                                ((BookEditActivity)mContext).setBookCover();
+                            if (mode == 0) {
+                                ((BookEditActivity) mContext).setBookCover();
                             }
                             // nothing except setHasCover(true) need to do if mode == 1
                         }
@@ -74,23 +72,23 @@ public class CoverDownloader {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG,"Fail to download image response," + t.toString());
+                Log.e(TAG, "Fail to download image response," + t.toString());
                 // Toast.makeText(mContext,"",Toast.LENGTH_LONG).show();
                 //todo
             }
         });
 
 
-
     }
+
     private interface downloadImgApi {
         @GET
         Call<ResponseBody> downloadFileWithDynamicUrlSync(@Url String fileUrl);
     }
 
-    private boolean saveImgToDisk(ResponseBody responseBody,String path){
-        try{
-            Log.d(TAG,"Begin to save cover to external storage");
+    private boolean saveImgToDisk(ResponseBody responseBody, String path) {
+        try {
+            Log.d(TAG, "Begin to save cover to external storage");
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
@@ -103,24 +101,24 @@ public class CoverDownloader {
                 while ((c = inputStream.read()) != -1) {
                     outputStream.write(c);
                 }
-            }catch (IOException ioe){
-                Log.e(TAG,"IOException, " + ioe.toString());
+            } catch (IOException ioe) {
+                Log.e(TAG, "IOException, " + ioe.toString());
                 return false;
-            }finally {
-                if(inputStream!=null){
+            } finally {
+                if (inputStream != null) {
                     inputStream.close();
                 }
                 outputStream.close();
 
             }
-        }catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e(TAG, "File not found exception, " + e.toString());
             return false;
-        }catch (IOException ioe){
-            Log.e(TAG,"IOException, " + ioe.toString());
+        } catch (IOException ioe) {
+            Log.e(TAG, "IOException, " + ioe.toString());
             return false;
         }
-        Log.i(TAG,"Save image successfully.");
+        Log.i(TAG, "Save image successfully.");
         return true;
     }
 }

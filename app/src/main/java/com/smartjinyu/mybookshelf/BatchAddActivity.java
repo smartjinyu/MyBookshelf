@@ -57,7 +57,7 @@ public class BatchAddActivity extends AppCompatActivity {
     public static List<Book> mBooks;// books added
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_batch_add);
 
@@ -95,31 +95,33 @@ public class BatchAddActivity extends AppCompatActivity {
             }
         });
 
-        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices",null);
-        if(rawWS!=null){
-            Type type = new TypeToken<Integer[]>(){}.getType();
+        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices", null);
+        if (rawWS != null) {
+            Type type = new TypeToken<Integer[]>() {
+            }.getType();
             Gson gson = new Gson();
-            selectedServices = gson.fromJson(rawWS,type);
-        }else{
-            selectedServices = new Integer[]{0,1}; //two webServices currently
+            selectedServices = gson.fromJson(rawWS, type);
+        } else {
+            selectedServices = new Integer[]{0, 1}; //two webServices currently
         }
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_batchadd,menu);
+        inflater.inflate(R.menu.menu_batchadd, menu);
         return true;
     }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.batch_add_menu_item_save:
                 // choose bookshelf
-                if(mBooks.size()!=0){
+                if (mBooks.size() != 0) {
                     chooseBookshelf();
-                }else{
+                } else {
                     finish();
                 }
 
@@ -128,7 +130,7 @@ public class BatchAddActivity extends AppCompatActivity {
         }
     }
 
-    private void chooseBookshelf(){
+    private void chooseBookshelf() {
 
         final BookShelfLab bookShelfLab = BookShelfLab.get(BatchAddActivity.this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
@@ -139,10 +141,10 @@ public class BatchAddActivity extends AppCompatActivity {
                     @Override
                     public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                         List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-                        for(BookShelf bookShelf : bookShelves){
-                            if(bookShelf.getTitle().equals(text)){
+                        for (BookShelf bookShelf : bookShelves) {
+                            if (bookShelf.getTitle().equals(text)) {
                                 // selected bookshelf
-                                for(Book book : mBooks){
+                                for (Book book : mBooks) {
                                     book.setBookshelfID(bookShelf.getId());
                                 }
                                 break;
@@ -179,7 +181,7 @@ public class BatchAddActivity extends AppCompatActivity {
                                         bookShelfLab.addBookShelf(bookShelfToAdd);
                                         Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
                                         listdialog.getItems().add(bookShelfToAdd.getTitle());
-                                        listdialog.notifyItemInserted(listdialog.getItems().size()-1);
+                                        listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
                                     }
                                 })
                                 .negativeText(android.R.string.cancel)
@@ -199,7 +201,7 @@ public class BatchAddActivity extends AppCompatActivity {
 
     }
 
-    private void addLabel(){
+    private void addLabel() {
         final LabelLab labelLab = LabelLab.get(BatchAddActivity.this);
         final List<Label> labels = labelLab.getLabels();
         new MaterialDialog.Builder(BatchAddActivity.this)
@@ -211,11 +213,11 @@ public class BatchAddActivity extends AppCompatActivity {
                         List<Label> labels = labelLab.getLabels();
                         // must refresh labels here because if user add label, the list won't update,
                         // and select the newly add label won't take effect
-                        for(int i=0;i<which.length;i++){
-                            for(Label label:labels){
-                                if(label.getTitle().equals(text[i])){
+                        for (int i = 0; i < which.length; i++) {
+                            for (Label label : labels) {
+                                if (label.getTitle().equals(text[i])) {
                                     // selected label
-                                    for(Book book : mBooks){
+                                    for (Book book : mBooks) {
                                         book.addLabel(label);
                                     }
                                     break;
@@ -278,32 +280,31 @@ public class BatchAddActivity extends AppCompatActivity {
                 .show();
 
     }
-    private void setTabTitle(){
-        if(tabLayout!=null){
+
+    private void setTabTitle() {
+        if (tabLayout != null) {
             tabLayout.getTabAt(1).
-                    setText(String.format(getString(R.string.batch_add_tab_title_1),mBooks.size()));
+                    setText(String.format(getString(R.string.batch_add_tab_title_1), mBooks.size()));
 
         }
     }
 
 
-
-
     public class PagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
         final int PAGE_COUNT = 2;
 
-        public PagerAdapter(FragmentManager fm){
+        public PagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public int getCount(){
+        public int getCount() {
             return PAGE_COUNT;
         }
 
         @Override
-        public Fragment getItem(int position){
-            switch (position){
+        public Fragment getItem(int position) {
+            switch (position) {
                 case 0:
                     return new BatchScanFragment();
                 case 1:
@@ -314,64 +315,64 @@ public class BatchAddActivity extends AppCompatActivity {
         }
 
         @Override
-        public CharSequence getPageTitle(int position){
-            switch (position){
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
                 case 0:
                     return getString(R.string.batch_add_tab_title_0);
                 case 1:
-                    return String.format(getString(R.string.batch_add_tab_title_1),mBooks.size());
+                    return String.format(getString(R.string.batch_add_tab_title_1), mBooks.size());
             }
             return null;
         }
     }
 
 
-
-    public void fetchSucceed(final Book mBook,final String imageURL){
+    public void fetchSucceed(final Book mBook, final String imageURL) {
         mBooks.add(mBook);
-        if(mBook.getWebsite()==null){
+        if (mBook.getWebsite() == null) {
             mBook.setWebsite("");
         }
-        if(mBook.getNotes()==null){
+        if (mBook.getNotes() == null) {
             mBook.setNotes("");
         }
         setTabTitle();
         Snackbar.make(
                 findViewById(R.id.batch_add_linear_layout),
-                String.format(getString(R.string.batch_add_added_snack_bar),mBook.getTitle()),
+                String.format(getString(R.string.batch_add_added_snack_bar), mBook.getTitle()),
                 Snackbar.LENGTH_SHORT).show();
-        CoverDownloader coverDownloader = new CoverDownloader(this,mBook,1);
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + mBook.getCoverPhotoFileName();
-        coverDownloader.downloadAndSaveImg(imageURL,path);
+        CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 1);
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
+        coverDownloader.downloadAndSaveImg(imageURL, path);
     }
 
-    public void fetchFailed(int fetcherID,int event,String isbn){
+    public void fetchFailed(int fetcherID, int event, String isbn) {
         /**
          * event = 0, unexpected response code
          * event = 1, request failed
          */
 
         indexOfServiceTested += 1;
-        if(indexOfServiceTested < selectedServices.length){
+        if (indexOfServiceTested < selectedServices.length) {
             // test next
-            if(selectedServices[indexOfServiceTested] == 0){
+            if (selectedServices[indexOfServiceTested] == 0) {
                 DoubanFetcher fetcher = new DoubanFetcher();
-                fetcher.getBookInfo(this,isbn,1);
-            }else if(selectedServices[indexOfServiceTested] == 1){
+                fetcher.getBookInfo(this, isbn, 1);
+            } else if (selectedServices[indexOfServiceTested] == 1) {
                 OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-                fetcher.getBookInfo(this,isbn,1);
+                fetcher.getBookInfo(this, isbn, 1);
             }
-        }else{
-            if(event == 0){
+        } else {
+            if (event == 0) {
                 event0Dialog(isbn);
-            }else if(event == 1){
+            } else if (event == 1) {
                 event1Dialog(isbn);
             }
         }
     }
-    private void event0Dialog(final String isbn){
+
+    private void event0Dialog(final String isbn) {
         String dialogContent = String.format(getResources().getString(
-                R.string.isbn_unmatched_dialog_batch_content),isbn);
+                R.string.isbn_unmatched_dialog_batch_content), isbn);
         new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
                 .content(dialogContent)
@@ -387,9 +388,9 @@ public class BatchAddActivity extends AppCompatActivity {
 
     }
 
-    private void event1Dialog(final String isbn){
+    private void event1Dialog(final String isbn) {
         String dialogContent = String.format(getResources().getString(
-                R.string.request_failed_dialog_batch_content),isbn);
+                R.string.request_failed_dialog_batch_content), isbn);
         new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
                 .content(dialogContent)
@@ -406,12 +407,12 @@ public class BatchAddActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         dialogBeforeDiscard();
     }
 
-    private void dialogBeforeDiscard(){
-        if(mBooks.size()!=0){
+    private void dialogBeforeDiscard() {
+        if (mBooks.size() != 0) {
             new MaterialDialog.Builder(this)
                     .title(R.string.batch_add_activity_discard_dialog_title)
                     .content(R.string.batch_add_activity_discard_dialog_content)
@@ -430,25 +431,23 @@ public class BatchAddActivity extends AppCompatActivity {
                         }
                     })
                     .show();
-        }else{
+        } else {
             finish();
         }
     }
 
 
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],@NonNull int[] results){
-        switch (requestCode){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] results) {
+        switch (requestCode) {
             case CAMERA_PERMISSION:
-                if(!(results.length>0 && results[0] == PackageManager.PERMISSION_GRANTED)){
-                    Toast.makeText(this,R.string.camera_permission_denied,Toast.LENGTH_LONG).show();
-                    Log.e(TAG,"Camera Permission Denied");
+                if (!(results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(this, R.string.camera_permission_denied, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Camera Permission Denied");
                     finish();
                 }
         }
     }
-
 
 
 }

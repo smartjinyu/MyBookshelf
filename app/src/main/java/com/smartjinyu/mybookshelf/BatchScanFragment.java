@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.zxing.Result;
+
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -26,7 +27,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  * Created by smartjinyu on 2017/2/8.
  */
 
-public class BatchScanFragment extends Fragment implements ZXingScannerView.ResultHandler{
+public class BatchScanFragment extends Fragment implements ZXingScannerView.ResultHandler {
     private static final String TAG = "BatchScanFragment";
     private static final String FLASH_STATE = "FLASH_STATE";
 
@@ -39,9 +40,9 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_batch_scan, container, false);
         setHasOptionsMenu(true);
-        if(savedInstanceState!=null){
-            mFlash = savedInstanceState.getBoolean(FLASH_STATE,false);
-        }else{
+        if (savedInstanceState != null) {
+            mFlash = savedInstanceState.getBoolean(FLASH_STATE, false);
+        } else {
             mFlash = false;
         }
         ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.batch_add_frame_scan);
@@ -54,10 +55,10 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem menuItem;
 
-        if(BatchScanFragment.mFlash) {
+        if (BatchScanFragment.mFlash) {
             menuItem = menu.add(Menu.NONE, R.id.menu_batch_add_flash, 0, R.string.menu_single_add_flash_on);
             menuItem.setIcon(R.drawable.ic_flash_on);
         } else {
@@ -65,7 +66,7 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
             menuItem.setIcon(R.drawable.ic_flash_off);
         }
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -73,12 +74,13 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
         switch (item.getItemId()) {
             case R.id.menu_batch_add_flash:
                 mFlash = !mFlash;
-                if(mFlash) {
+                if (mFlash) {
                     item.setTitle(R.string.menu_single_add_flash_on);
                     item.setIcon(R.drawable.ic_flash_on);
                 } else {
                     item.setTitle(R.string.menu_single_add_flash_off);
-                    item.setIcon(R.drawable.ic_flash_off);}
+                    item.setIcon(R.drawable.ic_flash_off);
+                }
                 mScannerView.setFlash(mFlash);
                 return true;
         }
@@ -86,25 +88,25 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
     }
 
 
-    private void addBook(final String isbn){
+    private void addBook(final String isbn) {
         BookLab bookLab = BookLab.get(getActivity());
         List<Book> mBooks = bookLab.getBooks();
         boolean isExist = false;
-        for(Book book:mBooks){
-            if (book.getIsbn().equals(isbn)){
+        for (Book book : mBooks) {
+            if (book.getIsbn().equals(isbn)) {
                 isExist = true;
                 break;
             }
         }
-        if(!isExist){ // added this time
-            for(Book book:BatchAddActivity.mBooks){
-                if (book.getIsbn().equals(isbn)){
+        if (!isExist) { // added this time
+            for (Book book : BatchAddActivity.mBooks) {
+                if (book.getIsbn().equals(isbn)) {
                     isExist = true;
                     break;
                 }
             }
         }
-        if(isExist){//The book is already in the list
+        if (isExist) {//The book is already in the list
             new MaterialDialog.Builder(getActivity())
                     .title(R.string.book_duplicate_dialog_title)
                     .content(R.string.book_duplicate_dialog_content)
@@ -117,29 +119,26 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
                     })
                     .negativeText(android.R.string.cancel)
                     .show();
-        }else{
+        } else {
             beginFetcher(isbn);
         }
     }
 
-    private void beginFetcher(String isbn){
+    private void beginFetcher(String isbn) {
         BatchAddActivity.indexOfServiceTested = 0;
-        if(BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 0){
+        if (BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 0) {
             DoubanFetcher fetcher = new DoubanFetcher();
-            fetcher.getBookInfo(getActivity(),isbn,1);
-        }else if(BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 1){
+            fetcher.getBookInfo(getActivity(), isbn, 1);
+        } else if (BatchAddActivity.selectedServices[BatchAddActivity.indexOfServiceTested] == 1) {
             OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-            fetcher.getBookInfo(getActivity(),isbn,1);
+            fetcher.getBookInfo(getActivity(), isbn, 1);
         }
     }
 
 
-
-
-
     @Override
-    public void handleResult(Result rawResult){
-        Log.i(TAG,"ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
+    public void handleResult(Result rawResult) {
+        Log.i(TAG, "ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
         addBook(rawResult.getText());
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -157,9 +156,9 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(FLASH_STATE,mFlash);
+        outState.putBoolean(FLASH_STATE, mFlash);
     }
 
     @Override
@@ -173,14 +172,11 @@ public class BatchScanFragment extends Fragment implements ZXingScannerView.Resu
     }
 
 
-
     @Override
     public void onPause() {
         super.onPause();
         mScannerView.stopCamera();
     }
-
-
 
 
 }

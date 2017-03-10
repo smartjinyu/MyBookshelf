@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <include domain="sharedpref" path="labels.xml"/>
-    <include domain="sharedpref" path="bookshelf.xml"/>
-    <include domain="sharedpref" path="com.smartjinyu.mybookshelf_preferences.xml"/>
-    <include domain="database" path="bookList.db"/>
-    <include domain="external"/>
+    <include
+        domain="sharedpref"
+        path="labels.xml" />
+    <include
+        domain="sharedpref"
+        path="bookshelf.xml" />
+    <include
+        domain="sharedpref"
+        path="com.smartjinyu.mybookshelf_preferences.xml" />
+    <include
+        domain="database"
+        path="bookList.db" />
+    <include domain="external" />
 
 
 </full-backup-content>

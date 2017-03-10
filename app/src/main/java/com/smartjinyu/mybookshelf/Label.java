@@ -10,15 +10,16 @@ public class Label {
     private UUID id;
     private String title;
 
-    public Label(){
+    public Label() {
         id = UUID.randomUUID();
     }
-    public Label(UUID uuid){
+
+    public Label(UUID uuid) {
         id = uuid;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return title;
     }
 
@@ -35,8 +36,8 @@ public class Label {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(!(o instanceof Label)){
+    public boolean equals(Object o) {
+        if (!(o instanceof Label)) {
             return false;
         }
         Label book = (Label) o;
@@ -44,7 +45,7 @@ public class Label {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id.hashCode();
     }
 

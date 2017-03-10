@@ -7,12 +7,12 @@ import org.simpleframework.xml.Root;
  * used to parse newest version code from github
  * Created by smartjinyu on 2017/3/4.
  */
-@Root(name="versions")
+@Root(name = "versions")
 public class VersionUpdateData {
-    @Element(name="official_code")
+    @Element(name = "official_code")
     private int version_code;
 
-    @Element(name="official_name")
+    @Element(name = "official_name")
     private String version_name;
 
     public int getVersion_code() {

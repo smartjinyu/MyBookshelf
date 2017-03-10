@@ -259,13 +259,13 @@ public class BookEditActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if(!BookLab.get(BookEditActivity.this).isBookExists(mBook)){
+                        if (!BookLab.get(BookEditActivity.this).isBookExists(mBook)) {
                             // discard a newly added book
-                            if(mBook.isHasCover()){
+                            if (mBook.isHasCover()) {
                                 // delete the redundant cover file
                                 File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName());
                                 boolean succeeded = file.delete();
-                                Log.i(TAG,"Remove redundant cover result = " + succeeded);
+                                Log.i(TAG, "Remove redundant cover result = " + succeeded);
                             }
                         }
                         finish();
@@ -626,14 +626,14 @@ public class BookEditActivity extends AppCompatActivity {
                                             != PackageManager.PERMISSION_GRANTED) {
                                         ActivityCompat.requestPermissions(BookEditActivity.this,
                                                 new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
-                                    }else{
+                                    } else {
                                         takePictureIntent();
                                     }
 
                                 } else if (position == 1) {
                                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                                     i.setType("image/*");
-                                    startActivityForResult(i,REQUEST_CHOOSE_IMAGE);
+                                    startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
 
                                 }
                             }
@@ -644,19 +644,19 @@ public class BookEditActivity extends AppCompatActivity {
         });
     }
 
-    private void takePictureIntent(){
+    private void takePictureIntent() {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (i.resolveActivity(getPackageManager()) != null) {
-            try{
+            try {
                 File photoFile = createImageFile();
                 Uri photoUri = FileProvider.getUriForFile(
                         this,
                         "com.smartjinyu.mybookshelf.provider",
                         photoFile);
-                i.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
-                startActivityForResult(i,REQUEST_IMAGE_CAPTURE);
-            }catch (IOException ioe){
-                Log.e(TAG,"createImageFile ioe = " + ioe.toString());
+                i.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
+            } catch (IOException ioe) {
+                Log.e(TAG, "createImageFile ioe = " + ioe.toString());
             }
         } else {
             Log.e(TAG, "Camera App Not Installed");
@@ -665,7 +665,7 @@ public class BookEditActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException{
+    private File createImageFile() throws IOException {
         // Create a new image file for camera to save
         String fileName = "Temp_" + Calendar.getInstance().getTimeInMillis();
         File storageDir = getExternalFilesDir("Temp");
@@ -698,16 +698,16 @@ public class BookEditActivity extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_PERMISSION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_camera_permission_denied),
+                    Toast.makeText(BookEditActivity.this, getString(R.string.cover_change_camera_permission_denied),
                             Toast.LENGTH_LONG)
                             .show();
-                }else{
+                } else {
                     takePictureIntent();
                 }
         }
     }
 
-    private void compressCustomCover(File imageFile){
+    private void compressCustomCover(File imageFile) {
         new Compressor.Builder(this)
                 .setMaxHeight(450)
                 .setMaxWidth(400)
@@ -725,27 +725,27 @@ public class BookEditActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            if(customPhotoName == null){
-                Log.e(TAG,"Error when taking a new picture");
-                Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_fail),Toast.LENGTH_LONG)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if (customPhotoName == null) {
+                Log.e(TAG, "Error when taking a new picture");
+                Toast.makeText(BookEditActivity.this, getString(R.string.cover_change_fail), Toast.LENGTH_LONG)
                         .show();
-            }else{
+            } else {
                 File imageFile = new File(customPhotoName);
                 compressCustomCover(imageFile);
 
                 boolean succeed = imageFile.delete();
-                Log.i(TAG,"Delete camera image result = " + succeed);
+                Log.i(TAG, "Delete camera image result = " + succeed);
                 customPhotoName = null;
             }
 
-        }else if(requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK){
-            if(data==null){
-                Log.e(TAG,"Error when choosing a picture");
-                Toast.makeText(BookEditActivity.this,getString(R.string.cover_change_fail),Toast.LENGTH_LONG)
+        } else if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK) {
+            if (data == null) {
+                Log.e(TAG, "Error when choosing a picture");
+                Toast.makeText(BookEditActivity.this, getString(R.string.cover_change_fail), Toast.LENGTH_LONG)
                         .show();
-            }else {
+            } else {
                 try {
                     File imageFile = FileUtil.from(this, data.getData());
                     compressCustomCover(imageFile);

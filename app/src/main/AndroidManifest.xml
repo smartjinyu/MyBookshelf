@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.smartjinyu.mybookshelf">
+    package="com.smartjinyu.mybookshelf">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera"
-        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -19,23 +20,27 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".SingleAddActivity"
-                  android:theme="@style/AppOverlayTheme"/>
-        <activity android:name=".BookEditActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".BookDetailActivity"
+        <activity
+            android:name=".SingleAddActivity"
+            android:theme="@style/AppOverlayTheme" />
+        <activity
+            android:name=".BookEditActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".BookDetailActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light"/>
-        <activity android:name=".AboutActivity"/>
-        <activity android:name=".SettingsActivity"/>
-        <activity android:name=".BatchAddActivity"/>
+            android:theme="@style/Theme.Sliding.Light" />
+        <activity android:name=".AboutActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".BatchAddActivity" />
 
         <activity
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"
@@ -54,7 +59,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
 
         </provider>
 

@@ -1,15 +1,12 @@
 package com.smartjinyu.mybookshelf;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -34,7 +31,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
 
 import java.lang.reflect.Type;
-import java.util.Calendar;
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -44,7 +40,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  * Scan barcode of a single book
  */
 
-public class SingleAddActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class SingleAddActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private static final String TAG = "SingleAddActivity";
 
     private static final int CAMERA_PERMISSION = 1;
@@ -62,9 +58,8 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     // Caution it is selectedServices[x], instead of the id of webServices itself.
 
 
-
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -78,7 +73,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 .putCustomAttribute("onCreate", "onCreate"));
 
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mFlash = savedInstanceState.getBoolean(FLASH_STATE, false);
         } else {
             mFlash = false;
@@ -89,7 +84,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mToolbar.setTitle(R.string.single_scan_toolbar);
         setSupportActionBar(mToolbar);
         final ActionBar ab = getSupportActionBar();
-        if(ab != null) {
+        if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -104,10 +99,10 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem menuItem;
 
-        if(mFlash) {
+        if (mFlash) {
             menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_flash, 0, R.string.menu_single_add_flash_on);
             menuItem.setIcon(R.drawable.ic_flash_on);
         } else {
@@ -117,21 +112,18 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        menuItem = menu.add(Menu.NONE,R.id.menu_simple_add_manually,0,R.string.menu_single_add_manually);
-        MenuItemCompat.setShowAsAction(menuItem,MenuItemCompat.SHOW_AS_ACTION_NEVER);
+        menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_manually, 0, R.string.menu_single_add_manually);
+        MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_NEVER);
 
         return super.onCreateOptionsMenu(menu);
 
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(FLASH_STATE,mFlash);
+        outState.putBoolean(FLASH_STATE, mFlash);
     }
-
-
-
 
 
     @Override
@@ -160,12 +152,13 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 return true;
             case R.id.menu_simple_add_flash:
                 mFlash = !mFlash;
-                if(mFlash) {
+                if (mFlash) {
                     item.setTitle(R.string.menu_single_add_flash_on);
                     item.setIcon(R.drawable.ic_flash_on);
                 } else {
                     item.setTitle(R.string.menu_single_add_flash_off);
-                    item.setIcon(R.drawable.ic_flash_off);}
+                    item.setIcon(R.drawable.ic_flash_off);
+                }
                 mScannerView.setFlash(mFlash);
                 return true;
             case R.id.menu_simple_add_manually:
@@ -189,13 +182,13 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         })
                         .alwaysCallInputCallback()
                         .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input(R.string.input_isbn_manually_edit_text,0, new MaterialDialog.InputCallback() {
+                        .input(R.string.input_isbn_manually_edit_text, 0, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 int length = dialog.getInputEditText().getText().length();
-                                if(length == 10 || length == 13){
+                                if (length == 10 || length == 13) {
                                     dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
-                                }else{
+                                } else {
                                     dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
                                 }
                             }
@@ -207,19 +200,19 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         return super.onOptionsItemSelected(item);
     }
 
-    private void addBook(final String isbn){
+    private void addBook(final String isbn) {
         mScannerView.stopCamera();
         BookLab bookLab = BookLab.get(this);
         List<Book> mBooks = bookLab.getBooks();
         boolean isExist = false;
-        for(Book book:mBooks){
-            if (book.getIsbn().equals(isbn)){
+        for (Book book : mBooks) {
+            if (book.getIsbn().equals(isbn)) {
                 isExist = true;
                 break;
             }
         }
 
-        if(isExist){//The book is already in the list
+        if (isExist) {//The book is already in the list
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                     .title(R.string.book_duplicate_dialog_title)
                     .content(R.string.book_duplicate_dialog_content)
@@ -238,36 +231,36 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         }
                     })
                     .show();
-        }else{
+        } else {
             beginFetcher(isbn);
         }
     }
 
-    private void beginFetcher(String isbn){
+    private void beginFetcher(String isbn) {
         indexOfServiceTested = 0;
-        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices",null);
-        if(rawWS!=null){
-            Type type = new TypeToken<Integer[]>(){}.getType();
+        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices", null);
+        if (rawWS != null) {
+            Type type = new TypeToken<Integer[]>() {
+            }.getType();
             Gson gson = new Gson();
-            selectedServices = gson.fromJson(rawWS,type);
-        }else{
-            selectedServices = new Integer[]{0,1}; //two webServices currently
+            selectedServices = gson.fromJson(rawWS, type);
+        } else {
+            selectedServices = new Integer[]{0, 1}; //two webServices currently
         }
 
-        if(selectedServices[indexOfServiceTested] == 0){
+        if (selectedServices[indexOfServiceTested] == 0) {
             DoubanFetcher fetcher = new DoubanFetcher();
-            fetcher.getBookInfo(this,isbn,0);
-        }else if(selectedServices[indexOfServiceTested] == 1){
+            fetcher.getBookInfo(this, isbn, 0);
+        } else if (selectedServices[indexOfServiceTested] == 1) {
             OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-            fetcher.getBookInfo(this,isbn,0);
+            fetcher.getBookInfo(this, isbn, 0);
         }
     }
 
 
-
     @Override
-    public void handleResult(Result rawResult){
-        Log.i(TAG,"ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
+    public void handleResult(Result rawResult) {
+        Log.i(TAG, "ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
         addBook(rawResult.getText());
 
 
@@ -285,7 +278,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         */
     }
 
-    public void resumeCamera(){
+    public void resumeCamera() {
         //mScannerView.resumeCameraPreview(SingleAddActivity.this);
         mScannerView.setResultHandler(this);
         mScannerView.setAutoFocus(true);
@@ -294,7 +287,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
     }
 
 
-    public void fetchSucceed(final Book mBook,final String imageURL){
+    public void fetchSucceed(final Book mBook, final String imageURL) {
 
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
@@ -306,10 +299,10 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mHandler.post(new Runnable() {//on the main thread
             @Override
             public void run() {
-                Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
-                i.putExtra(BookEditActivity.BOOK,mBook);
-                i.putExtra(BookEditActivity.downloadCover,true);
-                i.putExtra(BookEditActivity.imageURL,imageURL);
+                Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                i.putExtra(BookEditActivity.BOOK, mBook);
+                i.putExtra(BookEditActivity.downloadCover, true);
+                i.putExtra(BookEditActivity.imageURL, imageURL);
                 startActivity(i);
                 finish();
             }
@@ -317,7 +310,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
     }
 
-    public void fetchFailed(int fetcherID,int event,String isbn){
+    public void fetchFailed(int fetcherID, int event, String isbn) {
         /**
          * event = 0, unexpected response code
          * event = 1, request failed
@@ -330,29 +323,29 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
 
         indexOfServiceTested += 1;
-        if(indexOfServiceTested < selectedServices.length){
+        if (indexOfServiceTested < selectedServices.length) {
             // test next
-            if(selectedServices[indexOfServiceTested] == 0){
+            if (selectedServices[indexOfServiceTested] == 0) {
                 DoubanFetcher fetcher = new DoubanFetcher();
-                fetcher.getBookInfo(this,isbn,0);
-            }else if(selectedServices[indexOfServiceTested] == 1){
+                fetcher.getBookInfo(this, isbn, 0);
+            } else if (selectedServices[indexOfServiceTested] == 1) {
                 OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-                fetcher.getBookInfo(this,isbn,0);
+                fetcher.getBookInfo(this, isbn, 0);
             }
-        }else{
-            if(event == 0){
+        } else {
+            if (event == 0) {
                 event0Dialog(isbn);
-            }else if(event == 1){
+            } else if (event == 1) {
                 event1Dialog(isbn);
             }
         }
 
 
-
     }
-    private void event0Dialog(final String isbn){
+
+    private void event0Dialog(final String isbn) {
         String dialogContent = String.format(getResources().getString(
-                R.string.isbn_unmatched_dialog_content),isbn);
+                R.string.isbn_unmatched_dialog_content), isbn);
         new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
                 .content(dialogContent)
@@ -363,9 +356,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         //create a book only with isbn
                         Book mBook = new Book();
                         mBook.setIsbn(isbn);
-                        Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
-                        i.putExtra(BookEditActivity.BOOK,mBook);
-                        i.putExtra(BookEditActivity.downloadCover,false);
+                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK, mBook);
+                        i.putExtra(BookEditActivity.downloadCover, false);
                         startActivity(i);
                         finish();
 
@@ -388,9 +381,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
     }
 
-    private void event1Dialog(final String isbn){
+    private void event1Dialog(final String isbn) {
         String dialogContent = String.format(getResources().getString(
-                R.string.request_failed_dialog_content),isbn);
+                R.string.request_failed_dialog_content), isbn);
         new MaterialDialog.Builder(this)
                 .title(R.string.isbn_unmatched_dialog_title)
                 .content(dialogContent)
@@ -401,9 +394,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         //create a book only with isbn
                         Book mBook = new Book();
                         mBook.setIsbn(isbn);
-                        Intent i = new Intent(SingleAddActivity.this,BookEditActivity.class);
-                        i.putExtra(BookEditActivity.BOOK,mBook);
-                        i.putExtra(BookEditActivity.downloadCover,false);
+                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK, mBook);
+                        i.putExtra(BookEditActivity.downloadCover, false);
                         startActivity(i);
                         finish();
 
@@ -428,20 +421,16 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case CAMERA_PERMISSION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this,R.string.camera_permission_denied, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG,"Camera Permission Denied");
+                    Toast.makeText(this, R.string.camera_permission_denied, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Camera Permission Denied");
                     finish();
                 }
         }
     }
-
-
-
-
 
 
 }

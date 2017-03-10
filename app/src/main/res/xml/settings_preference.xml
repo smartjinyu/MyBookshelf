@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="@string/settings_info_retrieval">
-            <Preference
-                android:title="@string/settings_web_services_title"
-                android:key="settings_pref_web_services"
-                android:persistent="false" />
-            <SwitchPreference
-                android:title="@string/settings_auto_complete_website_title"
-                android:key="settings_pref_acwebsite"
-                android:defaultValue="true"/>
+    <PreferenceCategory android:title="@string/settings_info_retrieval">
+        <Preference
+            android:title="@string/settings_web_services_title"
+            android:key="settings_pref_web_services"
+            android:persistent="false" />
+        <SwitchPreference
+            android:title="@string/settings_auto_complete_website_title"
+            android:key="settings_pref_acwebsite"
+            android:defaultValue="true" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:title="@string/settings_backup_category">
+    <PreferenceCategory android:title="@string/settings_backup_category">
         <Preference
             android:title="@string/settings_backup_location_title"
-            android:key="settings_pref_backup_location"/>
+            android:key="settings_pref_backup_location" />
         <Preference
             android:title="@string/settings_backup_title"
-            android:key="settings_pref_backup"/>
+            android:key="settings_pref_backup" />
         <Preference
             android:title="@string/settings_restore_title"
-            android:key="settings_pref_restore"/>
+            android:key="settings_pref_restore" />
         <Preference
             android:title="@string/settings_export_to_csv_title"
             android:summary="@string/settings_export_to_csv_summary"
-            android:key="settings_pref_export_to_csv"/>
+            android:key="settings_pref_export_to_csv" />
     </PreferenceCategory>
 
 </PreferenceScreen>

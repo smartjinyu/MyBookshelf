@@ -26,40 +26,40 @@ public class LabelLab {
     private Context mContext;
 
 
-
-    public static LabelLab get(Context context){
-        if(sLabelLab ==null){
+    public static LabelLab get(Context context) {
+        if (sLabelLab == null) {
             sLabelLab = new LabelLab(context);
         }
         return sLabelLab;
     }
 
-    public LabelLab(Context context){
+    public LabelLab(Context context) {
         mContext = context.getApplicationContext();
-        LabelPreference = mContext.getSharedPreferences(PreferenceName,0);
+        LabelPreference = mContext.getSharedPreferences(PreferenceName, 0);
     }
 
-    private List<Label> loadLabel(){
+    private List<Label> loadLabel() {
         List<Label> labels = new ArrayList<>();
-        Type type = new TypeToken<List<Label>>(){}.getType();
+        Type type = new TypeToken<List<Label>>() {
+        }.getType();
         Gson gson = new Gson();
-        String toLoad = LabelPreference.getString(PreferenceName,null);
-        if(toLoad != null){
-            labels = gson.fromJson(toLoad,type);
-            Log.i(TAG,"JSON to Load = " + toLoad);
+        String toLoad = LabelPreference.getString(PreferenceName, null);
+        if (toLoad != null) {
+            labels = gson.fromJson(toLoad, type);
+            Log.i(TAG, "JSON to Load = " + toLoad);
         }
         return labels;
 
     }
 
-    public final List<Label> getLabels(){
+    public final List<Label> getLabels() {
         return loadLabel();
     }
 
-    public final Label getLabel(UUID id){
+    public final Label getLabel(UUID id) {
         List<Label> labels = loadLabel();
-        for(Label label :labels){
-            if(label.getId().equals(id)){
+        for (Label label : labels) {
+            if (label.getId().equals(id)) {
                 return label;
             }
         }
@@ -67,38 +67,38 @@ public class LabelLab {
     }
 
 
-
-    public void addLabel(Label label){
+    public void addLabel(Label label) {
         List<Label> sLabel = loadLabel();
         sLabel.add(label);
         saveLabel(sLabel);
     }
 
-    private void saveLabel(List<Label> sLabel){
+    private void saveLabel(List<Label> sLabel) {
         Gson gson = new Gson();
         String toSave = gson.toJson(sLabel);
-        Log.i(TAG,"JSON to Save = " + toSave);
+        Log.i(TAG, "JSON to Save = " + toSave);
         LabelPreference.edit()
-                .putString(PreferenceName,toSave)
+                .putString(PreferenceName, toSave)
                 .apply();
     }
 
     /**
      * delete specified label
-     * @param id the id of the label to delete
+     *
+     * @param id              the id of the label to delete
      * @param removeFromBooks true to remove the label from all the books
      */
-    public void deleteLabel(UUID id, boolean removeFromBooks){
+    public void deleteLabel(UUID id, boolean removeFromBooks) {
         List<Label> sLabel = loadLabel();
-        if(removeFromBooks){
-            List<Book> books = BookLab.get(mContext).getBooks(null,id);
-            for(Book book:books){
+        if (removeFromBooks) {
+            List<Book> books = BookLab.get(mContext).getBooks(null, id);
+            for (Book book : books) {
                 book.removeLabel(id);
                 BookLab.get(mContext).updateBook(book);
             }
         }
-        for(Label label:sLabel){
-            if(label.getId().equals(id)){
+        for (Label label : sLabel) {
+            if (label.getId().equals(id)) {
                 sLabel.remove(label);
                 break;
             }
@@ -106,10 +106,10 @@ public class LabelLab {
         saveLabel(sLabel);
     }
 
-    public void renameLabel(UUID id,String newName){
+    public void renameLabel(UUID id, String newName) {
         List<Label> labels = loadLabel();
-        for(Label label : labels){
-            if(label.getId().equals(id)){
+        for (Label label : labels) {
+            if (label.getId().equals(id)) {
                 label.setTitle(newName);
                 break;
             }

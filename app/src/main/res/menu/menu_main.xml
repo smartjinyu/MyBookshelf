@@ -5,32 +5,32 @@
         android:id="@+id/menu_main_search"
         android:title="@string/menu_main_search"
         android:icon="@drawable/ic_search_white"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_main_sort"
         android:icon="@drawable/ic_sort_white"
         android:title="@string/menu_main_sort"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_main_rename_bookshelf"
         android:title="@string/menu_main_rename_bookshelf"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_delete_bookshelf"
         android:title="@string/menu_main_delete_bookshelf"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_rename_label"
         android:title="@string/menu_main_rename_label"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_delete_label"
         android:title="@string/menu_main_delete_label"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
 
 </menu>

@@ -7,12 +7,10 @@
     android:layout_height="match_parent">
 
 
-
     <android.support.v7.widget.RecyclerView
-    android:id="@+id/booklist_recycler_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+        android:id="@+id/booklist_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 
     <com.github.clans.fab.FloatingActionMenu

@@ -22,12 +22,12 @@ import retrofit2.http.Path;
  * This class is used to get information from website like DouBan
  */
 
-public class DoubanFetcher extends BookFetcher{
+public class DoubanFetcher extends BookFetcher {
     private static final String TAG = "DoubanFetcher";
 
 
     @Override
-    public void getBookInfo(final Context context, final String isbn,final int mode){
+    public void getBookInfo(final Context context, final String isbn, final int mode) {
         mContext = context;
         Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://api.douban.com/v2/book/")
@@ -40,72 +40,72 @@ public class DoubanFetcher extends BookFetcher{
         call.enqueue(new Callback<DouBanJson>() {
             @Override
             public void onResponse(Call<DouBanJson> call, Response<DouBanJson> response) {
-                if(response.code() == 200) {
+                if (response.code() == 200) {
                     Log.i(TAG, "GET Douban information successfully, id = " + response.body().getId()
-                            +", title = " + response.body().getTitle());
+                            + ", title = " + response.body().getTitle());
                     mBook = new Book();
                     mBook.setTitle(response.body().getTitle());
                     //mBook.setId(Long.parseLong(response.body().getId(),10));
                     mBook.setIsbn(isbn);
-                    if(response.body().getAuthor().size()!=0){
+                    if (response.body().getAuthor().size() != 0) {
                         mBook.setAuthors(response.body().getAuthor());
-                    }else{
+                    } else {
                         mBook.setAuthors(new ArrayList<String>());
                     }
-                    if(response.body().getTranslator().size()!=0){
+                    if (response.body().getTranslator().size() != 0) {
                         mBook.setTranslators(response.body().getTranslator());
-                    }else{
+                    } else {
                         mBook.setTranslators(new ArrayList<String>());
                     }
 
-                    if(mBook.getWebIds() == null){
+                    if (mBook.getWebIds() == null) {
                         mBook.setWebIds(new HashMap<String, String>());
                     }
-                    mBook.getWebIds().put("douban",response.body().getId());
+                    mBook.getWebIds().put("douban", response.body().getId());
                     mBook.setPublisher(response.body().getPublisher());
 
                     String rawDate = response.body().getPubdate();
-                    Log.i(TAG,"Date raw = " + rawDate);
-                    String year,month;
-                    if(rawDate.contains("-")){
+                    Log.i(TAG, "Date raw = " + rawDate);
+                    String year, month;
+                    if (rawDate.contains("-")) {
                         // 2016-11
                         String[] date = rawDate.split("-");
                         year = date[0];
                         // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
                         month = date[1];
-                    }else if (rawDate.contains(".")){
+                    } else if (rawDate.contains(".")) {
                         String[] date = rawDate.split("\\.");
                         year = date[0];
                         // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
                         month = date[1];
-                    }else{
+                    } else {
                         year = "9999";
                         month = "1";
                     }
-                    Log.i(TAG,"Get PubDate Year = " + year + ", month = " + month);
+                    Log.i(TAG, "Get PubDate Year = " + year + ", month = " + month);
                     Calendar calendar = Calendar.getInstance();
-                    calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,1);
+                    calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
                     mBook.setPubTime(calendar);
                     final String imageURL = response.body().getImages().getLarge();
                     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    boolean addWebsite = pref.getBoolean("settings_pref_acwebsite",true);
-                    if(addWebsite){
+                    boolean addWebsite = pref.getBoolean("settings_pref_acwebsite", true);
+                    if (addWebsite) {
                         mBook.setWebsite("https://book.douban.com/subject/" + response.body().getId());
                     }
-                    if(mode == 0){
-                        ((SingleAddActivity)mContext).fetchSucceed(mBook,imageURL);
-                    }else if(mode == 1){
-                        ((BatchAddActivity)mContext).fetchSucceed(mBook,imageURL);
+                    if (mode == 0) {
+                        ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
+                    } else if (mode == 1) {
+                        ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
                     }
-                }else{
-                    Log.w(TAG,"Unexpected response code " + response.code() + ", isbn = " + isbn);
-                    if(mode == 0){
-                        ((SingleAddActivity)mContext).fetchFailed(
-                                BookFetcher.fetcherID_DB,0,isbn
+                } else {
+                    Log.w(TAG, "Unexpected response code " + response.code() + ", isbn = " + isbn);
+                    if (mode == 0) {
+                        ((SingleAddActivity) mContext).fetchFailed(
+                                BookFetcher.fetcherID_DB, 0, isbn
                         );
-                    }else if(mode == 1){
-                        ((BatchAddActivity)mContext).fetchFailed(
-                                BookFetcher.fetcherID_DB,0,isbn);
+                    } else if (mode == 1) {
+                        ((BatchAddActivity) mContext).fetchFailed(
+                                BookFetcher.fetcherID_DB, 0, isbn);
                     }
                 }
 
@@ -113,25 +113,23 @@ public class DoubanFetcher extends BookFetcher{
 
             @Override
             public void onFailure(Call<DouBanJson> call, Throwable t) {
-                Log.w(TAG,"GET Douban information failed, " + t.toString());
-                if(mode==0){
-                    ((SingleAddActivity)mContext).fetchFailed(
-                            BookFetcher.fetcherID_DB,1,isbn
+                Log.w(TAG, "GET Douban information failed, " + t.toString());
+                if (mode == 0) {
+                    ((SingleAddActivity) mContext).fetchFailed(
+                            BookFetcher.fetcherID_DB, 1, isbn
                     );
-                }else if(mode == 1){
-                    ((BatchAddActivity)mContext).fetchFailed(
-                            BookFetcher.fetcherID_DB,1,isbn);
+                } else if (mode == 1) {
+                    ((BatchAddActivity) mContext).fetchFailed(
+                            BookFetcher.fetcherID_DB, 1, isbn);
                 }
             }
         });
 
 
-
-
     }
 
-    private interface DB_API{
-        @GET ("isbn/{isbn}")
+    private interface DB_API {
+        @GET("isbn/{isbn}")
         Call<DouBanJson> getDBResult(@Path("isbn") String isbn);
     }
 

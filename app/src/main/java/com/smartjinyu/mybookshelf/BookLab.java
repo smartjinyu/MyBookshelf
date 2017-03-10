@@ -3,7 +3,6 @@ package com.smartjinyu.mybookshelf;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -31,50 +30,51 @@ public class BookLab {
     private Context mContext;
     private static BookLab sBookLab;
     private SQLiteDatabase mDatabase;
-    public static BookLab get(Context context){
-        if(sBookLab == null){
+
+    public static BookLab get(Context context) {
+        if (sBookLab == null) {
             sBookLab = new BookLab(context);
         }
         return sBookLab;
     }
 
-    public BookLab(Context context){
+    public BookLab(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new BookBaseHelper(context).getWritableDatabase();
     }
 
 
-    private static ContentValues getContentValues(Book book){
+    private static ContentValues getContentValues(Book book) {
         ContentValues values = new ContentValues();
-        values.put(BookDBSchema.BookTable.Cols.TITLE,book.getTitle());
-        values.put(BookDBSchema.BookTable.Cols.UUID,book.getId().toString());
+        values.put(BookDBSchema.BookTable.Cols.TITLE, book.getTitle());
+        values.put(BookDBSchema.BookTable.Cols.UUID, book.getId().toString());
         //authors
         Gson gson = new Gson();
         String authors = gson.toJson(book.getAuthors());
-        values.put(BookDBSchema.BookTable.Cols.AUTHORS,authors);
+        values.put(BookDBSchema.BookTable.Cols.AUTHORS, authors);
         //translators
         String translators = gson.toJson(book.getTranslators());
-        values.put(BookDBSchema.BookTable.Cols.TRANSLATORS,translators);
+        values.put(BookDBSchema.BookTable.Cols.TRANSLATORS, translators);
         //webIds
         String webIds = gson.toJson(book.getWebIds());
-        values.put(BookDBSchema.BookTable.Cols.WEBIDS,webIds);
+        values.put(BookDBSchema.BookTable.Cols.WEBIDS, webIds);
         //
-        values.put(BookDBSchema.BookTable.Cols.PUBLISHER,book.getPublisher());
-        values.put(BookDBSchema.BookTable.Cols.PUB_TIME,book.getPubTime().getTimeInMillis());
-        values.put(BookDBSchema.BookTable.Cols.ADD_TIME,book.getAddTime().getTimeInMillis());
-        values.put(BookDBSchema.BookTable.Cols.ISBN,book.getIsbn());
-        values.put(BookDBSchema.BookTable.Cols.HAS_COVER,book.isHasCover());
-        values.put(BookDBSchema.BookTable.Cols.READING_STATUS,book.getReadingStatus());
-        values.put(BookDBSchema.BookTable.Cols.BOOKSHELF_ID,book.getBookshelfID().toString());
-        values.put(BookDBSchema.BookTable.Cols.NOTES,book.getNotes());
-        values.put(BookDBSchema.BookTable.Cols.WEBSITE,book.getWebsite());
+        values.put(BookDBSchema.BookTable.Cols.PUBLISHER, book.getPublisher());
+        values.put(BookDBSchema.BookTable.Cols.PUB_TIME, book.getPubTime().getTimeInMillis());
+        values.put(BookDBSchema.BookTable.Cols.ADD_TIME, book.getAddTime().getTimeInMillis());
+        values.put(BookDBSchema.BookTable.Cols.ISBN, book.getIsbn());
+        values.put(BookDBSchema.BookTable.Cols.HAS_COVER, book.isHasCover());
+        values.put(BookDBSchema.BookTable.Cols.READING_STATUS, book.getReadingStatus());
+        values.put(BookDBSchema.BookTable.Cols.BOOKSHELF_ID, book.getBookshelfID().toString());
+        values.put(BookDBSchema.BookTable.Cols.NOTES, book.getNotes());
+        values.put(BookDBSchema.BookTable.Cols.WEBSITE, book.getWebsite());
         //label id
         String labelID = gson.toJson(book.getLabelID());
-        values.put(BookDBSchema.BookTable.Cols.LABEL_ID,labelID);
+        values.put(BookDBSchema.BookTable.Cols.LABEL_ID, labelID);
         return values;
     }
 
-    private BookCursorWrapper queryBooks(String whereClause,String[] whereArgs){
+    private BookCursorWrapper queryBooks(String whereClause, String[] whereArgs) {
 
         Cursor cursor = mDatabase.query(
                 BookDBSchema.BookTable.NAME,//TableName
@@ -86,24 +86,24 @@ public class BookLab {
                 null//limit
         );
         // for log
-        if(whereArgs == null){
+        if (whereArgs == null) {
             whereArgs = new String[]{"null"};
         }
-        if(whereClause == null){
+        if (whereClause == null) {
             whereClause = "null";
         }
-        Log.i(TAG,"Query books whereClause = " + whereClause + ", whereArgs = " + Arrays.toString(whereArgs));
+        Log.i(TAG, "Query books whereClause = " + whereClause + ", whereArgs = " + Arrays.toString(whereArgs));
 
         return new BookCursorWrapper(cursor);
 
     }
 
-    public Book getBook(UUID id){
+    public Book getBook(UUID id) {
         try (BookCursorWrapper cursor = queryBooks(
                 BookDBSchema.BookTable.Cols.UUID + "= ?",
                 new String[]{id.toString()})
-        ){
-            if(cursor.getCount() == 0){
+        ) {
+            if (cursor.getCount() == 0) {
                 return null;
             }
             cursor.moveToFirst();
@@ -111,13 +111,13 @@ public class BookLab {
         }
     }
 
-    public List<Book> getBooks(){
+    public List<Book> getBooks() {
         List<Book> mBooks = new ArrayList<>();
 
-        try(BookCursorWrapper cursor = queryBooks(null,null)
-        ){
+        try (BookCursorWrapper cursor = queryBooks(null, null)
+        ) {
             cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
+            while (!cursor.isAfterLast()) {
                 mBooks.add(cursor.getBook());
                 cursor.moveToNext();
             }
@@ -128,37 +128,38 @@ public class BookLab {
 
     /**
      * getBooks by bookshelfID and labelID, all the parameters can be null
+     *
      * @param bookShelfID
      * @param labelID
      * @return result
      */
-    public List<Book> getBooks(@Nullable UUID bookShelfID,@Nullable UUID labelID){
+    public List<Book> getBooks(@Nullable UUID bookShelfID, @Nullable UUID labelID) {
         List<Book> mBooks = new ArrayList<>();
         String whereClause;
         String[] whereArgs;
-        if(bookShelfID == null && labelID == null){
+        if (bookShelfID == null && labelID == null) {
             return getBooks();
-        }else if (bookShelfID == null){
+        } else if (bookShelfID == null) {
             // bookShelfID == null and labelID != null
             whereClause = BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?";
-            whereArgs = new String[]{"*"+labelID.toString()+"*"};
+            whereArgs = new String[]{"*" + labelID.toString() + "*"};
             // It is WRONG to write ... + "GLOB *?*",new String[](labelID.toString())
-        }else if (labelID == null){
+        } else if (labelID == null) {
             // bookShelfID != null and labelID == null
             whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ?";
             whereArgs = new String[]{bookShelfID.toString()};
-        }else{
+        } else {
             // bookShelfID != null and labelID != null
             whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + "= ? AND "
-                    +BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?";
-            whereArgs = new String[]{bookShelfID.toString(),"*"+labelID.toString()+"*"};
+                    + BookDBSchema.BookTable.Cols.LABEL_ID + " GLOB ?";
+            whereArgs = new String[]{bookShelfID.toString(), "*" + labelID.toString() + "*"};
         }
 
-        try(BookCursorWrapper cursor
-                    = queryBooks(whereClause,whereArgs)
-        ){
+        try (BookCursorWrapper cursor
+                     = queryBooks(whereClause, whereArgs)
+        ) {
             cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
+            while (!cursor.isAfterLast()) {
                 mBooks.add(cursor.getBook());
                 cursor.moveToNext();
             }
@@ -169,51 +170,52 @@ public class BookLab {
     /**
      * Search books only supports search on bookshelf currently,
      * keyword will try to match title,authors,translators,publishers,note (case-insensitive)
-     * @param keyword search keyword
+     *
+     * @param keyword     search keyword
      * @param bookshelfID bookshelf id, pass null if on all bookshelves
      * @return search result
      */
-    public List<Book> searchBook(String keyword, @Nullable UUID bookshelfID){
+    public List<Book> searchBook(String keyword, @Nullable UUID bookshelfID) {
         List<Book> books = new ArrayList<>();
         String whereClause;
         String[] whereArgs;
-        if(keyword==null){
-            return getBooks(bookshelfID,null);
+        if (keyword == null) {
+            return getBooks(bookshelfID, null);
         }
         // in sql, "GLOB" is case-sensitive while "LIKE" is case-insensitive
-        if(bookshelfID==null){
+        if (bookshelfID == null) {
             // on all bookshelves
             whereClause = BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.AUTHORS + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.TRANSLATORS + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.PUBLISHER + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.NOTES + " LIKE ? ";
-            whereArgs = new String[]{"%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%"};
-        }else{
+            whereArgs = new String[]{"%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%"};
+        } else {
             // on specified bookshelf
             whereClause = BookDBSchema.BookTable.Cols.BOOKSHELF_ID + " = ? AND "
-                    +BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
+                    + BookDBSchema.BookTable.Cols.TITLE + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.AUTHORS + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.TRANSLATORS + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.PUBLISHER + " LIKE ? OR "
                     + BookDBSchema.BookTable.Cols.NOTES + " LIKE ? ";
             whereArgs = new String[]{bookshelfID.toString(),
-                    "%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%",
-                    "%"+keyword+"%"};
+                    "%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%",
+                    "%" + keyword + "%"};
         }
 
-        try(BookCursorWrapper cursor
-                    = queryBooks(whereClause,whereArgs)
-        ){
+        try (BookCursorWrapper cursor
+                     = queryBooks(whereClause, whereArgs)
+        ) {
             cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
+            while (!cursor.isAfterLast()) {
                 books.add(cursor.getBook());
                 cursor.moveToNext();
             }
@@ -226,23 +228,24 @@ public class BookLab {
 
     /**
      * whether this book is in the database (check id, not isbn)
+     *
      * @param book the book need to check
      * @return
      */
-    public boolean isBookExists(Book book){
+    public boolean isBookExists(Book book) {
         try (BookCursorWrapper cursor = queryBooks(
                 BookDBSchema.BookTable.Cols.UUID + "= ?",
                 new String[]{book.getId().toString()})
-        ){
-            return cursor.getCount()!=0;
+        ) {
+            return cursor.getCount() != 0;
         }
 
     }
 
 
-    public void addBook(Book book){
+    public void addBook(Book book) {
         ContentValues values = getContentValues(book);
-        if(isBookExists(book)){
+        if (isBookExists(book)) {
             //book still exists, update it
             mDatabase.update(
                     BookDBSchema.BookTable.NAME,
@@ -250,29 +253,28 @@ public class BookLab {
                     BookDBSchema.BookTable.Cols.UUID + "= ?",
                     new String[]{book.getId().toString()}
             );
-        }else{
+        } else {
             //add a new book
-            mDatabase.insert(BookDBSchema.BookTable.NAME,null,values);
+            mDatabase.insert(BookDBSchema.BookTable.NAME, null, values);
         }
     }
 
-    public void addBooks(List<Book> books){
-        if(books!=null){
-            for(Book book : books){
+    public void addBooks(List<Book> books) {
+        if (books != null) {
+            for (Book book : books) {
                 addBook(book);
             }
         }
     }
 
 
-
-    public void deleteBook(Book book){
+    public void deleteBook(Book book) {
         String uuidString = book.getId().toString();
-        if(book.isHasCover()){
+        if (book.isHasCover()) {
             // delete cover file
-            File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" +book.getCoverPhotoFileName());
+            File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName());
             boolean succeeded = file.delete();
-            Log.i(TAG,"Remove cover result = " + succeeded);
+            Log.i(TAG, "Remove cover result = " + succeeded);
         }
         mDatabase.delete(
                 BookDBSchema.BookTable.NAME,
@@ -282,7 +284,7 @@ public class BookLab {
     }
 
 
-    public void updateBook(Book book){
+    public void updateBook(Book book) {
         ContentValues values = getContentValues(book);
         String uuidString = book.getId().toString();
         mDatabase.update(

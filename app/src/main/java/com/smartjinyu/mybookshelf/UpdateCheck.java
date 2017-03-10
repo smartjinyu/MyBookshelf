@@ -24,7 +24,8 @@ import retrofit2.http.GET;
 public class UpdateCheck {
     private static final String TAG = "UpdateCheck";
     private Context mContext;
-    public UpdateCheck(Context context){
+
+    public UpdateCheck(Context context) {
         mContext = context;
         Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://raw.githubusercontent.com/smartjinyu/MyBookshelf/master/")
@@ -35,10 +36,10 @@ public class UpdateCheck {
         call.enqueue(new Callback<VersionUpdateData>() {
             @Override
             public void onResponse(Call<VersionUpdateData> call, Response<VersionUpdateData> response) {
-                if(response.code()==200 && response.body()!=null){
+                if (response.code() == 200 && response.body() != null) {
                     int newVersionCode = response.body().getVersion_code();
-                    Log.i(TAG,"Newest Version Code is = " + newVersionCode + ", current code is " + BuildConfig.VERSION_CODE);
-                    if(newVersionCode > BuildConfig.VERSION_CODE){
+                    Log.i(TAG, "Newest Version Code is = " + newVersionCode + ", current code is " + BuildConfig.VERSION_CODE);
+                    if (newVersionCode > BuildConfig.VERSION_CODE) {
                         new MaterialDialog.Builder(mContext)
                                 .title(R.string.new_version_find_dialog_title)
                                 .content(String.format(
@@ -73,19 +74,19 @@ public class UpdateCheck {
                                 .show();
 
                     }
-                }else{
-                    Log.e(TAG,"Failed. Response code = " + response.code() + ", body = " + response.body());
+                } else {
+                    Log.e(TAG, "Failed. Response code = " + response.code() + ", body = " + response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<VersionUpdateData> call, Throwable t) {
-                Log.e(TAG,"Response Failed, " + t.toString());
+                Log.e(TAG, "Response Failed, " + t.toString());
             }
         });
     }
 
-    private interface Version_API{
+    private interface Version_API {
         @GET("version_update.xml")
         Call<VersionUpdateData> getWebVersion();
 

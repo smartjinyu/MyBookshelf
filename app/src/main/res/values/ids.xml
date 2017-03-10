@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="menu_simple_add_flash"/>
-    <item type="id" name="menu_simple_add_manually"/>
-    <item type="id" name="menu_batch_add_flash"/>
+    <item type="id" name="menu_simple_add_flash" />
+    <item type="id" name="menu_simple_add_manually" />
+    <item type="id" name="menu_batch_add_flash" />
 </resources>

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -19,7 +20,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -60,10 +60,6 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
-
-import io.fabric.sdk.android.Fabric;
-import moe.feng.alipay.zerosdk.AlipayZeroSdk;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -71,13 +67,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import io.fabric.sdk.android.Fabric;
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String drawerSelected = "drawerSelected";
     private static final String SORT_METHOD = "SORT_METHOD";
-    private static final String ACTION_SEARCH ="com.smartjinyu.mybookshelf.ACTION_SEARCH";
+    private static final String ACTION_SEARCH = "com.smartjinyu.mybookshelf.ACTION_SEARCH";
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sortMethod = defaultSharedPreferences.getInt(SORT_METHOD,0);
+        sortMethod = defaultSharedPreferences.getInt(SORT_METHOD, 0);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
 
@@ -127,12 +125,12 @@ public class MainActivity extends AppCompatActivity {
         setToolbar();
         setBookShelfSpinner(0);
         long drawerSelection = -1;
-        if(savedInstanceState!=null){
-            drawerSelection = savedInstanceState.getLong(drawerSelected,-1);
+        if (savedInstanceState != null) {
+            drawerSelection = savedInstanceState.getLong(drawerSelected, -1);
         }
         setDrawer(drawerSelection);
         setSearchView();
-        if(getIntent().getAction().equals(ACTION_SEARCH)){
+        if (getIntent().getAction().equals(ACTION_SEARCH)) {
             actionSearch = true;
         }
         Handler handler = new Handler();
@@ -141,19 +139,19 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 new UpdateCheck(MainActivity.this);
             }
-        },3000);
+        }, 3000);
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu){
-        Log.i(TAG,"onPrepareOptionsMenu showLabelItem = " + showLabelMenuItem + ", showBookshelfItem = " + showBookshelfMenuItem);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.i(TAG, "onPrepareOptionsMenu showLabelItem = " + showLabelMenuItem + ", showBookshelfItem = " + showBookshelfMenuItem);
         MenuItem renameLabelItem = menu.findItem(R.id.menu_main_rename_label);
         MenuItem deleteLabelItem = menu.findItem(R.id.menu_main_delete_label);
         MenuItem renameBookshelfItem = menu.findItem(R.id.menu_main_rename_bookshelf);
@@ -166,12 +164,12 @@ public class MainActivity extends AppCompatActivity {
 
         renameBookshelfItem.setVisible(showBookshelfMenuItem);
         deleteBookshelfItem.setVisible(showBookshelfMenuItem);
-        if(showLabelMenuItem){
-            Log.d(TAG,"Hide FAM 1");
+        if (showLabelMenuItem) {
+            Log.d(TAG, "Hide FAM 1");
             mActionAddButton.setVisibility(View.GONE);
             mActionAddButton.hideMenuButton(true);
-        }else{
-            Log.d(TAG,"Show FAM 1");
+        } else {
+            Log.d(TAG, "Show FAM 1");
             mActionAddButton.setVisibility(View.VISIBLE);
             mActionAddButton.showMenuButton(true);
         }
@@ -181,11 +179,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_main_rename_bookshelf:
-                if(mSpinner!=null){
-                    final BookShelf selectedBS =(BookShelf) mSpinner.getSelectedItem();
-                    if(!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))){
+                if (mSpinner != null) {
+                    final BookShelf selectedBS = (BookShelf) mSpinner.getSelectedItem();
+                    if (!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
                         // make sure the bookshelf to rename is valid
                         new MaterialDialog.Builder(this)
                                 .title(R.string.rename_bookshelf_dialog_title)
@@ -203,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         String newName = dialog.getInputEditText().getText().toString();
-                                        BookShelfLab.get(MainActivity.this).renameBookShelf(selectedBS.getId(),newName);
+                                        BookShelfLab.get(MainActivity.this).renameBookShelf(selectedBS.getId(), newName);
                                         setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                                     }
                                 })
@@ -219,15 +217,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.menu_main_delete_bookshelf:
-                if(mSpinner!=null){
-                    final BookShelf selectedBS =(BookShelf) mSpinner.getSelectedItem();
-                    if(!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))){
+                if (mSpinner != null) {
+                    final BookShelf selectedBS = (BookShelf) mSpinner.getSelectedItem();
+                    if (!selectedBS.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
                         // make sure the bookshelf to rename is valid
-                        if(mBooks.size()==0){
+                        if (mBooks.size() == 0) {
                             // no books here, no need to popup a dialog
-                            BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(),false);
+                            BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(), false);
                             setBookShelfSpinner(0);
-                        }else{
+                        } else {
                             new MaterialDialog.Builder(this)
                                     .title(R.string.delete_bookshelf_dialog_title)
                                     .content(R.string.delete_bookshelf_dialog_content)
@@ -235,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(),true);
+                                            BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(), true);
                                             setBookShelfSpinner(0);
                                         }
                                     })
@@ -253,12 +251,12 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.menu_main_rename_label:
-                if(mDrawer!=null){
+                if (mDrawer != null) {
                     long drawerSelection = mDrawer.getCurrentSelection();
                     List<Label> labels = LabelLab.get(MainActivity.this).getLabels();
-                    if(drawerSelection >= 10 && drawerSelection < 10 + labels.size()){
+                    if (drawerSelection >= 10 && drawerSelection < 10 + labels.size()) {
                         // make sure the selection label is valid
-                        final Label selectedLB = labels.get((int)drawerSelection-10);
+                        final Label selectedLB = labels.get((int) drawerSelection - 10);
                         new MaterialDialog.Builder(this)
                                 .title(R.string.rename_label_dialog_title)
                                 .input(
@@ -275,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         String newName = dialog.getInputEditText().getText().toString();
-                                        LabelLab.get(MainActivity.this).renameLabel(selectedLB.getId(),newName);
+                                        LabelLab.get(MainActivity.this).renameLabel(selectedLB.getId(), newName);
                                         setDrawer(mDrawer.getCurrentSelection());
                                     }
                                 })
@@ -292,18 +290,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.menu_main_delete_label:
-                if(mDrawer!=null) {
+                if (mDrawer != null) {
                     long drawerSelection = mDrawer.getCurrentSelection();
                     List<Label> labels = LabelLab.get(MainActivity.this).getLabels();
                     if (drawerSelection >= 10 && drawerSelection < 10 + labels.size()) {
                         // make sure the selection label is valid
                         final Label selectedLB = labels.get((int) drawerSelection - 10);
-                        if(mBooks.size()==0){
+                        if (mBooks.size() == 0) {
                             // no need to popup a dialog
-                            LabelLab.get(MainActivity.this).deleteLabel(selectedLB.getId(),false);
+                            LabelLab.get(MainActivity.this).deleteLabel(selectedLB.getId(), false);
                             setDrawer(1);
 
-                        }else{
+                        } else {
                             new MaterialDialog.Builder(this)
                                     .title(R.string.delete_label_dialog_title)
                                     .content(R.string.delete_label_dialog_content)
@@ -311,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            LabelLab.get(MainActivity.this).deleteLabel(selectedLB.getId(),true);
+                                            LabelLab.get(MainActivity.this).deleteLabel(selectedLB.getId(), true);
                                             setDrawer(1);
                                         }
                                     })
@@ -343,13 +341,13 @@ public class MainActivity extends AppCompatActivity {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                updateUI(false,null);
+                                updateUI(false, null);
                             }
                         })
                         .show();
                 break;
             case R.id.menu_main_search:
-                mSearchView.open(true,item);
+                mSearchView.open(true, item);
                 break;
             default:
                 break;
@@ -357,19 +355,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setSearchView(){
+    private void setSearchView() {
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG,"Search " + query);
+                Log.i(TAG, "Search " + query);
                 Answers.getInstance().logContentView(new ContentViewEvent()
                         .putContentName(TAG)
                         .putContentType("Activity")
                         .putContentId("1002")
                         .putCustomAttribute("Search", "Search Text Submitted"));
                 mSearchView.hideKeyboard();
-                updateUI(true,query);
+                updateUI(true, query);
                 return true;
             }
 
@@ -381,21 +379,21 @@ public class MainActivity extends AppCompatActivity {
         mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
             @Override
             public boolean onClose() {
-                Log.d(TAG,"SearchView close");
-                if(mActionAddButton!=null){
-                    Log.d(TAG,"Show FAM 2");
+                Log.d(TAG, "SearchView close");
+                if (mActionAddButton != null) {
+                    Log.d(TAG, "Show FAM 2");
                     mActionAddButton.setVisibility(View.VISIBLE);
                     mActionAddButton.showMenuButton(true);
                 }
-                updateUI(true,null);
+                updateUI(true, null);
                 return true;
             }
 
             @Override
             public boolean onOpen() {
-                Log.d(TAG,"SearchView open");
-                if(mActionAddButton!=null){
-                    Log.d(TAG,"Hide FAM 2");
+                Log.d(TAG, "SearchView open");
+                if (mActionAddButton != null) {
+                    Log.d(TAG, "Hide FAM 2");
                     mActionAddButton.setVisibility(View.GONE);
                     mActionAddButton.hideMenuButton(true);
                 }
@@ -404,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setDrawer(long selectionIdentifier){
+    private void setDrawer(long selectionIdentifier) {
         final List<Label> labels = LabelLab.get(this).getLabels();
         final IProfile profile = new ProfileDrawerItem()
                 .withName(getResources().getString(R.string.app_name))
@@ -464,23 +462,23 @@ public class MainActivity extends AppCompatActivity {
                         //those items don't contain a drawerItem
 
                         if (drawerItem != null) {
-                            Log.i(TAG,"Select drawer item at position " + position);
+                            Log.i(TAG, "Select drawer item at position " + position);
                             // Identifier between 10 and 9 + labels.size() are labels
-                            if(mActionMode!=null){
+                            if (mActionMode != null) {
                                 mActionMode.finish();
                                 // study drawerLayout and try to lock the drawer in the future
                             }
-                            if (drawerItem.getIdentifier()==1){
-                                if(mSearchView!=null){
-                                    if(mSearchView.isSearchOpen()){
+                            if (drawerItem.getIdentifier() == 1) {
+                                if (mSearchView != null) {
+                                    if (mSearchView.isSearchOpen()) {
                                         mSearchView.close(true);
                                     }
                                 }
-                                updateUI(true,null);
-                            }else if(drawerItem.getIdentifier()==3){
+                                updateUI(true, null);
+                            } else if (drawerItem.getIdentifier() == 3) {
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title(R.string.label_add_new_dialog_title)
-                                        .inputRange(1,getResources().getInteger(R.integer.label_name_max_length))
+                                        .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
                                         .input(
                                                 R.string.label_add_new_dialog_edit_text,
                                                 0,
@@ -496,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Label labelToAdd = new Label();
                                                 labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
                                                 LabelLab.get(MainActivity.this).addLabel(labelToAdd);
-                                                Log.i(TAG,"New label created " + labelToAdd.getTitle());
+                                                Log.i(TAG, "New label created " + labelToAdd.getTitle());
                                                 setDrawer(mDrawer.getCurrentSelection());
                                             }
                                         })
@@ -508,28 +506,28 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         })
                                         .show();
-                            }else if(drawerItem.getIdentifier()>=10 && drawerItem.getIdentifier()<10+labels.size()){
-                                if(mSearchView!=null){
-                                    if(mSearchView.isSearchOpen()){
+                            } else if (drawerItem.getIdentifier() >= 10 && drawerItem.getIdentifier() < 10 + labels.size()) {
+                                if (mSearchView != null) {
+                                    if (mSearchView.isSearchOpen()) {
                                         mSearchView.close(true);
                                     }
                                 }
-                                updateUI(true,null);
-                            }else if(drawerItem.getIdentifier() == 2){
+                                updateUI(true, null);
+                            } else if (drawerItem.getIdentifier() == 2) {
                                 mDrawer.setSelection(1);
-                                updateUI(true,null);
-                                if(mSearchView!=null){
-                                    if(!mSearchView.isSearchOpen()){
+                                updateUI(true, null);
+                                if (mSearchView != null) {
+                                    if (!mSearchView.isSearchOpen()) {
                                         mSearchView.open(true);
                                     }
                                 }
-                            }else if(drawerItem.getIdentifier()==4){
-                                Intent i = new Intent(MainActivity.this,SettingsActivity.class);
+                            } else if (drawerItem.getIdentifier() == 4) {
+                                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
                                 startActivity(i);
-                            }else if(drawerItem.getIdentifier() == 5){
-                                Intent i = new Intent(MainActivity.this,AboutActivity.class);
+                            } else if (drawerItem.getIdentifier() == 5) {
+                                Intent i = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(i);
-                            }else if(drawerItem.getIdentifier() == 6){
+                            } else if (drawerItem.getIdentifier() == 6) {
                                 showDonateDialog();
                             }
                         }
@@ -539,53 +537,53 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         //.withSavedInstance(savedInstanceState) do not use this
-                // because we will add items after .build()
+        // because we will add items after .build()
         // donate
-        boolean isDonateShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow",true);
-        if(isDonateShow){
+        boolean isDonateShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow", true);
+        if (isDonateShow) {
             IDrawerItem drawerItem = new PrimaryDrawerItem()
                     .withName(R.string.drawer_item_donate)
                     .withIcon(R.drawable.ic_donate)
                     .withIdentifier(6)// identifier begin from 10
                     .withSelectable(false);
-            mDrawer.addItemAtPosition(drawerItem,6);
+            mDrawer.addItemAtPosition(drawerItem, 6);
         }
         /**
          * About position
          * begin at 1
          * divider\section also counts in
          */
-        for(int i = 0; i < labels.size();i++){
+        for (int i = 0; i < labels.size(); i++) {
             // add labels
             IDrawerItem drawerItem = new PrimaryDrawerItem()
                     .withName(labels.get(i).getTitle())
                     .withIcon(R.drawable.ic_label)
-                    .withIdentifier(i+10)// identifier begin from 10
+                    .withIdentifier(i + 10)// identifier begin from 10
                     .withSelectable(true);
-            mDrawer.addItemAtPosition(drawerItem,i+4);
+            mDrawer.addItemAtPosition(drawerItem, i + 4);
         }
 
-        if(selectionIdentifier != -1){
+        if (selectionIdentifier != -1) {
             mDrawer.setSelection(selectionIdentifier);
         }
     }
 
-    private void setToolbar(){
+    private void setToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-        if(getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
     }
 
-    private void setFloatingActionButton(){
+    private void setFloatingActionButton() {
         mActionAddButton = (FloatingActionMenu) findViewById(R.id.fab_menu_add);
         fab1 = (FloatingActionButton) findViewById(R.id.fab_menu_item_1);
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG,"fab menu item 1 clicked");
-                Intent i = new Intent(MainActivity.this,SingleAddActivity.class);
+                Log.i(TAG, "fab menu item 1 clicked");
+                Intent i = new Intent(MainActivity.this, SingleAddActivity.class);
                 startActivity(i);
                 mActionAddButton.close(true);
 
@@ -595,31 +593,31 @@ public class MainActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG,"fab menu item 2 clicked");
-                Intent i = new Intent(MainActivity.this,BatchAddActivity.class);
+                Log.i(TAG, "fab menu item 2 clicked");
+                Intent i = new Intent(MainActivity.this, BatchAddActivity.class);
                 startActivity(i);
                 mActionAddButton.close(true);
             }
         });
-        mActionAddButton.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(this,R.anim.show_from_bottom));
-        mActionAddButton.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(this,R.anim.hide_to_bottom));
+        mActionAddButton.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(this, R.anim.show_from_bottom));
+        mActionAddButton.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(this, R.anim.hide_to_bottom));
     }
 
-    private void setRecyclerView(){
+    private void setRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.booklist_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             // hide/display float action button automatically
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy>0){
-                    if(!mActionAddButton.isMenuButtonHidden()) {
-                        Log.d(TAG,"Hide FAM 3");
+                if (dy > 0) {
+                    if (!mActionAddButton.isMenuButtonHidden()) {
+                        Log.d(TAG, "Hide FAM 3");
                         mActionAddButton.hideMenuButton(true);
                     }
-                }else{
-                    if(mActionAddButton.isMenuButtonHidden()){
-                        Log.d(TAG,"Show FAM 3");
+                } else {
+                    if (mActionAddButton.isMenuButtonHidden()) {
+                        Log.d(TAG, "Show FAM 3");
                         mActionAddButton.showMenuButton(true);
                     }
                 }
@@ -630,36 +628,36 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this, mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Log.d(TAG,"Click recyclerView position = " + position);
-                if(position!=-1){
+                Log.d(TAG, "Click recyclerView position = " + position);
+                if (position != -1) {
                     //// TODO: 2017/2/19 for unknown reason, in some cases position will be -1
-                    if(isMultiSelect){
-                        multiSelect(position-1);
-                    }else{
-                        if(mActionAddButton.isOpened()){
+                    if (isMultiSelect) {
+                        multiSelect(position - 1);
+                    } else {
+                        if (mActionAddButton.isOpened()) {
                             mActionAddButton.close(true);
-                        }else{
-                            Log.d(TAG,"Clicked Book's hashcode is " + mBooks.get(position-1).hashCode());
-                            Intent i = new Intent(MainActivity.this,BookDetailActivity.class);
-                            i.putExtra(BookDetailActivity.Intent_Book_ToEdit,mBooks.get(position-1));
+                        } else {
+                            Log.d(TAG, "Clicked Book's hashcode is " + mBooks.get(position - 1).hashCode());
+                            Intent i = new Intent(MainActivity.this, BookDetailActivity.class);
+                            i.putExtra(BookDetailActivity.Intent_Book_ToEdit, mBooks.get(position - 1));
                             startActivity(i);
                         }
                     }
-                }else{
-                    Log.e(TAG,"RecyclerView Position -1");
+                } else {
+                    Log.e(TAG, "RecyclerView Position -1");
                 }
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-                if(!isMultiSelect){
+                if (!isMultiSelect) {
                     multiSelectList = new ArrayList<>();
                     isMultiSelect = true;
                 }
-                if(mActionMode==null){
+                if (mActionMode == null) {
                     mActionMode = startActionMode(mActionModeCallback);
                 }
-                multiSelect(position-1);
+                multiSelect(position - 1);
             }
         }));
 
@@ -673,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
         private TextView mPubtimeTextView;
         private RelativeLayout mRelativeLayout;
 
-        public BookHolder(View itemView){
+        public BookHolder(View itemView) {
             super(itemView);
             mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
@@ -682,21 +680,21 @@ public class MainActivity extends AppCompatActivity {
             mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
         }
 
-        public void bindBook(Book book){
+        public void bindBook(Book book) {
             mTitleTextView.setText(book.getTitle());
 
             StringBuilder authorAndPub = new StringBuilder();
-            for(String author : book.getAuthors()){
+            for (String author : book.getAuthors()) {
                 authorAndPub.append(author);
                 authorAndPub.append(",");
             }
 
-            if(authorAndPub.length()!=0){
-                authorAndPub.deleteCharAt(authorAndPub.length()-1);
+            if (authorAndPub.length() != 0) {
+                authorAndPub.deleteCharAt(authorAndPub.length() - 1);
             }
 
-            if(book.getPublisher().length()!=0){
-                if(authorAndPub.length()!=0){
+            if (book.getPublisher().length() != 0) {
+                if (authorAndPub.length() != 0) {
                     authorAndPub.append(" ");
                     authorAndPub.append(getResources().getString(R.string.author_suffix));
                     authorAndPub.append(",   ");
@@ -708,26 +706,26 @@ public class MainActivity extends AppCompatActivity {
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             StringBuilder pubDate = new StringBuilder();
-            if(year == 9999){
+            if (year == 9999) {
                 pubDate.append(getResources().getString(R.string.pubdate_unset));
-            }else{
+            } else {
                 pubDate.append(year);
                 pubDate.append("-");
-                if(month<9){
+                if (month < 9) {
                     pubDate.append("0");
                 }
-                pubDate.append(month+1);
+                pubDate.append(month + 1);
             }
 
             mPubtimeTextView.setText(pubDate);
-            if(multiSelectList.contains(book)){//set select
-                mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this,R.color.recycler_item_selected));
-                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.ic_check_circle));
-            }else{//back to normal
+            if (multiSelectList.contains(book)) {//set select
+                mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.recycler_item_selected));
+                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_check_circle));
+            } else {//back to normal
                 mRelativeLayout.setBackgroundColor(Color.WHITE);
-                if(book.isHasCover()){
+                if (book.isHasCover()) {
                     String path =
-                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ "/" + book.getCoverPhotoFileName();
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
                     Bitmap src = BitmapFactory.decodeFile(path);
                     mCoverImageView.setImageBitmap(src);
                 }
@@ -737,35 +735,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class HeaderViewHolder extends RecyclerView.ViewHolder{
+    private class HeaderViewHolder extends RecyclerView.ViewHolder {
         private TextView mTextView;
-        public HeaderViewHolder(View itemView){
+
+        public HeaderViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.recyclerview_header_text);
         }
-        public void setCount(int count){
+
+        public void setCount(int count) {
             mTextView.setText(String.valueOf(count));
         }
     }
 
 
-    private class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // implement header
         private static final int TYPE_HEADER = 0;
         private static final int TYPE_ITEM = 1;
 
-        public BookAdapter(List<Book> books){
+        public BookAdapter(List<Book> books) {
             mBooks = books;
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            if(viewType == TYPE_ITEM){
-                View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview,parent,false);
+            if (viewType == TYPE_ITEM) {
+                View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview, parent, false);
                 return new BookHolder(view);
-            }else if(viewType == TYPE_HEADER){
-                View view = layoutInflater.inflate(R.layout.header_booklist_recyclerview,parent,false);
+            } else if (viewType == TYPE_HEADER) {
+                View view = layoutInflater.inflate(R.layout.header_booklist_recyclerview, parent, false);
                 return new HeaderViewHolder(view);
             }
             throw new RuntimeException("no type  matches the type " + viewType + " + make sure your using types correctly");
@@ -773,27 +773,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
-            if (holder instanceof BookHolder){
-                Book book = mBooks.get(position-1); // remember to -1 because of the header
-                ((BookHolder)holder).bindBook(book);
-            }else if(holder instanceof HeaderViewHolder){
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof BookHolder) {
+                Book book = mBooks.get(position - 1); // remember to -1 because of the header
+                ((BookHolder) holder).bindBook(book);
+            } else if (holder instanceof HeaderViewHolder) {
                 // set header
                 ((HeaderViewHolder) holder).setCount(mBooks.size());
             }
         }
 
         @Override
-        public int getItemViewType(int position){
-            if(position == 0){
+        public int getItemViewType(int position) {
+            if (position == 0) {
                 return TYPE_HEADER;
-            }else{
+            } else {
                 return TYPE_ITEM;
             }
         }
 
         @Override
-        public int getItemCount(){
+        public int getItemCount() {
             return mBooks.size() + 1;
         }
 
@@ -802,6 +802,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * setBookShelfSpinner
+     *
      * @param selection default selection position
      */
     private void setBookShelfSpinner(int selection) {
@@ -817,7 +818,7 @@ public class MainActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                updateUI(true,null);
+                updateUI(true, null);
             }
 
 
@@ -826,35 +827,36 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        if(selection>=0 && selection < bookShelves.size()){
+        if (selection >= 0 && selection < bookShelves.size()) {
             mSpinner.setSelection(selection);
         }
     }
 
     /**
      * change Toolbar and status bar color
+     *
      * @param mode 0 represents colorPrimary\colorPrimaryDark, 1 represents selected|selectedDark
      */
-    private void setToolbarColor(int mode){
-        int colorPrimaryRes,colorPrimaryDarkRes;
-        if(mode == 1){
-            colorPrimaryRes = ContextCompat.getColor(this,R.color.selected_primary);
-            colorPrimaryDarkRes = ContextCompat.getColor(this,R.color.selected_primary_dark);
-        }else {
-            colorPrimaryRes = ContextCompat.getColor(this,R.color.colorPrimary);
-            colorPrimaryDarkRes = ContextCompat.getColor(this,R.color.colorPrimaryDark);
+    private void setToolbarColor(int mode) {
+        int colorPrimaryRes, colorPrimaryDarkRes;
+        if (mode == 1) {
+            colorPrimaryRes = ContextCompat.getColor(this, R.color.selected_primary);
+            colorPrimaryDarkRes = ContextCompat.getColor(this, R.color.selected_primary_dark);
+        } else {
+            colorPrimaryRes = ContextCompat.getColor(this, R.color.colorPrimary);
+            colorPrimaryDarkRes = ContextCompat.getColor(this, R.color.colorPrimaryDark);
 
         }
         mToolbar.setBackgroundColor(colorPrimaryRes);
         getWindow().setStatusBarColor(colorPrimaryDarkRes);
     }
 
-    private void setBooksAndUI(@Nullable String keyword){
+    private void setBooksAndUI(@Nullable String keyword) {
         BookLab bookLab = BookLab.get(this);
         List<Label> labels = LabelLab.get(this).getLabels();
-        UUID bookshelfID = null,labelID = null;
+        UUID bookshelfID = null, labelID = null;
         int toolbarMode = 0;
-        if(mSpinner!=null){
+        if (mSpinner != null) {
             BookShelf selectedBookShelf = (BookShelf) mSpinner.getSelectedItem();
             if (selectedBookShelf.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
                 // select "All"
@@ -868,32 +870,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         long drawerSelection = mDrawer.getCurrentSelection();
-        if(mDrawer!=null){
-            if(drawerSelection < 10 || drawerSelection >= 10 + labels.size()){
+        if (mDrawer != null) {
+            if (drawerSelection < 10 || drawerSelection >= 10 + labels.size()) {
                 // not select label
                 showLabelMenuItem = false;
-            }else{
+            } else {
                 // select one label
                 toolbarMode = 1;
-                labelID = labels.get((int)drawerSelection-10).getId();
+                labelID = labels.get((int) drawerSelection - 10).getId();
                 showLabelMenuItem = true;
 
             }
         }
-        if(mSearchView!=null && mSearchView.isSearchOpen()){
+        if (mSearchView != null && mSearchView.isSearchOpen()) {
             // in search mode, only support search in specified bookshelf currently
-            mBooks = bookLab.searchBook(keyword,bookshelfID);
-        }else{
-            mBooks = bookLab.getBooks(bookshelfID,labelID);
+            mBooks = bookLab.searchBook(keyword, bookshelfID);
+        } else {
+            mBooks = bookLab.getBooks(bookshelfID, labelID);
         }
         setToolbarColor(toolbarMode);
         invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
     }
 
-    private void sortBooks(){
+    private void sortBooks() {
         Comparator<Book> comparator;
-        switch (sortMethod){
+        switch (sortMethod) {
             case 0:
                 comparator = new Book.titleComparator();
                 break;
@@ -909,38 +911,37 @@ public class MainActivity extends AppCompatActivity {
             default:
                 comparator = new Book.titleComparator();
         }
-        Collections.sort(mBooks,comparator);
+        Collections.sort(mBooks, comparator);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.edit()
-                .putInt(SORT_METHOD,sortMethod).apply();
+                .putInt(SORT_METHOD, sortMethod).apply();
     }
 
     /**
-     *
      * @param updateBooksList whether to retrieve a new List<Book> mBooks
      */
-    private void updateUI(boolean updateBooksList, @Nullable String keyword){
-        if(updateBooksList){
+    private void updateUI(boolean updateBooksList, @Nullable String keyword) {
+        if (updateBooksList) {
             setBooksAndUI(keyword);
         }
         sortBooks();
-        if(mRecyclerViewAdapter ==null){
+        if (mRecyclerViewAdapter == null) {
             mRecyclerViewAdapter = new BookAdapter(mBooks);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        }else{
+        } else {
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume, mSearchView open = " + mSearchView.isSearchOpen());
-        if(mSpinner!=null){
+        Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
+        if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());
         }
-        if(mDrawer!=null){
+        if (mDrawer != null) {
             setDrawer(mDrawer.getCurrentSelection());
         }
 
@@ -950,9 +951,9 @@ public class MainActivity extends AppCompatActivity {
 //        }else{
 //            updateUI(true,null);
 //        }
-        updateUI(true,null);
-        Log.d(TAG,"ACTION_SEARCH = " + actionSearch);
-        if(actionSearch){
+        updateUI(true, null);
+        Log.d(TAG, "ACTION_SEARCH = " + actionSearch);
+        if (actionSearch) {
             mSearchView.open(true);
             actionSearch = false;
         }
@@ -960,20 +961,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void multiSelect(int position){
+    private void multiSelect(int position) {
         //Add/Remove items from list
-        if(mActionMode!=null){
+        if (mActionMode != null) {
             int index = multiSelectList.indexOf(mBooks.get(position));
-            Log.d(TAG,"Select in List Position " +index);
-            if(index == -1){//not in the list
+            Log.d(TAG, "Select in List Position " + index);
+            if (index == -1) {//not in the list
                 multiSelectList.add(mBooks.get(position));
-            }else{
+            } else {
                 multiSelectList.remove(index);
             }
-            if(multiSelectList.size()>0){
-                String title = getResources().getQuantityString(R.plurals.multi_title,multiSelectList.size(),multiSelectList.size());
+            if (multiSelectList.size() > 0) {
+                String title = getResources().getQuantityString(R.plurals.multi_title, multiSelectList.size(), multiSelectList.size());
                 mActionMode.setTitle(title);
-            }else{
+            } else {
                 mActionMode.finish();
 
             }
@@ -988,11 +989,11 @@ public class MainActivity extends AppCompatActivity {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // inflate a menu resource providing contextual menu items
             MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_multiselect,menu);
-            Log.d(TAG,"Hide FAM 4");
+            inflater.inflate(R.menu.menu_multiselect, menu);
+            Log.d(TAG, "Hide FAM 4");
             mActionAddButton.setVisibility(View.GONE);
             mActionAddButton.hideMenuButton(true);
-            showFAM=true;
+            showFAM = true;
             return true;
         }
 
@@ -1003,29 +1004,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.menu_multi_select_select_all:
                     multiSelectList = mBooks;
                     String title = getResources().
-                            getQuantityString(R.plurals.multi_title,multiSelectList.size(),multiSelectList.size());
+                            getQuantityString(R.plurals.multi_title, multiSelectList.size(), multiSelectList.size());
                     mActionMode.setTitle(title);
                     mRecyclerViewAdapter.notifyDataSetChanged();
                     break;
                 case R.id.menu_multi_select_delete:
-                    if(multiSelectList.size()!=0){
+                    if (multiSelectList.size() != 0) {
                         final BookLab bookLab = BookLab.get(MainActivity.this);
                         UndoBooks = new ArrayList<>();
-                        for(Book book:multiSelectList){
+                        for (Book book : multiSelectList) {
                             bookLab.deleteBook(book);
                             UndoBooks.add(book);
                         }
                         Snackbar snackbar;
-                        if(UndoBooks.size() == 1){
+                        if (UndoBooks.size() == 1) {
                             snackbar = Snackbar.make(
                                     mCoordinatorLayout,
                                     R.string.book_deleted_snack_bar_0,
                                     Snackbar.LENGTH_SHORT);
-                        }else{
+                        } else {
                             snackbar = Snackbar.make(
                                     mCoordinatorLayout,
                                     R.string.book_deleted_snack_bar_1,
@@ -1034,24 +1035,24 @@ public class MainActivity extends AppCompatActivity {
                         snackbar.setAction(R.string.book_deleted_snack_bar_undo, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                for(Book book: UndoBooks){
+                                for (Book book : UndoBooks) {
                                     bookLab.addBook(book);
                                 }
                                 UndoBooks = new ArrayList<>();
-                                updateUI(true,null);
+                                updateUI(true, null);
                             }
                         });
-                        snackbar.addCallback(new Snackbar.Callback(){
+                        snackbar.addCallback(new Snackbar.Callback() {
                             @Override
-                            public void onDismissed(Snackbar snackbar,int event){
-                                Log.d(TAG,"Show FAM 4");
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                Log.d(TAG, "Show FAM 4");
                                 mActionAddButton.setVisibility(View.VISIBLE);
                                 mActionAddButton.showMenuButton(true);
                             }
                         });
                         showFAM = false;
                         // for that the FAM won't move up when a snackbar shows, just hide it currently
-                        updateUI(true,null);
+                        updateUI(true, null);
                         snackbar.show();
                         mActionMode.finish();
                     }
@@ -1068,11 +1069,11 @@ public class MainActivity extends AppCompatActivity {
                                     List<Label> labels = labelLab.getLabels();
                                     // must refresh labels here because if user add label, the list won't update,
                                     // and select the newly add label won't take effect
-                                    for(int i=0;i<which.length;i++){
-                                        for(Label label:labels){
-                                            if(label.getTitle().equals(text[i])){
+                                    for (int i = 0; i < which.length; i++) {
+                                        for (Label label : labels) {
+                                            if (label.getTitle().equals(text[i])) {
                                                 // selected label
-                                                for(Book book : multiSelectList){
+                                                for (Book book : multiSelectList) {
                                                     book.addLabel(label);
                                                     BookLab.get(MainActivity.this).updateBook(book);
                                                 }
@@ -1080,13 +1081,13 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
-                                    if(mActionMode!=null){
+                                    if (mActionMode != null) {
                                         mActionMode.finish();
                                     }
-                                    if(mDrawer!=null){
+                                    if (mDrawer != null) {
                                         setDrawer(mDrawer.getCurrentSelection());
                                     }
-                                    updateUI(true,null);
+                                    updateUI(true, null);
                                     dialog.dismiss();
                                     return true;
                                 }
@@ -1143,23 +1144,23 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                                     List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-                                    for(BookShelf bookShelf : bookShelves){
-                                        if(bookShelf.getTitle().equals(text)){
+                                    for (BookShelf bookShelf : bookShelves) {
+                                        if (bookShelf.getTitle().equals(text)) {
                                             // selected bookshelf
-                                            for(Book book : multiSelectList){
+                                            for (Book book : multiSelectList) {
                                                 book.setBookshelfID(bookShelf.getId());
                                                 BookLab.get(MainActivity.this).updateBook(book);
                                             }
                                             break;
                                         }
                                     }
-                                    if(mActionMode!=null){
+                                    if (mActionMode != null) {
                                         mActionMode.finish();
                                     }
-                                    if(mSpinner!=null){
+                                    if (mSpinner != null) {
                                         setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                                     }
-                                    updateUI(true,null);
+                                    updateUI(true, null);
                                     dialog.dismiss();
                                 }
                             })
@@ -1183,11 +1184,11 @@ public class MainActivity extends AppCompatActivity {
                                                     R.string.custom_book_shelf_dialog_edit_text,
                                                     0,
                                                     new MaterialDialog.InputCallback() {
-                                                @Override
-                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                    // nothing to do here
-                                                }
-                                            })
+                                                        @Override
+                                                        public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                            // nothing to do here
+                                                        }
+                                                    })
                                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                                 @Override
                                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -1196,7 +1197,7 @@ public class MainActivity extends AppCompatActivity {
                                                     bookShelfLab.addBookShelf(bookShelfToAdd);
                                                     Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
                                                     listdialog.getItems().add(bookShelfToAdd.getTitle());
-                                                    listdialog.notifyItemInserted(listdialog.getItems().size()-1);
+                                                    listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
                                                 }
                                             })
                                             .negativeText(android.R.string.cancel)
@@ -1225,12 +1226,12 @@ public class MainActivity extends AppCompatActivity {
             mActionMode = null;
             isMultiSelect = false;
             multiSelectList = new ArrayList<>();
-            if(showFAM){
-                Log.d(TAG,"Show FAM 5");
+            if (showFAM) {
+                Log.d(TAG, "Show FAM 5");
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
-            if(mSearchView!=null && mSearchView.isSearchOpen()){
+            if (mSearchView != null && mSearchView.isSearchOpen()) {
                 mSearchView.close(false);
             }
             mRecyclerViewAdapter.notifyDataSetChanged();
@@ -1240,44 +1241,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        if(mDrawer!=null){
-            savedInstanceState.putLong(drawerSelected,mDrawer.getCurrentSelection());
+        if (mDrawer != null) {
+            savedInstanceState.putLong(drawerSelected, mDrawer.getCurrentSelection());
         }
     }
 
 
-
     @Override
-    public void onBackPressed(){
-        if(mDrawer!=null && mDrawer.isDrawerOpen()){
+    public void onBackPressed() {
+        if (mDrawer != null && mDrawer.isDrawerOpen()) {
             mDrawer.closeDrawer();
-        }else{
-            if(defaultSharedPreferences!=null){
-                int startTimes = defaultSharedPreferences.getInt("launchTimes",1);
-                Log.i(TAG,"startTimes = " + startTimes);
-                defaultSharedPreferences.edit().putInt("launchTimes",startTimes + 1).apply();
-                boolean muteRatings = defaultSharedPreferences.getBoolean("muteRatings",false);
-                boolean isRated = defaultSharedPreferences.getBoolean("isRated",false);
-                boolean isDonateItemShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow",true);
-                Log.i(TAG,"rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
-                if(!muteRatings &&
+        } else {
+            if (defaultSharedPreferences != null) {
+                int startTimes = defaultSharedPreferences.getInt("launchTimes", 1);
+                Log.i(TAG, "startTimes = " + startTimes);
+                defaultSharedPreferences.edit().putInt("launchTimes", startTimes + 1).apply();
+                boolean muteRatings = defaultSharedPreferences.getBoolean("muteRatings", false);
+                boolean isRated = defaultSharedPreferences.getBoolean("isRated", false);
+                boolean isDonateItemShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow", true);
+                Log.i(TAG, "rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
+                if (!muteRatings &&
                         !isRated &&
                         startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
-                        mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)){
+                        mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)) {
                     // show ratings dialog
                     showRatingDialog();
-                }else if(isDonateItemShow &&
-                        startTimes % getResources().getInteger(R.integer.donate_after_start_times)==0) {
+                } else if (isDonateItemShow &&
+                        startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
                     showDonateDialog();
-                }else{
+                } else {
                     super.onBackPressed();
                 }
-            }else{
+            } else {
                 super.onBackPressed();
             }
         }
     }
-    private void showRatingDialog(){
+
+    private void showRatingDialog() {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
                 .putContentType("Rating")
@@ -1291,7 +1292,7 @@ public class MainActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        defaultSharedPreferences.edit().putBoolean("isRated",true).apply();
+                        defaultSharedPreferences.edit().putBoolean("isRated", true).apply();
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
                         startActivity(i);
@@ -1320,7 +1321,7 @@ public class MainActivity extends AppCompatActivity {
                 .onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        defaultSharedPreferences.edit().putBoolean("muteRatings",true).apply();
+                        defaultSharedPreferences.edit().putBoolean("muteRatings", true).apply();
                         Answers.getInstance().logContentView(new ContentViewEvent()
                                 .putContentName(TAG)
                                 .putContentType("Rating")
@@ -1334,15 +1335,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showDonateDialog(){
+    private void showDonateDialog() {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
                 .putContentType("Donate")
                 .putContentId("2030")
                 .putCustomAttribute("Donate Clicked", "Donate Clicked"));
-        Log.i(TAG,"Donate Dialog show");
+        Log.i(TAG, "Donate Dialog show");
         boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
-        if(hasInstalledAlipayClient){
+        if (hasInstalledAlipayClient) {
             new MaterialDialog.Builder(MainActivity.this)
                     .title(R.string.about_preference_donate_title)
                     .content(R.string.about_donate_dialog_content)
@@ -1356,7 +1357,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putContentType("Donate")
                                     .putContentId("2031")
                                     .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
                         }
@@ -1381,7 +1382,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putContentType("Donate")
                                     .putContentId("2032")
                                     .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
                         }
@@ -1400,7 +1401,7 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .canceledOnTouchOutside(false)
                     .show();
-        }else{
+        } else {
             new MaterialDialog.Builder(MainActivity.this)
                     .title(R.string.about_preference_donate_title)
                     .content(R.string.about_donate_dialog_content)
@@ -1424,7 +1425,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putContentType("Donate")
                                     .putContentId("2032")
                                     .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow",false).apply();
+                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
 
@@ -1464,9 +1465,6 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
 
 
 }

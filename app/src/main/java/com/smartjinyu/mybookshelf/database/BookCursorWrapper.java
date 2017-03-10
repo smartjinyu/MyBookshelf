@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import com.smartjinyu.mybookshelf.Book;
 
 import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -20,25 +19,27 @@ import java.util.UUID;
  */
 
 public class BookCursorWrapper extends CursorWrapper {
-    public BookCursorWrapper(Cursor cursor){
+    public BookCursorWrapper(Cursor cursor) {
         super(cursor);
     }
 
-    public Book getBook(){
+    public Book getBook() {
         String title = getString(getColumnIndex(BookDBSchema.BookTable.Cols.TITLE));
         String uuid = getString(getColumnIndex(BookDBSchema.BookTable.Cols.UUID));
         //authors
         String authorsJson = getString(getColumnIndex(BookDBSchema.BookTable.Cols.AUTHORS));
-        Type typeStringList = new TypeToken<List<String>>(){}.getType();
+        Type typeStringList = new TypeToken<List<String>>() {
+        }.getType();
         Gson gson = new Gson();
-        List<String> authors = gson.fromJson(authorsJson,typeStringList);
+        List<String> authors = gson.fromJson(authorsJson, typeStringList);
         //translators
         String translatorsJson = getString(getColumnIndex(BookDBSchema.BookTable.Cols.TRANSLATORS));
-        List<String> translators = gson.fromJson(translatorsJson,typeStringList);
+        List<String> translators = gson.fromJson(translatorsJson, typeStringList);
         //webIDs
         String webIDJson = getString(getColumnIndex(BookDBSchema.BookTable.Cols.WEBIDS));
-        Type typeStrStrMap = new TypeToken<Map<String,String>>(){}.getType();
-        Map<String,String> webIDs = gson.fromJson(webIDJson,typeStrStrMap);
+        Type typeStrStrMap = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, String> webIDs = gson.fromJson(webIDJson, typeStrStrMap);
         //
         String publisher = getString(getColumnIndex(BookDBSchema.BookTable.Cols.PUBLISHER));
         //pubTime
@@ -54,9 +55,9 @@ public class BookCursorWrapper extends CursorWrapper {
         //hasCover
         int hanCoverInt = getInt(getColumnIndex(BookDBSchema.BookTable.Cols.HAS_COVER));
         boolean hasCover;
-        if(hanCoverInt == 0){
+        if (hanCoverInt == 0) {
             hasCover = false;
-        }else{
+        } else {
             hasCover = true;
         }
         //
@@ -66,8 +67,9 @@ public class BookCursorWrapper extends CursorWrapper {
         String website = getString(getColumnIndex(BookDBSchema.BookTable.Cols.WEBSITE));
         //labelID
         String labelIDJson = getString(getColumnIndex(BookDBSchema.BookTable.Cols.LABEL_ID));
-        Type typeUUID = new TypeToken<List<UUID>>(){}.getType();
-        List<UUID> labelID = gson.fromJson(labelIDJson,typeUUID);
+        Type typeUUID = new TypeToken<List<UUID>>() {
+        }.getType();
+        List<UUID> labelID = gson.fromJson(labelIDJson, typeUUID);
         //
         //above finish reading from database, then set book
         Book book = new Book(UUID.fromString(uuid));

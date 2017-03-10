@@ -27,27 +27,28 @@ public class BookShelfLab {
     private SharedPreferences BookShelfPreference;
     private Context mContext;
 
-    public static BookShelfLab get(Context context){
-        if(sBookShelfLab==null){
+    public static BookShelfLab get(Context context) {
+        if (sBookShelfLab == null) {
             sBookShelfLab = new BookShelfLab(context);
         }
         return sBookShelfLab;
     }
 
-    public BookShelfLab(Context context){
+    public BookShelfLab(Context context) {
         mContext = context.getApplicationContext();
-        BookShelfPreference = mContext.getSharedPreferences(PreferenceName,0);
+        BookShelfPreference = mContext.getSharedPreferences(PreferenceName, 0);
     }
 
-    private List<BookShelf> loadBookShelf(){
+    private List<BookShelf> loadBookShelf() {
         List<BookShelf> sBookShelf = new ArrayList<>();
-        Type type = new TypeToken<List<BookShelf>>(){}.getType();
+        Type type = new TypeToken<List<BookShelf>>() {
+        }.getType();
         Gson gson = new Gson();
-        String toLoad = BookShelfPreference.getString(PreferenceName,null);
-        if(toLoad != null){
-            sBookShelf = gson.fromJson(toLoad,type);
-            Log.i(TAG,"JSON to Load = " + toLoad);
-        }else{
+        String toLoad = BookShelfPreference.getString(PreferenceName, null);
+        if (toLoad != null) {
+            sBookShelf = gson.fromJson(toLoad, type);
+            Log.i(TAG, "JSON to Load = " + toLoad);
+        } else {
             BookShelf bookShelf = new BookShelf(
                     UUID.fromString(
                             mContext.getResources().getString(R.string.default_book_shelf_uuid))
@@ -59,14 +60,14 @@ public class BookShelfLab {
         return sBookShelf;
     }
 
-    public final List<BookShelf> getBookShelves(){
+    public final List<BookShelf> getBookShelves() {
         return loadBookShelf();
     }
 
-    public final BookShelf getBookShelf(UUID id){
+    public final BookShelf getBookShelf(UUID id) {
         List<BookShelf> sBookShelf = loadBookShelf();
-        for(BookShelf bookShelf : sBookShelf){
-            if(bookShelf.getId().equals(id)){
+        for (BookShelf bookShelf : sBookShelf) {
+            if (bookShelf.getId().equals(id)) {
                 return bookShelf;
             }
         }
@@ -74,26 +75,25 @@ public class BookShelfLab {
     }
 
 
-
-    public void addBookShelf(BookShelf bookShelf){
+    public void addBookShelf(BookShelf bookShelf) {
         List<BookShelf> sBookShelf = loadBookShelf();
         sBookShelf.add(bookShelf);
         saveBookShelf(sBookShelf);
     }
 
-    private void saveBookShelf(List<BookShelf> sBookShelf){
+    private void saveBookShelf(List<BookShelf> sBookShelf) {
         Gson gson = new Gson();
         String toSave = gson.toJson(sBookShelf);
-        Log.i(TAG,"JSON to Save = " + toSave);
+        Log.i(TAG, "JSON to Save = " + toSave);
         BookShelfPreference.edit()
-                .putString(PreferenceName,toSave)
+                .putString(PreferenceName, toSave)
                 .apply();
     }
 
-    public void renameBookShelf(UUID id,String newName){
+    public void renameBookShelf(UUID id, String newName) {
         List<BookShelf> bookShelves = loadBookShelf();
-        for(BookShelf bookShelf:bookShelves){
-            if(bookShelf.getId().equals(id)){
+        for (BookShelf bookShelf : bookShelves) {
+            if (bookShelf.getId().equals(id)) {
                 bookShelf.setTitle(newName);
                 break;
             }
@@ -107,20 +107,20 @@ public class BookShelfLab {
      * @param id the uuid of the bookshelf to delete
      * @param removeFromBooks whether move books on this bookshelf to default bookshelf
      */
-    public void deleteBookShelf(UUID id, boolean removeFromBooks){
+    public void deleteBookShelf(UUID id, boolean removeFromBooks) {
         List<BookShelf> sBookShelf = loadBookShelf();
-        if(removeFromBooks){
+        if (removeFromBooks) {
             // move to default bookshelf
-            List<Book> books = BookLab.get(mContext).getBooks(id,null);
-            for(Book book:books){
+            List<Book> books = BookLab.get(mContext).getBooks(id, null);
+            for (Book book : books) {
                 book.setBookshelfID(UUID.fromString(mContext.getString(R.string.default_book_shelf_uuid)));
                 BookLab.get(mContext).updateBook(book);
 
             }
         }
 
-        for(BookShelf bookShelf:sBookShelf){
-            if(bookShelf.getId().equals(id)){
+        for (BookShelf bookShelf : sBookShelf) {
+            if (bookShelf.getId().equals(id)) {
                 sBookShelf.remove(bookShelf);
                 break;
             }
@@ -128,7 +128,6 @@ public class BookShelfLab {
 
         saveBookShelf(sBookShelf);
     }
-
 
 
 }

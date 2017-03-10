@@ -6,19 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        layout="@layout/toolbar_batchadd"/>
+    <include layout="@layout/toolbar_batchadd" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/batch_add_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"/>
+        app:tabMode="fixed" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/batch_add_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white"/>
+        android:background="@android:color/white" />
 
 </LinearLayout>

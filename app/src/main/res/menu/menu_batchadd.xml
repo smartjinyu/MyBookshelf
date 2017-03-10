@@ -5,6 +5,6 @@
         android:id="@+id/batch_add_menu_item_save"
         android:icon="@drawable/ic_done_white"
         android:title="@string/batch_add_menu_item_save"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

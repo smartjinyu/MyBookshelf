@@ -70,7 +70,6 @@
     <string name="new_version_find_dialog_content">New version of Bookshelf is available now! \nThe newest version is %1$s.\nWe highly recommend to update this app.If you cannot find it in the market, please refer to my Blog.</string>
     <string name="new_version_find_dialog_positive">Market</string>
     <string name="new_version_find_dialog_negative">My Blog</string>
-    
 
 
     <!--SingleAddActivity-->
@@ -95,7 +94,6 @@
     <string name="input_isbn_manually_content">Please input your book\'s isbn in the EditText (10 or 13 digits).</string>
     <string name="input_isbn_manually_edit_text">Book\'s ISBN</string>
     <string name="input_isbn_manually_positive">Add</string>
-
 
 
     <!--BookEditActivity-->
@@ -200,7 +198,7 @@
     <string name="about_preference_feedback_summary">Contact me if any suggestions or complaints</string>
     <string name="about_preference_license">License</string>
     <string name="about_preference_license_dialog">Open Source License</string>
-    
+
     <!--Settings-->
     <string name="settings_settings">Settings</string>
     <string name="settings_info_retrieval">Book Info Retrieval</string>
@@ -262,7 +260,6 @@
     <string name="export_csv_caution_dialog_title">Caution</string>
     <string name="export_csv_caution_dialog_content">This function is used for further management of your books.\nYou CANNOT import the .csv file to BookShelf.
         If you want to restore later, please use backup/restore function. </string>
-
 
 
     <!--BatchAddActivity-->

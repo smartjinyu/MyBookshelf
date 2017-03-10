@@ -257,6 +257,15 @@ public class BookEditActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if(!BookLab.get(BookEditActivity.this).isBookExists(mBook)){
+                            // discard a newly added book
+                            if(mBook.isHasCover()){
+                                // delete the redundant cover file
+                                File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName());
+                                boolean succeeded = file.delete();
+                                Log.i(TAG,"Remove redundant cover result = " + succeeded);
+                            }
+                        }
                         finish();
                     }
                 })
@@ -723,7 +732,9 @@ public class BookEditActivity extends AppCompatActivity {
             }else{
                 File imageFile = new File(customPhotoName);
                 compressCustomCover(imageFile);
-                imageFile.delete();
+
+                boolean succeed = imageFile.delete();
+                Log.i(TAG,"Delete camera image result = " + succeed);
                 customPhotoName = null;
             }
 

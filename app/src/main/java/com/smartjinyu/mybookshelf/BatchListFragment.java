@@ -1,5 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
@@ -62,6 +64,11 @@ public class BatchListFragment extends Fragment {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                if(BatchAddActivity.mBooks.get(position).isHasCover()){
+                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" +BatchAddActivity.mBooks.get(position).getCoverPhotoFileName());
+                                    boolean succeeded = file.delete();
+                                    Log.i(TAG,"Remove cover result = " + succeeded);
+                                }
                                 BatchAddActivity.mBooks.remove(position);
                                 mRecyclerViewAdapter.notifyDataSetChanged();
                                 BatchAddActivity.tabLayout.getTabAt(1).

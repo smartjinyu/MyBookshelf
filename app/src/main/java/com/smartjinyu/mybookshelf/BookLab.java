@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import com.smartjinyu.mybookshelf.database.BookBaseHelper;
 import com.smartjinyu.mybookshelf.database.BookCursorWrapper;
 import com.smartjinyu.mybookshelf.database.BookDBSchema;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -266,6 +268,12 @@ public class BookLab {
 
     public void deleteBook(Book book){
         String uuidString = book.getId().toString();
+        if(book.isHasCover()){
+            // delete cover file
+            File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" +book.getCoverPhotoFileName());
+            boolean succeeded = file.delete();
+            Log.i(TAG,"Remove cover result = " + succeeded);
+        }
         mDatabase.delete(
                 BookDBSchema.BookTable.NAME,
                 BookDBSchema.BookTable.Cols.UUID + " = ?",

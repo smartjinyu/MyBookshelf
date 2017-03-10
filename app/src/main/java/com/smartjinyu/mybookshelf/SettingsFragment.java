@@ -128,9 +128,27 @@ public class SettingsFragment extends PreferenceFragment {
                 .positiveText(android.R.string.ok)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        new exportCSVTask().execute(dialog.getSelectedIndices());
-                        dialog.dismiss();
+                    public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
+                        new MaterialDialog.Builder(getActivity())
+                                .title(R.string.export_csv_caution_dialog_title)
+                                .content(R.string.export_csv_caution_dialog_content)
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        new exportCSVTask().execute(listDialog.getSelectedIndices());
+                                        listDialog.dismiss();
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                        listDialog.dismiss();
+                                    }
+                                })
+                                .show();
                     }
                 })
                 .negativeText(android.R.string.cancel)
@@ -847,7 +865,12 @@ public class SettingsFragment extends PreferenceFragment {
                     csvWriter.writeNext(entry.toArray(new String[0]));
                 }
                 csvWriter.writeNext(new String[]{""});
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE z");
+                String exportTime = format.format(mCalendar.getTime());
+                String exportTimeString = String.format(getString(R.string.export_csv_file_time),exportTime);
+                csvWriter.writeNext(new String[]{exportTimeString});
                 csvWriter.writeNext(new String[]{getString(R.string.export_csv_file_end)});
+                csvWriter.writeNext(new String[]{getString(R.string.export_csv_file_copyright)});
                 csvWriter.close();
 
             } catch (IOException ioe) {

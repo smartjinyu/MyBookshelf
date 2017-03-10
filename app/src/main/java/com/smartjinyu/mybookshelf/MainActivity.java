@@ -1230,6 +1230,9 @@ public class MainActivity extends AppCompatActivity {
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
+            if(mSearchView!=null && mSearchView.isSearchOpen()){
+                mSearchView.close(false);
+            }
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
     };
@@ -1301,7 +1304,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.super.onBackPressed();
                     }
                 })
-                .negativeText(R.string.rating_dialog_negative)
+                .negativeText(android.R.string.cancel)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

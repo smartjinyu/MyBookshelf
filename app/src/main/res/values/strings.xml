@@ -92,7 +92,7 @@
     <string name="book_duplicate_dialog_content">This book is still on your bookshelf. Do you want to add it anyway?</string>
     <string name="book_duplicate_dialog_positive">Add it Anyway</string>
     <string name="input_isbn_manually_title">Add Manually</string>
-    <string name="input_isbn_manually_content">Please input your book\'s isbn in the EditText(10 or 13 digits).</string>
+    <string name="input_isbn_manually_content">Please input your book\'s isbn in the EditText (10 or 13 digits).</string>
     <string name="input_isbn_manually_edit_text">Book\'s ISBN</string>
     <string name="input_isbn_manually_positive">Add</string>
 
@@ -253,10 +253,15 @@
         <item>Website</item>
     </string-array>
     <string name="export_csv_file_order">No.</string>
+    <string name="export_csv_file_time">Export Time: %1$s</string>
     <string name="export_csv_file_end">Exported from BookShelf (https://play.google.com/store/apps/details?id=com.smartjinyu.mybookshelf)</string>
+    <string name="export_csv_file_copyright">Copyright of the above data is reserved by the corresponding web services, you must follow requirement of these services to use data.</string>
     <string name="export_csv_dialog_at_least_toast">You have to choose at least ONE item!</string>
     <string name="export_csv_export_succeed_toast">Export Succeeded! File Path: %1$s</string>
     <string name="export_csv_export_fail_toast">Export Failed! Please check logs and contact the developer!</string>
+    <string name="export_csv_caution_dialog_title">Caution</string>
+    <string name="export_csv_caution_dialog_content">This function is used for further management of your books.\nYou CANNOT import the .csv file to BookShelf.
+        If you want to restore later, please use backup/restore function. </string>
 
 
 

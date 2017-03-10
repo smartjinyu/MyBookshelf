@@ -161,15 +161,17 @@ public class BookEditActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(pubmonthEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
-        } else if (isbnEditText.getText().toString().length() != 10 && isbnEditText.getText().toString().length() != 13) {
-            // isbn should be 10 or 13 digits
-            Log.i(TAG, "Invalid isbn = " + isbnEditText.getText() + ", length = " + isbnEditText.getText().length());
-            Toast.makeText(this, R.string.isbn_invalid, Toast.LENGTH_LONG).show();
-            isbnEditText.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
-            return false;
-        } else if (titleEditText.getText().toString().length() == 0) {
+        }
+//        else if (isbnEditText.getText().toString().length() != 10 && isbnEditText.getText().toString().length() != 13) {
+//            // isbn should be 10 or 13 digits
+//            Log.i(TAG, "Invalid isbn = " + isbnEditText.getText() + ", length = " + isbnEditText.getText().length());
+//            Toast.makeText(this, R.string.isbn_invalid, Toast.LENGTH_LONG).show();
+//            isbnEditText.requestFocus();
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
+//            return false;
+//        }
+        else if (titleEditText.getText().toString().length() == 0) {
             Log.i(TAG, "Title Empty problem.");
             Toast.makeText(this, R.string.title_empty, Toast.LENGTH_LONG).show();
             titleEditText.requestFocus();

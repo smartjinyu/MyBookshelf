@@ -44,9 +44,11 @@ android {
         debug {
             manifestPlaceholders = [fabric_api_key: getApiKey()]
         }
-
-
     }
+    lintOptions {
+        abortOnError false
+    }
+
 
 }
 

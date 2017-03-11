@@ -5,18 +5,21 @@
 [这里]:https://smartjinyu.com/android/2017/02/09/mybookshelf.html
 
 ### Screenshots
-![Screenshot1](https://smartjinyu.com/img/2017-02-09/1.png)
-![Screenshot2](https://smartjinyu.com/img/2017-02-09/2.png)
-![Screenshot3](https://smartjinyu.com/img/2017-02-09/3.png)
-![Screenshot4](https://smartjinyu.com/img/2017-02-09/4.png)
-![Screenshot5](https://smartjinyu.com/img/2017-02-09/5.png)
+See [My Blog] for screenshots
+
+[My Blog]:https://smartjinyu.com/android/2017/02/09/mybookshelf.html
+
+
 
 ### Description
 
 An open-source physical books manage app,  your electronic Bookshelf
 
 This app is designed to manage physical books. Scan books' Barcode, and books will add to Bookshelf. You can record book information, reading status, notes, labels and etc. With Search function, there is no need for you to rummage through your house for a book, and you may avoid to buy a same book you have.
-This app is fully open source under GPL v3 license.
+
+Recommendation by ifanr: [http://www.ifanr.com/app/798137]
+
+[http://www.ifanr.com/app/798137]:http://www.ifanr.com/app/798137
 
 Features:
 - Material Design
@@ -24,10 +27,12 @@ Features:
 - Fully Open Source, no privacy issues
 - Support Single, Batch, Manual add books
 - Get book details from web services automatically*
+- Support Export to .csv file
 - Perfect Labels and bookshelf system
+- Support data backup and restore
 - No ADs
 
-*Only support Douban.com currently, more services will be added in the near future
+*Only support Douban.com and OpenLibrary.org currently, more services will be added in the near future
 
 If you have any advice or complaints, feel free to open an issue. PR is welcomed anytime.
 

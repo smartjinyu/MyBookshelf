@@ -23,6 +23,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
+import java.util.Locale;
+
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 /**
@@ -37,6 +39,7 @@ public class AboutFragment extends PreferenceFragment {
     private Preference donatePreference;
     private Preference feedbackPreference;
     private Preference licensePreference;
+    private Preference termOfServicePreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,7 +202,7 @@ public class AboutFragment extends PreferenceFragment {
                 });
 
                 alert.setView(wv);
-                alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
@@ -210,15 +213,72 @@ public class AboutFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        termOfServicePreference = findPreference("about_pref_term_of_service");
+        termOfServicePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle(getString(R.string.about_preference_term_of_service));
+
+                WebView wv = new WebView(getActivity());
+                if (getCurrentLocale().equals(Locale.CHINA)) {
+                    wv.loadUrl("file:///android_asset/termOfService_zh.html");
+                }else{
+                    wv.loadUrl("file:///android_asset/termOfService_en.html");
+                }
+                wv.setWebViewClient(new WebViewClient() {
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        view.loadUrl(url);
+                        return true;
+                    }
+
+                    @TargetApi(Build.VERSION_CODES.N)
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                        final Uri uri = request.getUrl();
+                        view.loadUrl(uri.toString());
+                        return true;
+                    }
+
+                });
+
+                alert.setView(wv);
+                alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+
+                return true;
+            }
+        });
+
     }
 
     private String getEmailContent() {
         String content = "\n\n" + "------------------------" + "\n";
         content += "Package Name: " + getActivity().getPackageName() + "\n";
         content += "App Version: " + BuildConfig.VERSION_NAME + "\n";
+        content += "App Version Code: " + BuildConfig.VERSION_CODE + "\n";
         content += "Device Model: " + Build.MODEL + "\n" + "Device Brand: " + Build.BRAND + "\n" + "SDK Version: " + Build.VERSION.SDK_INT + "\n" + "------------------------";
         return content;
 
     }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
 
 }

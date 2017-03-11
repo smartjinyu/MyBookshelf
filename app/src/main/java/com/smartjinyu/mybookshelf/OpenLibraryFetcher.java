@@ -45,48 +45,59 @@ public class OpenLibraryFetcher extends BookFetcher {
         call.enqueue(new Callback<Map<String, OpenLibraryJson>>() {
             @Override
             public void onResponse(Call<Map<String, OpenLibraryJson>> call, Response<Map<String, OpenLibraryJson>> response) {
-                Log.d(TAG, "response code = " + response.code());
-                Log.d(TAG, "response body = " + response.body());
-                OpenLibraryJson OLJ = response.body().get("ISBN:" + isbn);
-                if (OLJ != null) {
-                    // get information successfully
-                    Log.i(TAG, "GET OpenLibrary information successfully, title = " + OLJ.getTitle());
-                    mBook = new Book();
-                    mBook.setIsbn(isbn);
-                    mBook.setTitle(OLJ.getTitle());
-                    List<String> authors = new ArrayList<String>();
-                    List<OpenLibraryJson.AuthorsBean> authorsBeen = OLJ.getAuthors();
-                    for (OpenLibraryJson.AuthorsBean ab : authorsBeen) {
-                        authors.add(ab.getName());
-                    }
-                    mBook.setAuthors(authors);
-                    mBook.setTranslators(new ArrayList<String>());
-                    // Open Library books are almost English books, no translators
-                    mBook.setWebIds(new HashMap<String, String>());
-                    mBook.getWebIds().put("openLibrary", OLJ.getKey());
-                    mBook.setPublisher(OLJ.getPublishers().get(0).getName());
-                    String rawDate = OLJ.getPublish_date();
-                    int pubYear = 9999;
-                    if (rawDate.length() > 4) {
-                        pubYear = Integer.parseInt(rawDate.substring(rawDate.length() - 4));
-                    }
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(pubYear, 0, 1); // Open Library seldom returns month
-                    mBook.setPubTime(calendar);
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    boolean addWebsite = pref.getBoolean("settings_pref_acwebsite", true);
-                    if (addWebsite) {
-                        mBook.setWebsite("https://openlibrary.org" + OLJ.getKey());
-                    }
-                    final String imageURL = OLJ.getCover().getLarge();
-                    if (mode == 0) {
-                        ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
-                    } else if (mode == 1) {
-                        ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
+                if (response.body() != null) {
+                    Log.i(TAG, "response code = " + response.code());
+                    Log.i(TAG, "response body = " + response.body());
+                    OpenLibraryJson OLJ = response.body().get("ISBN:" + isbn);
+                    if (OLJ != null) {
+                        // get information successfully
+                        Log.i(TAG, "GET OpenLibrary information successfully, title = " + OLJ.getTitle());
+                        mBook = new Book();
+                        mBook.setIsbn(isbn);
+                        mBook.setTitle(OLJ.getTitle());
+                        List<String> authors = new ArrayList<String>();
+                        List<OpenLibraryJson.AuthorsBean> authorsBeen = OLJ.getAuthors();
+                        for (OpenLibraryJson.AuthorsBean ab : authorsBeen) {
+                            authors.add(ab.getName());
+                        }
+                        mBook.setAuthors(authors);
+                        mBook.setTranslators(new ArrayList<String>());
+                        // Open Library books are almost English books, no translators
+                        mBook.setWebIds(new HashMap<String, String>());
+                        mBook.getWebIds().put("openLibrary", OLJ.getKey());
+                        mBook.setPublisher(OLJ.getPublishers().get(0).getName());
+                        String rawDate = OLJ.getPublish_date();
+                        int pubYear = 9999;
+                        if (rawDate.length() > 4) {
+                            pubYear = Integer.parseInt(rawDate.substring(rawDate.length() - 4));
+                        }
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(pubYear, 0, 1); // Open Library seldom returns month
+                        mBook.setPubTime(calendar);
+                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+                        boolean addWebsite = pref.getBoolean("settings_pref_acwebsite", true);
+                        if (addWebsite) {
+                            mBook.setWebsite("https://openlibrary.org" + OLJ.getKey());
+                        }
+                        final String imageURL = OLJ.getCover().getLarge();
+                        if (mode == 0) {
+                            ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
+                        } else if (mode == 1) {
+                            ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
+                        }
+                    } else {
+                        Log.e(TAG, "Null OpenLibrary Json " + response.code() + ", isbn = " + isbn);
+                        if (mode == 0) {
+                            ((SingleAddActivity) mContext).fetchFailed(
+                                    BookFetcher.fetcherID_OL, 0, isbn
+                            );
+                        } else if (mode == 1) {
+                            ((BatchAddActivity) mContext).fetchFailed(
+                                    BookFetcher.fetcherID_OL, 0, isbn);
+                        }
                     }
                 } else {
-                    Log.d(TAG, "Null OpenLibrary Json ");
-                    Log.w(TAG, "Null OpenLibrary Json " + response.code() + ", isbn = " + isbn);
+                    Log.e(TAG, "Null Response Body, code = " + response.code() + ", isbn = " + isbn);
                     if (mode == 0) {
                         ((SingleAddActivity) mContext).fetchFailed(
                                 BookFetcher.fetcherID_OL, 0, isbn
@@ -97,7 +108,6 @@ public class OpenLibraryFetcher extends BookFetcher {
                     }
 
                 }
-
             }
 
             @Override

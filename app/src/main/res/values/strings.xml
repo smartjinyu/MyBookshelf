@@ -67,10 +67,12 @@
     <string name="rating_dialog_negative">Cancel</string>
     <string name="rating_dialog_positive">Rating</string>
     <string name="new_version_find_dialog_title">New Version Available</string>
-    <string name="new_version_find_dialog_content">New version of Bookshelf is available now! \nThe newest version is %1$s.\nWe highly recommend to update this app.If you cannot find it in the market, please refer to my Blog.</string>
+    <string name="new_version_find_dialog_content">New version of BookShelf is available now! \nThe newest version is %1$s.\nWe highly recommend to update this app.If you cannot find it in the market, please refer to my Blog.</string>
     <string name="new_version_find_dialog_positive">Market</string>
     <string name="new_version_find_dialog_negative">My Blog</string>
-
+    <string name="accept_term_of_service_dialog_positive">Accept</string>
+    <string name="accept_term_of_service_dialog_negative">Deny</string>
+    <string name="accept_term_of_service_dialog_deny_toast">You must accept the term of service to continue!</string>
 
     <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>
@@ -153,7 +155,7 @@
     <string name="cover_change_fail">Something wrong when processing image! Please check the log and contact the developer!</string>
 
     <!--BookShelfLab-->
-    <string name="default_book_shelf_name">Default BookShelf</string>
+    <string name="default_book_shelf_name">Default Bookshelf</string>
     <string name="default_book_shelf_uuid" translatable="false">407c4479-5a57-4371-8b94-ad038f1276fe</string>
     <!--in Book.java, default book shelf id doesn't refer to here-->
 
@@ -189,7 +191,7 @@
     <string name="about_preference_rate_summary">Please give five stars if you find it useful</string>
     <string name="about_preference_donate_title">Donate Me</string>
     <string name="about_preference_donate_summary">Donations are greatly appreciated</string>
-    <string name="about_donate_dialog_content">Your donations will be my motivation to make this app better.My PayPal &amp; Alipay account is smartjinyu@gmail.com.\n Thanks for your support!</string>
+    <string name="about_donate_dialog_content">Your donations will be my motivation to make this app better.\nMy PayPal &amp; Alipay account is smartjinyu@gmail.com.\nThanks for your support!</string>
     <string name="about_donate_dialog_positive0">Alipay</string>
     <string name="about_donate_dialog_negative0">Copy Account</string>
     <string name="about_donate_alipay_qrcode">aex01588ztl2mjttjpwtzae</string>
@@ -199,6 +201,7 @@
     <string name="about_preference_feedback_summary">Contact me if any suggestions or complaints</string>
     <string name="about_preference_license">License</string>
     <string name="about_preference_license_dialog">Open Source License</string>
+    <string name="about_preference_term_of_service">Term of Service</string>
 
     <!--Settings-->
     <string name="settings_settings">Settings</string>
@@ -220,9 +223,9 @@
     <string name="storage_permission_toast5">You have to grant STORAGE permission so that we can export your books!</string>
     <string name="backup_succeed_toast">Backup Succeeded! File Path: %1$s</string>
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
-    <string name="backup_progress_dialog_title">Backing Up Bookshelf</string>
+    <string name="backup_progress_dialog_title">Backing Up BookShelf</string>
     <string name="backup_progress_dialog_content">Please wait…</string>
-    <string name="restore_progress_dialog_title">Backing Up Bookshelf</string>
+    <string name="restore_progress_dialog_title">Backing Up BookShelf</string>
     <string name="choose_folder_dialog_choose">Choose</string>
     <string name="restore_succeed_toast">Restore Succeeded, and App will restart in 2 seconds…</string>
     <string name="restore_fail_toast">Restore Failed! Please check logs and contact the developer!</string>
@@ -232,7 +235,7 @@
     <string name="restore_delete_dialog_content">Are you sure to delete this backup?</string>
     <string name="restore_no_backup_toast">It seems that there are not any backups in your folder…</string>
     <string name="restore_confirm_dialog_title">Caution</string>
-    <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in Bookshelf currently. You CANNOT recover them after this action. Are you sure to continue to restore?</string>
+    <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in BookShelf currently. You CANNOT recover them after this action. Are you sure to continue to restore?</string>
     <string name="settings_export_to_csv_title">Export to .csv file</string>
     <string name="settings_export_to_csv_summary">Export BookShelf to .csv file for further management</string>
     <string name="export_progress_dialog_title">Exporting BookShelf</string>

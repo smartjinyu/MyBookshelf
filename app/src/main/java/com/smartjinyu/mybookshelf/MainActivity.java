@@ -1,14 +1,17 @@
 package com.smartjinyu.mybookshelf;
 
+import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +37,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -65,6 +72,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
@@ -119,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         sortMethod = defaultSharedPreferences.getInt(SORT_METHOD, 0);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
-
+        checkTermOfService();
         setRecyclerView();
         setFloatingActionButton();
         setToolbar();
@@ -937,6 +945,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
+       // checkTermOfService();
         if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());
@@ -1449,6 +1458,67 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void checkTermOfService(){
+        boolean isAccepted = defaultSharedPreferences.getBoolean("isAcceptTermOfService",false);
+        if(!isAccepted){
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle(getString(R.string.about_preference_term_of_service));
+
+            WebView wv = new WebView(this);
+            if (getCurrentLocale().equals(Locale.CHINA)) {
+                wv.loadUrl("file:///android_asset/termOfService_zh.html");
+            }else{
+                wv.loadUrl("file:///android_asset/termOfService_en.html");
+            }
+            wv.setWebViewClient(new WebViewClient() {
+                @SuppressWarnings("deprecation")
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    view.loadUrl(url);
+                    return true;
+                }
+
+                @TargetApi(Build.VERSION_CODES.N)
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    final Uri uri = request.getUrl();
+                    view.loadUrl(uri.toString());
+                    return true;
+                }
+
+            });
+
+            alert.setView(wv);
+            alert.setPositiveButton(R.string.accept_term_of_service_dialog_positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    defaultSharedPreferences.edit().putBoolean("isAcceptTermOfService",true).apply();
+                    dialog.dismiss();
+                }
+            });
+            alert.setNegativeButton(R.string.accept_term_of_service_dialog_negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    Toast.makeText(MainActivity.this,R.string.accept_term_of_service_dialog_deny_toast,Toast.LENGTH_LONG)
+                            .show();
+                    finish();
+                }
+            });
+            alert.show();
+
+        }
+    }
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -224,7 +224,7 @@ public class AboutFragment extends PreferenceFragment {
                 WebView wv = new WebView(getActivity());
                 if (getCurrentLocale().equals(Locale.CHINA)) {
                     wv.loadUrl("file:///android_asset/termOfService_zh.html");
-                }else{
+                } else {
                     wv.loadUrl("file:///android_asset/termOfService_en.html");
                 }
                 wv.setWebViewClient(new WebViewClient() {
@@ -272,9 +272,9 @@ public class AboutFragment extends PreferenceFragment {
 
     @TargetApi(Build.VERSION_CODES.N)
     private Locale getCurrentLocale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
-        } else{
+        } else {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }

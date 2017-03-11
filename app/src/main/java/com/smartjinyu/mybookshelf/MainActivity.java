@@ -945,7 +945,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
-       // checkTermOfService();
+        // checkTermOfService();
         if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());
@@ -1459,16 +1459,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checkTermOfService(){
-        boolean isAccepted = defaultSharedPreferences.getBoolean("isAcceptTermOfService",false);
-        if(!isAccepted){
+    private void checkTermOfService() {
+        boolean isAccepted = defaultSharedPreferences.getBoolean("isAcceptTermOfService", false);
+        if (!isAccepted) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle(getString(R.string.about_preference_term_of_service));
 
             WebView wv = new WebView(this);
             if (getCurrentLocale().equals(Locale.CHINA)) {
                 wv.loadUrl("file:///android_asset/termOfService_zh.html");
-            }else{
+            } else {
                 wv.loadUrl("file:///android_asset/termOfService_en.html");
             }
             wv.setWebViewClient(new WebViewClient() {
@@ -1493,14 +1493,14 @@ public class MainActivity extends AppCompatActivity {
             alert.setPositiveButton(R.string.accept_term_of_service_dialog_positive, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    defaultSharedPreferences.edit().putBoolean("isAcceptTermOfService",true).apply();
+                    defaultSharedPreferences.edit().putBoolean("isAcceptTermOfService", true).apply();
                     dialog.dismiss();
                 }
             });
             alert.setNegativeButton(R.string.accept_term_of_service_dialog_negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                    Toast.makeText(MainActivity.this,R.string.accept_term_of_service_dialog_deny_toast,Toast.LENGTH_LONG)
+                    Toast.makeText(MainActivity.this, R.string.accept_term_of_service_dialog_deny_toast, Toast.LENGTH_LONG)
                             .show();
                     finish();
                 }
@@ -1509,11 +1509,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
     @TargetApi(Build.VERSION_CODES.N)
     private Locale getCurrentLocale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
-        } else{
+        } else {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }

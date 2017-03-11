@@ -115,6 +115,10 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_manually, 0, R.string.menu_single_add_manually);
         MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_NEVER);
 
+        menuItem = menu.add(Menu.NONE,R.id.menu_simple_add_totally_manual,1,R.string.menu_single_add_totally_manually);
+        MenuItemCompat.setShowAsAction(menuItem,MenuItemCompat.SHOW_AS_ACTION_NEVER);
+        // add a book without isbn directly
+
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -195,6 +199,14 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         })
                         .canceledOnTouchOutside(false)
                         .show();
+            case R.id.menu_simple_add_totally_manual:
+                Book mBook = new Book();
+                Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                i.putExtra(BookEditActivity.BOOK, mBook);
+                i.putExtra(BookEditActivity.downloadCover, false);
+                startActivity(i);
+                finish();
+
 
         }
         return super.onOptionsItemSelected(item);

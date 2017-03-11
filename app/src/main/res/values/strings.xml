@@ -77,6 +77,7 @@
     <string name="menu_single_add_flash_off">Flash[OFF]</string>
     <string name="menu_single_add_flash_on">Flash[ON]</string>
     <string name="menu_single_add_manually">Input ISBN Manually</string>
+    <string name="menu_single_add_totally_manually">Add Book Manually</string>
     <string name="camera_permission_denied">Please grant Camera permission to scan Barcode!</string>
     <string name="isbn_unmatched_dialog_title">Get Information Failed</string>
     <string name="isbn_unmatched_dialog_content">Your Book\'s ISBN is %1$s,

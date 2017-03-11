@@ -194,7 +194,7 @@
     <string name="about_donate_dialog_content">Your donations will be my motivation to make this app better.\nMy PayPal &amp; Alipay account is smartjinyu@gmail.com.\nThanks for your support!</string>
     <string name="about_donate_dialog_positive0">Alipay</string>
     <string name="about_donate_dialog_negative0">Copy Account</string>
-    <string name="about_donate_alipay_qrcode">aex01588ztl2mjttjpwtzae</string>
+    <string name="about_donate_alipay_qrcode" translatable="false">aex01588ztl2mjttjpwtzae</string>
     <string name="about_preference_donate_toast">My account has been copied to clipboard! Thanks for your donating!</string>
     <string name="about_preference_github_repository">Open Source</string>
     <string name="about_preference_feedback_title">Feedback</string>
@@ -257,7 +257,7 @@
     <string name="export_csv_file_order">No.</string>
     <string name="export_csv_file_time">Export Time: %1$s</string>
     <string name="export_csv_file_end">Exported from BookShelf (https://play.google.com/store/apps/details?id=com.smartjinyu.mybookshelf)</string>
-    <string name="export_csv_file_copyright">Copyright of the above data is reserved by the corresponding web services, you must follow requirement of these services to use data.</string>
+    <string name="export_csv_file_copyright">"Copyright of the above data is reserved by the corresponding web services, you must follow requirement of these services to use data. BookShelf is not responsible for copyright issues. "</string>
     <string name="export_csv_dialog_at_least_toast">You have to choose at least ONE item!</string>
     <string name="export_csv_export_succeed_toast">Export Succeeded! File Path: %1$s</string>
     <string name="export_csv_export_fail_toast">Export Failed! Please check logs and contact the developer!</string>

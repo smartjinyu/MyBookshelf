@@ -135,7 +135,7 @@
     <string name="rename_bookshelf_dialog_title">重命名书架</string>
     <string name="rename_label_dialog_edit_text">输入新的标签的名称</string>
     <string name="rename_label_dialog_title">重命名标签</string>
-    <string name="request_failed_dialog_batch_content">此书的 ISBN 是%1$s，我们无法获取书籍详情，请检查您的网络。您可以再次扫描或使用单个添加功能手动添加ben\'shu</string>
+    <string name="request_failed_dialog_batch_content">此书的 ISBN 是%1$s，我们无法获取书籍详情，请检查您的网络。您可以再次扫描或使用单个添加功能手动添加本书。</string>
     <string name="request_failed_dialog_content">此书的 ISBN 是%1$s，我们无法获取书籍详情，请检查您的网络。您可以手动输入详情或重新扫描。</string>
     <string name="search_view_hint">搜索书籍</string>
     <string name="settings_auto_complete_website_title">自动填充“网站”栏</string>
@@ -164,9 +164,9 @@
         <item>DouBan.com</item>
         <item>OpenLibrary.org</item>
     </string-array>
-    <string name="storage_permission_toast1">请授予“存储空间”权限以便更改您的备份目录！</string>
-    <string name="storage_permission_toast2">请授予“存储空间”权限以便保存您的备份！</string>
-    <string name="storage_permission_toast3">请授予“存储空间”权限以便恢复您的备份！</string>
+    <string name="storage_permission_toast1">请授予存储空间权限以便更改您的备份目录！</string>
+    <string name="storage_permission_toast2">请授予存储空间权限以便保存您的备份！</string>
+    <string name="storage_permission_toast3">请授予存储空间权限以便恢复您的备份！</string>
     <string name="title_empty">标题不能为空！</string>
     <string name="settings_backup_category">备份</string>
     <string name="settings_backup_location_title">备份位置</string>
@@ -197,6 +197,60 @@
     <string name="about_preference_rate_title">评分</string>
     <string name="drawer_item_donate">捐赠</string>
     <string name="about_preference_rate_summary">如果觉得好用，请为我们打五分</string>
+    <string name="about_donate_dialog_content">您的捐赠是我们继续努力的动力所在。\n我的支付宝&amp; PayPal 账户是:smartjinyu@gmail.com.\n感谢您的支持！</string>
+    <string name="about_donate_dialog_negative0">复制账号</string>
+    <string name="about_donate_dialog_positive0">前往支付宝</string>
+    <string name="about_preference_donate_summary">非常欢迎您的捐赠</string>
+    <string name="about_preference_term_of_service">使用条款</string>
+    <string name="accept_term_of_service_dialog_deny_toast">您必须接受使用条款后才能继续使用本应用！</string>
+    <string name="accept_term_of_service_dialog_negative">拒绝</string>
+    <string name="accept_term_of_service_dialog_positive">接受</string>
+    <string name="cover_change_camera_permission_denied">请授予相机权限以拍摄封面照片！</string>
+    <string name="cover_change_dialog_title">更换封面</string>
+    <string name="cover_change_fail">处理封面图片错误！请查看日志文件并联系开发者！</string>
+    <string name="cover_change_no_camera_app">没有找到已安装的相机应用！</string>
+    <string name="drawer_item_donate_click_toast">我的 PayPal &amp; 支付宝账号已经复制到剪贴板，感谢您的捐赠！</string>
+    <string name="export_csv_caution_dialog_content">此功能是为了您更好地管理图书，导出的.csv文件不能再被导入本应用。\n如果您想要将来恢复应用数据，请使用备份\\还原功能！</string>
+    <string name="export_csv_caution_dialog_title">注意</string>
+    <string name="export_csv_dialog_at_least_toast">请至少选择一项！</string>
+    <string name="export_csv_dialog_title">选择需要导出的项目</string>
+    <string name="export_csv_export_fail_toast">导出失败！请查看日志并联系作者！</string>
+    <string name="export_csv_export_succeed_toast">导出成功！文件路径：%1$s</string>
+    <string name="export_csv_file_copyright">以上数据的版权由书籍信息提供网站保留，请按照它们的版权要求使用这些数据，本软件不对此负责。</string>
+    <string name="export_csv_file_end">从 BookShelf 导出(http://coolapk.com/apk/com.smartjinyu.mybookshelf)</string>
+    <string name="export_csv_file_order">编号</string>
+    <string name="export_csv_file_time">导出时间：%1$s</string>
+    <string name="export_progress_dialog_content">请稍候…</string>
+    <string name="export_progress_dialog_title">正在导出</string>
+    <string name="menu_single_add_totally_manually">手动添加书籍</string>
+    <string name="new_version_find_dialog_content">BookShelf 发布新版本啦！\n最新版是%1$s.\n我们建议您尽快更新，如果您的应用市场里还未上线新版本，请到我的博客获取。</string>
+    <string name="new_version_find_dialog_negative">我的博客</string>
+    <string name="new_version_find_dialog_positive">应用市场</string>
+    <string name="new_version_find_dialog_title">发现新版本</string>
+    <string name="settings_export_to_csv_summary">导出为.csv文件以便管理</string>
+    <string name="settings_export_to_csv_title">导出为.csv文件</string>
+    <string name="shortcut_name_add">添加书籍</string>
+    <string name="shortcut_name_search">搜索</string>
+    <string name="storage_permission_toast5">请授予存储空间权限以导出您的书籍！</string>
+    <string-array name="cover_change_dialog_list">
+        <item>拍摄新图片</item>
+        <item>从相册选择图片</item>
+    </string-array>
+    <string-array name="export_csv_dialog_list">
+        <item>标题</item>
+        <item>作者</item>
+        <item>译者</item>
+        <item>出版社</item>
+        <item>出版时间</item>
+        <item>ISBN</item>
+        <item>阅读状态</item>
+        <item>书架</item>
+        <item>标签</item>
+        <item>笔记</item>
+        <item>网站</item>
+    </string-array>
+
+
 
 
 </resources>

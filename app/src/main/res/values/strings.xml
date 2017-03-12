@@ -151,6 +151,7 @@
         <item>Choose Picture from Gallery</item>
     </string-array>
     <string name="cover_change_no_camera_app">No Camera app installed!</string>
+    <string name="cover_change_no_choose_picture_app">No supported picture chooser in your device!</string>
     <string name="cover_change_camera_permission_denied">You need to grant Camera permission to take new pictures!</string>
     <string name="cover_change_fail">Something wrong when processing image! Please check the log and contact the developer!</string>
 
@@ -184,6 +185,7 @@
     <string name="book_detail_menu_delete">Delete Book</string>
     <string name="book_detail_book_delete_toast">Book Deleted!</string>
     <string name="book_detail_labels_image_view">Labels</string>
+    <string name="book_detail_browser_not_found">No supported browser found!</string>
 
     <!--About-->
     <string name="about_preference_category_title">About</string>

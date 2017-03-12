@@ -124,10 +124,11 @@ public class BatchAddActivity extends AppCompatActivity {
                 } else {
                     finish();
                 }
-
+                break;
             default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void chooseBookshelf() {

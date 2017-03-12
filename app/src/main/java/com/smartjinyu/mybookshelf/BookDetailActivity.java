@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import java.util.UUID;
 
 public class BookDetailActivity extends SlidingActivity {
     public static String Intent_Book_ToEdit = "BOOKTOEDIT";
+    private static final String TAG = "BookDetailActivity";
     private Book mBook;
 
     private TextView infoTitleTextView;
@@ -387,7 +389,13 @@ public class BookDetailActivity extends SlidingActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(mBook.getWebsite()));
-                    startActivity(i);
+                    if (i.resolveActivity(getPackageManager()) != null) {
+                        startActivity(i);
+                    } else {
+                        Log.e(TAG, "No supported browser found!");
+                        Toast.makeText(BookDetailActivity.this, R.string.book_detail_browser_not_found, Toast.LENGTH_LONG)
+                                .show();
+                    }
                 }
             });
         } else {
@@ -417,7 +425,7 @@ public class BookDetailActivity extends SlidingActivity {
             default:
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 

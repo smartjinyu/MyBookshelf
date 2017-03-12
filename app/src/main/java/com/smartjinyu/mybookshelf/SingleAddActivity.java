@@ -153,7 +153,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 finish();
-                return true;
+                break;
             case R.id.menu_simple_add_flash:
                 mFlash = !mFlash;
                 if (mFlash) {
@@ -164,7 +164,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                     item.setIcon(R.drawable.ic_flash_off);
                 }
                 mScannerView.setFlash(mFlash);
-                return true;
+                break;
             case R.id.menu_simple_add_manually:
                 mScannerView.stopCamera();
                 new MaterialDialog.Builder(this)
@@ -199,6 +199,8 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         })
                         .canceledOnTouchOutside(false)
                         .show();
+                break;
+
             case R.id.menu_simple_add_totally_manual:
                 Book mBook = new Book();
                 Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
@@ -206,6 +208,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 i.putExtra(BookEditActivity.downloadCover, false);
                 startActivity(i);
                 finish();
+                break;
 
 
         }

@@ -240,10 +240,11 @@ public class BookEditActivity extends AppCompatActivity {
                 if (saveBook()) {
                     finish();
                 }
-
+                break;
             default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -633,7 +634,13 @@ public class BookEditActivity extends AppCompatActivity {
                                 } else if (position == 1) {
                                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                                     i.setType("image/*");
-                                    startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+                                    if (i.resolveActivity(getPackageManager()) != null) {
+                                        startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+                                    } else {
+                                        Log.e(TAG, "No Image chooser available");
+                                        Toast.makeText(BookEditActivity.this, R.string.cover_change_no_choose_picture_app, Toast.LENGTH_LONG)
+                                                .show();
+                                    }
 
                                 }
                             }

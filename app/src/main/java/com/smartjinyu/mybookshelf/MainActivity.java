@@ -945,7 +945,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
-        // checkTermOfService();
         if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());

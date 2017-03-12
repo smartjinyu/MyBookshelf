@@ -249,8 +249,8 @@
         <item>笔记</item>
         <item>网站</item>
     </string-array>
-
-
+    <string name="book_detail_browser_not_found">没有找到支持的浏览器！</string>
+    <string name="cover_change_no_choose_picture_app">没有找到支持的图片选择工具！</string>
 
 
 </resources>

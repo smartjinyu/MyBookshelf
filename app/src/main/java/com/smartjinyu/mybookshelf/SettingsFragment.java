@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.icu.text.UnicodeSet;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -782,17 +783,10 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                     if (items[2] == 1) {
                         // translators
-                        if (mBook.getTranslators().size() != 0) {
-                            StringBuilder translators = new StringBuilder();
-                            for (String translator : mBook.getTranslators()) {
-                                translators.append(translator);
-                                translators.append(",");
-                            }
-                            if (translators.length() != 0) {
-                                translators.deleteCharAt(translators.length() - 1);
-                            }
-                            entry.add(translators.toString());
-                        } else {
+                        String translators = mBook.getFormatTranslator();
+                        if(translators!=null){
+                            entry.add(translators);
+                        }else{
                             entry.add("");
                         }
                     }

@@ -149,15 +149,9 @@ public class BookDetailActivity extends SlidingActivity {
             authorRelativeLayout.setVisibility(View.GONE);
         }
 
-        if (mBook.getTranslators().size() != 0) {
-            StringBuilder translators = new StringBuilder();
-            for (String translator : mBook.getTranslators()) {
-                translators.append(translator);
-                translators.append(",");
-            }
-            if (translators.length() != 0) {
-                translators.deleteCharAt(translators.length() - 1);
-            }
+        String translators = mBook.getFormatTranslator();
+
+        if (translators!=null) {
             translatorTextView.setText(translators);
             translatorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -175,7 +169,6 @@ public class BookDetailActivity extends SlidingActivity {
                     return true;
                 }
             });
-
         } else {
             translatorRelativeLayout.setVisibility(View.GONE);
         }

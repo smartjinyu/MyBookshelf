@@ -427,18 +427,9 @@ public class BookEditActivity extends AppCompatActivity {
         if(authors!=null){
             authorEditText.setText(authors);
         }
-
-        if (mBook.getTranslators() != null && mBook.getTranslators().size() != 0) {
-            translator_layout.setVisibility(View.VISIBLE);
-            StringBuilder stringBuilder2 = new StringBuilder();
-            for (String translator : mBook.getTranslators()) {
-                stringBuilder2.append(translator);
-                stringBuilder2.append(",");
-            }
-            if (stringBuilder2.length() != 0) {
-                stringBuilder2.deleteCharAt(stringBuilder2.length() - 1);
-            }
-            translatorEditText.setText(stringBuilder2);
+        String translators = mBook.getFormatTranslator();
+        if(translators!=null){
+            translatorEditText.setText(translators);
         }
 
         publisherEditText.setText(mBook.getPublisher());

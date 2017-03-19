@@ -1,6 +1,7 @@
 package com.smartjinyu.mybookshelf;
 
 import android.support.annotation.Nullable;
+import android.support.v4.net.TrafficStatsCompat;
 
 import com.github.promeg.pinyinhelper.Pinyin;
 
@@ -58,6 +59,7 @@ public class Book implements Serializable {
 
         // initial value
         authors = new ArrayList<>();
+        translators = new ArrayList<>();
         labelID = new ArrayList<>();
     }
 
@@ -285,7 +287,7 @@ public class Book implements Serializable {
     public String getFormatAuthor(){
         if(authors.size()!=0) {
             StringBuilder authorsBuilder = new StringBuilder();
-            for (String curAuthor : authors) {
+            for (String curAuthor : getAuthors()) {
                 authorsBuilder.append(curAuthor);
                 authorsBuilder.append(",");
             }
@@ -293,6 +295,27 @@ public class Book implements Serializable {
                 authorsBuilder.deleteCharAt(authorsBuilder.length() - 1);
             }
             return authorsBuilder.toString();
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * Get Formatted translators information
+     * @return A string with translators authors divided by ',', e.g.: smartjinyu1,smartjinyu2. Return null if no translators
+     */
+    @Nullable
+    public String getFormatTranslator(){
+        if(translators.size()!=0){
+            StringBuilder translators = new StringBuilder();
+            for (String translator : getTranslators()) {
+                translators.append(translator);
+                translators.append(",");
+            }
+            if (translators.length() != 0) {
+                translators.deleteCharAt(translators.length() - 1);
+            }
+            return translators.toString();
         }else{
             return null;
         }

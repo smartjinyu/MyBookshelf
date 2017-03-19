@@ -245,30 +245,8 @@ public class BookDetailActivity extends SlidingActivity {
             isbnRelativeLayout.setVisibility(View.GONE);
         }
 
-        boolean isManually = false;
-        Map<String, String> webIds = mBook.getWebIds();
-        if (webIds == null || webIds.size() == 0) {
-            isManually = true;
-        } else {
-            for (String key : webIds.keySet()) {
-                if (key.equals("douban")) {
-                    isManually = false;
-                    String detailBarText = String.format(getString(R.string.book_info_title), "DouBan.com");
-                    infoTitleTextView.setText(detailBarText);
-                    continue;
-                }
-                if (key.equals("openLibrary")) {
-                    isManually = false;
-                    String detailBarText = String.format(getString(R.string.book_info_title), "OpenLibrary.org");
-                    infoTitleTextView.setText(detailBarText);
-                }
-            }
-        }
-        if (isManually) {
-            String detailBarText = String.format(getString(R.string.book_info_title), "Manually");
-            infoTitleTextView.setText(detailBarText);
-        }
-
+        String detailBarText = String.format(getString(R.string.book_info_title),mBook.getDataSource());
+        infoTitleTextView.setText(detailBarText);
 
     }
 

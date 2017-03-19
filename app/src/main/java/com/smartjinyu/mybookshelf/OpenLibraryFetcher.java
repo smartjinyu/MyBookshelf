@@ -63,7 +63,6 @@ public class OpenLibraryFetcher extends BookFetcher {
                         mBook.setAuthors(authors);
                         mBook.setTranslators(new ArrayList<String>());
                         // Open Library books are almost English books, no translators
-                        mBook.setWebIds(new HashMap<String, String>());
                         mBook.getWebIds().put("openLibrary", OLJ.getKey());
                         mBook.setPublisher(OLJ.getPublishers().get(0).getName());
                         String rawDate = OLJ.getPublish_date();

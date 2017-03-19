@@ -58,9 +58,6 @@ public class DoubanFetcher extends BookFetcher {
                         mBook.setTranslators(new ArrayList<String>());
                     }
 
-                    if (mBook.getWebIds() == null) {
-                        mBook.setWebIds(new HashMap<String, String>());
-                    }
                     mBook.getWebIds().put("douban", response.body().getId());
                     mBook.setPublisher(response.body().getPublisher());
 

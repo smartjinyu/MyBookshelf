@@ -135,7 +135,7 @@ public class BatchListFragment extends Fragment {
             if (book.getPublisher().length() != 0) {
                 if (authorAndPub.length() != 0) {
                     authorAndPub.append(" ");
-                    //authorAndPub.append(getResources().getString(R.string.author_suffix));
+                    authorAndPub.append(getResources().getString(R.string.author_suffix));
                     authorAndPub.append(",   ");
                 }
                 authorAndPub.append(book.getPublisher());

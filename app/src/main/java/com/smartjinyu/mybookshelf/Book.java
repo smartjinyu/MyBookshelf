@@ -61,6 +61,7 @@ public class Book implements Serializable {
         authors = new ArrayList<>();
         translators = new ArrayList<>();
         labelID = new ArrayList<>();
+        WebIds = new HashMap<>();
     }
 
 
@@ -82,9 +83,6 @@ public class Book implements Serializable {
     }
 
     public Map<String, String> getWebIds() {
-        if(WebIds==null){
-            WebIds = new HashMap<>();
-        }
         return WebIds;
     }
 
@@ -319,6 +317,28 @@ public class Book implements Serializable {
         }else{
             return null;
         }
+    }
+
+    /**
+     * Get the source of the book info
+     * @return "Douban.com","OpenLibrary.org","Manually"
+     */
+    public String getDataSource() {
+        Map<String, String> webIds = getWebIds();
+        if (webIds.size() == 0) {
+            return "Manually";
+        } else {
+            for (String key : webIds.keySet()) {
+                if (key.equals("douban")) {
+                    return "Douban.com";
+                }
+                if (key.equals("openLibrary")) {
+                    return "OpenLibrary.org";
+                }
+            }
+            return "Manually";
+        }
+
     }
 
 

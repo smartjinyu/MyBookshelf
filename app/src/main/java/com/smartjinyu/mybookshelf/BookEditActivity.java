@@ -198,23 +198,22 @@ public class BookEditActivity extends AppCompatActivity {
             }
             //
             //translators
-            if (translator_layout.getVisibility() != View.GONE) {
-                String translators = translatorEditText.getText().toString().replace("\n","");
-                if(translators.trim().length()!=0){
-                    String[] translatorArray;
-                    if (translators.contains("、")) {
-                        translatorArray = translators.split("、");
-                    } else if (translators.contains(",")) {
-                        translatorArray = translators.split(",");
-                    } else if (translators.contains("，")) {
-                        translatorArray = translators.split("，");
-                    } else {
-                        translatorArray = new String[]{translators};
-                    }
-                    List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
-                    mBook.setTranslators(translatorList);
+            String translators = translatorEditText.getText().toString().replace("\n","");
+            if(translators.trim().length()!=0){
+                String[] translatorArray;
+                if (translators.contains("、")) {
+                    translatorArray = translators.split("、");
+                } else if (translators.contains(",")) {
+                    translatorArray = translators.split(",");
+                } else if (translators.contains("，")) {
+                    translatorArray = translators.split("，");
+                } else {
+                    translatorArray = new String[]{translators};
                 }
+                List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
+                mBook.setTranslators(translatorList);
             }
+
             //
             mBook.setPublisher(publisherEditText.getText().toString().trim());
             //pubDate
@@ -435,41 +434,24 @@ public class BookEditActivity extends AppCompatActivity {
         publisherEditText.setText(mBook.getPublisher());
         if (mBook.getPubTime() != null) {
             int year = mBook.getPubTime().get(Calendar.YEAR);
-            int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
-            StringBuilder month = new StringBuilder();
-            if (mon < 10) {
-                month.append("0");
+            if(year!=9999){
+                pubyearEditText.setText(String.valueOf(year));
+                int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
+                StringBuilder month = new StringBuilder();
+                if (mon < 10) {
+                    month.append("0");
+                }
+                month.append(String.valueOf(mon));
+                pubmonthEditText.setText(month);
+
             }
-            month.append(String.valueOf(mon));
-            pubyearEditText.setText(String.valueOf(year));
-            pubmonthEditText.setText(month);
         }
 
 
         isbnEditText.setText(mBook.getIsbn());
-        boolean isManually = false;
-        Map<String, String> webIds = mBook.getWebIds();
-        if (webIds == null || webIds.size() == 0) {
-            isManually = true;
-        } else {
-            for (String key : webIds.keySet()) {
-                if (key.equals("douban")) {
-                    isManually = false;
-                    String detailBarText = String.format(getString(R.string.separator_text_view), "DouBan.com");
-                    detailBarTextView.setText(detailBarText);
-                    continue;
-                }
-                if (key.equals("openLibrary")) {
-                    isManually = false;
-                    String detailBarText = String.format(getString(R.string.separator_text_view), "OpenLibrary.org");
-                    detailBarTextView.setText(detailBarText);
-                }
-            }
-        }
-        if (isManually) {
-            String detailBarText = String.format(getString(R.string.separator_text_view), "Manually");
-            detailBarTextView.setText(detailBarText);
-        }
+
+        String detailBarText = String.format(getString(R.string.book_info_title),mBook.getDataSource());
+        detailBarTextView.setText(detailBarText);
     }
 
     private int curBookshelfPos;

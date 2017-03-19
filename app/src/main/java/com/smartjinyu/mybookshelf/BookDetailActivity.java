@@ -126,17 +126,8 @@ public class BookDetailActivity extends SlidingActivity {
         infoTitleTextView = (TextView) findViewById(R.id.book_info_title_bar_text_view);
 
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-
-
-        if (mBook.getAuthors().size() != 0) {
-            StringBuilder authors = new StringBuilder();
-            for (String author : mBook.getAuthors()) {
-                authors.append(author);
-                authors.append(",");
-            }
-            if (authors.length() != 0) {
-                authors.deleteCharAt(authors.length() - 1);
-            }
+        String authors = mBook.getFormatAuthor();
+        if (authors!=null) {
             authorTextView.setText(authors);
             authorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

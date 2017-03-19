@@ -1,11 +1,14 @@
 package com.smartjinyu.mybookshelf;
 
+import android.support.annotation.Nullable;
+
 import com.github.promeg.pinyinhelper.Pinyin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +24,7 @@ public class Book implements Serializable {
     private String title;
     private UUID id; // A unique id to identify each book
     private List<String> authors;
-    private List<String> translators;//set null if no translator
+    private List<String> translators;
     private Map<String, String> WebIds;
     // "douban"
     private String publisher;
@@ -52,6 +55,9 @@ public class Book implements Serializable {
         //default bookshelf id
         readingStatus = 0;
         addTime = Calendar.getInstance();
+
+        // initial value
+        authors = new ArrayList<>();
         labelID = new ArrayList<>();
     }
 
@@ -74,6 +80,9 @@ public class Book implements Serializable {
     }
 
     public Map<String, String> getWebIds() {
+        if(WebIds==null){
+            WebIds = new HashMap<>();
+        }
         return WebIds;
     }
 
@@ -266,6 +275,27 @@ public class Book implements Serializable {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    /**
+     * Get Formatted authors information
+     * @return A string with different authors divided by ',', e.g.: smartjinyu1,smartjinyu2. Return null if no authors
+     */
+    @Nullable
+    public String getFormatAuthor(){
+        if(authors.size()!=0) {
+            StringBuilder authorsBuilder = new StringBuilder();
+            for (String curAuthor : authors) {
+                authorsBuilder.append(curAuthor);
+                authorsBuilder.append(",");
+            }
+            if (authorsBuilder.length() != 0) {
+                authorsBuilder.deleteCharAt(authorsBuilder.length() - 1);
+            }
+            return authorsBuilder.toString();
+        }else{
+            return null;
+        }
     }
 
 

@@ -773,17 +773,10 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                     if (items[1] == 1) {
                         // authors
-                        if (mBook.getAuthors().size() != 0) {
-                            StringBuilder authors = new StringBuilder();
-                            for (String author : mBook.getAuthors()) {
-                                authors.append(author);
-                                authors.append(",");
-                            }
-                            if (authors.length() != 0) {
-                                authors.deleteCharAt(authors.length() - 1);
-                            }
-                            entry.add(authors.toString());
-                        } else {
+                        String authors = mBook.getFormatAuthor();
+                        if(authors!=null){
+                            entry.add(authors);
+                        }else {
                             entry.add("");
                         }
                     }

@@ -181,37 +181,42 @@ public class BookEditActivity extends AppCompatActivity {
         } else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
-            String authors = authorEditText.getText().toString();
-            String[] authorArray;
-            if (authors.contains("、")) {
-                authorArray = authors.split("、");
-            } else if (authors.contains(",")) {
-                authorArray = authors.split(",");
-            } else if (authors.contains("，")) {
-                authorArray = authors.split("，");
-            } else {
-                authorArray = new String[]{authors};
+            String authors = authorEditText.getText().toString().replace("\n","");
+            if(authors.trim().length()!=0){
+                String[] authorArray;
+                if (authors.contains("、")) {
+                    authorArray = authors.split("、");
+                } else if (authors.contains(",")) {
+                    authorArray = authors.split(",");
+                } else if (authors.contains("，")) {
+                    authorArray = authors.split("，");
+                } else {
+                    authorArray = new String[]{authors};
+                }
+                List<String> authorList = new ArrayList<>(Arrays.asList(authorArray));
+                mBook.setAuthors(authorList);
             }
-            List<String> authorList = new ArrayList<>(Arrays.asList(authorArray));
-            mBook.setAuthors(authorList);
             //
             //translators
             if (translator_layout.getVisibility() != View.GONE) {
-                String translators = translatorEditText.getText().toString();
-                String[] translatorArray;
-                if (translators.contains("、")) {
-                    translatorArray = translators.split("、");
-                } else {
-                    translatorArray = translators.split(" ");
+                String translators = translatorEditText.getText().toString().replace("\n","");
+                if(translators.trim().length()!=0){
+                    String[] translatorArray;
+                    if (translators.contains("、")) {
+                        translatorArray = translators.split("、");
+                    } else if (translators.contains(",")) {
+                        translatorArray = translators.split(",");
+                    } else if (translators.contains("，")) {
+                        translatorArray = translators.split("，");
+                    } else {
+                        translatorArray = new String[]{translators};
+                    }
+                    List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
+                    mBook.setTranslators(translatorList);
                 }
-                List<String> translatorList = new ArrayList<>(Arrays.asList(translatorArray));
-                mBook.setTranslators(translatorList);
-            } else {
-                List<String> list = new ArrayList<>();
-                mBook.setTranslators(list);
             }
             //
-            mBook.setPublisher(publisherEditText.getText().toString());
+            mBook.setPublisher(publisherEditText.getText().toString().trim());
             //pubDate
             int year;
             if (pubyearEditText.getText().toString().length() == 0) {
@@ -418,17 +423,9 @@ public class BookEditActivity extends AppCompatActivity {
         detailBarTextView = (TextView) findViewById(R.id.book_edit_detail_bar_text_view);
 
         titleEditText.setText(mBook.getTitle());
-
-        if (mBook.getAuthors() != null && mBook.getAuthors().size() != 0) {
-            StringBuilder stringBuilder1 = new StringBuilder();
-            for (String author : mBook.getAuthors()) {
-                stringBuilder1.append(author);
-                stringBuilder1.append(",");
-            }
-            if (stringBuilder1.length() != 0) {
-                stringBuilder1.deleteCharAt(stringBuilder1.length() - 1);
-            }
-            authorEditText.setText(stringBuilder1);
+        String authors = mBook.getFormatAuthor();
+        if(authors!=null){
+            authorEditText.setText(authors);
         }
 
         if (mBook.getTranslators() != null && mBook.getTranslators().size() != 0) {

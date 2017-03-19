@@ -127,18 +127,15 @@ public class BatchListFragment extends Fragment {
             mTitleTextView.setText(book.getTitle());
 
             StringBuilder authorAndPub = new StringBuilder();
-            for (String author : book.getAuthors()) {
-                authorAndPub.append(author);
-                authorAndPub.append(",");
-            }
-            if (authorAndPub.length() != 0) {
-                authorAndPub.deleteCharAt(authorAndPub.length() - 1);
+            String authors = book.getFormatAuthor();
+            if(authors!=null){
+                authorAndPub.append(authors);
             }
 
             if (book.getPublisher().length() != 0) {
                 if (authorAndPub.length() != 0) {
                     authorAndPub.append(" ");
-                    authorAndPub.append(getResources().getString(R.string.author_suffix));
+                    //authorAndPub.append(getResources().getString(R.string.author_suffix));
                     authorAndPub.append(",   ");
                 }
                 authorAndPub.append(book.getPublisher());

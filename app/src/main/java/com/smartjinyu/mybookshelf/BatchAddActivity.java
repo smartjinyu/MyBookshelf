@@ -341,9 +341,13 @@ public class BatchAddActivity extends AppCompatActivity {
                 findViewById(R.id.batch_add_linear_layout),
                 String.format(getString(R.string.batch_add_added_snack_bar), mBook.getTitle()),
                 Snackbar.LENGTH_SHORT).show();
-        CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 1);
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
-        coverDownloader.downloadAndSaveImg(imageURL, path);
+        if(imageURL!=null){
+            CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 1);
+            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
+            coverDownloader.downloadAndSaveImg(imageURL, path);
+        }else{
+            mBook.setHasCover(false);
+        }
     }
 
     public void fetchFailed(int fetcherID, int event, String isbn) {

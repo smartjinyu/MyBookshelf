@@ -27,11 +27,13 @@ public class UpdateCheck {
 
     public UpdateCheck(Context context) {
         mContext = context;
+        Log.i(TAG,"Update check started");
         Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://raw.githubusercontent.com/smartjinyu/MyBookshelf/master/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .build();
         Version_API api = mRetrofit.create(Version_API.class);
+
         Call<VersionUpdateData> call = api.getWebVersion();
         call.enqueue(new Callback<VersionUpdateData>() {
             @Override

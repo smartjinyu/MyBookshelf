@@ -266,6 +266,8 @@
     <string name="export_csv_caution_dialog_title">Caution</string>
     <string name="export_csv_caution_dialog_content">This function is used for further management of your books.\nYou CANNOT import the .csv file to BookShelf.
         If you want to restore later, please use backup/restore function. </string>
+    <string name="settings_general">General</string>
+    <string name="settings_check_update_title">Check Updates on Startup</string>
 
 
     <!--BatchAddActivity-->

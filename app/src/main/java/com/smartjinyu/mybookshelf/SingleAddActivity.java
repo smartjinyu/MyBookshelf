@@ -316,8 +316,13 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
             public void run() {
                 Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
                 i.putExtra(BookEditActivity.BOOK, mBook);
-                i.putExtra(BookEditActivity.downloadCover, true);
-                i.putExtra(BookEditActivity.imageURL, imageURL);
+                if(imageURL!=null){
+                    i.putExtra(BookEditActivity.downloadCover, true);
+                    i.putExtra(BookEditActivity.imageURL, imageURL);
+                }else{
+                    i.putExtra(BookEditActivity.downloadCover, false);
+                    mBook.setHasCover(false);
+                }
                 startActivity(i);
                 finish();
             }

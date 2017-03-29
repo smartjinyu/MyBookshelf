@@ -25,5 +25,11 @@
             android:summary="@string/settings_export_to_csv_summary"
             android:key="settings_pref_export_to_csv" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_general">
+        <SwitchPreference
+            android:title="@string/settings_check_update_title"
+            android:key="settings_pref_check_update"
+            android:defaultValue="1"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

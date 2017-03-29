@@ -141,13 +141,16 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getAction().equals(ACTION_SEARCH)) {
             actionSearch = true;
         }
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new UpdateCheck(MainActivity.this);
-            }
-        }, 3000);
+
+        if(defaultSharedPreferences.getBoolean("settings_pref_check_update",true)){
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    new UpdateCheck(MainActivity.this);
+                }
+            }, 3000);
+        }
 
     }
 

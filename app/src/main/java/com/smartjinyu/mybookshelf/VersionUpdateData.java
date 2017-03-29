@@ -15,6 +15,7 @@ public class VersionUpdateData {
     @Element(name = "official_name")
     private String version_name;
 
+
     public int getVersion_code() {
         return version_code;
     }

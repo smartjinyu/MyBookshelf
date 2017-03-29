@@ -61,7 +61,6 @@ public class OpenLibraryFetcher extends BookFetcher {
                             authors.add(ab.getName());
                         }
                         mBook.setAuthors(authors);
-                        mBook.setTranslators(new ArrayList<String>());
                         // Open Library books are almost English books, no translators
                         mBook.getWebIds().put("openLibrary", OLJ.getKey());
                         mBook.setPublisher(OLJ.getPublishers().get(0).getName());
@@ -78,7 +77,12 @@ public class OpenLibraryFetcher extends BookFetcher {
                         if (addWebsite) {
                             mBook.setWebsite("https://openlibrary.org" + OLJ.getKey());
                         }
-                        final String imageURL = OLJ.getCover().getLarge();
+                        final String imageURL;
+                        if(OLJ.getCover()!=null){
+                            imageURL = OLJ.getCover().getLarge();
+                        }else{
+                            imageURL = null;
+                        }
                         if (mode == 0) {
                             ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
                         } else if (mode == 1) {

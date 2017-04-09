@@ -1222,6 +1222,39 @@ public class MainActivity extends AppCompatActivity {
                             // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
                             .show();
                     break;
+                case R.id.menu_multi_select_set_reading_status:
+                    int initialReadingStatus = multiSelectList.get(0).getReadingStatus();
+                    if(initialReadingStatus > 0){
+                        initialReadingStatus--;
+                    }
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .title(R.string.set_reading_status_title)
+                            .items(R.array.reading_status_array_no_unset)
+                            .itemsCallbackSingleChoice(initialReadingStatus, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                    Log.i(TAG,"Set multi reading status = " + which);
+                                    for(Book book: multiSelectList){
+                                        book.setReadingStatus(which + 1);
+                                        BookLab.get(MainActivity.this).updateBook(book);
+                                        // must call this to update the database
+                                    }
+                                    updateUI(true, null);
+                                    dialog.dismiss();
+                                    return true;
+                                }
+                            })
+                            .positiveText(android.R.string.ok)
+                            .negativeText(android.R.string.cancel)
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .autoDismiss(false)
+                            .show();
+                    break;
                 default:
                     break;
             }

@@ -7,12 +7,12 @@
         android:icon="@drawable/ic_select_all"
         android:title="@string/menu_multi_select_item_select_all"
         app:showAsAction="ifRoom" />
-
     <item
         android:id="@+id/menu_multi_select_delete"
         android:icon="@drawable/ic_delete"
         android:title="@string/menu_multi_select_item_delete"
         app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/menu_multi_select_add_label"
         android:title="@string/menu_multi_select_item_add_label"
@@ -21,5 +21,14 @@
         android:id="@+id/menu_multi_select_move_to"
         android:title="@string/menu_multi_select_item_move_bookshelf"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_multi_select_set_reading_status"
+        android:title="@string/menu_multi_select_item_set_reading_status"
+        app:showAsAction="never" />
+
+
+
+
 
 </menu>

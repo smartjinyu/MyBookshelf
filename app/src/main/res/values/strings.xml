@@ -20,8 +20,9 @@
     <string name="pubdate_unset">Unset</string>
     <string name="menu_multi_select_item_delete">Delete</string>
     <string name="menu_multi_select_item_select_all">Select All</string>
-    <string name="menu_multi_select_item_add_label">Add label</string>
-    <string name="menu_multi_select_item_move_bookshelf">Move to</string>
+    <string name="menu_multi_select_item_add_label">Add Label</string>
+    <string name="menu_multi_select_item_move_bookshelf">Move To</string>
+    <string name="menu_multi_select_item_set_reading_status">Set Reading Status</string>
     <plurals name="multi_title">
         <item quantity="one">Select %1$d Book</item>
         <item quantity="other">Select %1$d Books</item>
@@ -73,6 +74,7 @@
     <string name="accept_term_of_service_dialog_positive">Accept</string>
     <string name="accept_term_of_service_dialog_negative">Deny</string>
     <string name="accept_term_of_service_dialog_deny_toast">You must accept the term of service to continue!</string>
+    <string name="set_reading_status_title">Set Reading Status</string>
 
     <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>
@@ -97,6 +99,11 @@
     <string name="input_isbn_manually_content">Please input your book\'s isbn in the EditText (10 or 13 digits).</string>
     <string name="input_isbn_manually_edit_text">Book\'s ISBN</string>
     <string name="input_isbn_manually_positive">Add</string>
+    <string-array name="reading_status_array_no_unset">
+        <item>Unread</item>
+        <item>Reading</item>
+        <item>Finished</item>
+    </string-array>
 
 
     <!--BookEditActivity-->

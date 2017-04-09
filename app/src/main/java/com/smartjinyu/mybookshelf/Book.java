@@ -158,10 +158,18 @@ public class Book implements Serializable {
         this.bookshelfID = bookshelfID;
     }
 
+    /**
+     *
+     * @return 0 unset, 1 unread, 2 reading, 3 finished
+     */
     public int getReadingStatus() {
         return readingStatus;
     }
 
+    /**
+     *
+     * @param readingStatus 0 unset, 1 unread, 2 reading, 3 finished
+     */
     public void setReadingStatus(int readingStatus) {
         this.readingStatus = readingStatus;
     }

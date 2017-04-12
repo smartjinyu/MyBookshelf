@@ -9,7 +9,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.smartjinyu.mybookshelf"
-            android:targetClass="com.smartjinyu.mybookshelf.SingleAddActivity" />
+            android:targetClass="com.smartjinyu.mybookshelf.ui.SingleAddActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
     <shortcut
@@ -21,7 +21,7 @@
         <intent
             android:action="com.smartjinyu.mybookshelf.ACTION_SEARCH"
             android:targetPackage="com.smartjinyu.mybookshelf"
-            android:targetClass="com.smartjinyu.mybookshelf.MainActivity" />
+            android:targetClass="com.smartjinyu.mybookshelf.ui.MainActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 

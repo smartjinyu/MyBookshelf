@@ -7,7 +7,6 @@ import android.view.MenuItem;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
-import com.smartjinyu.mybookshelf.AboutFragment;
 import com.smartjinyu.mybookshelf.R;
 
 /**

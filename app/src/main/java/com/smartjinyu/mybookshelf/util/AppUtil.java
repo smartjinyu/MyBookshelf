@@ -1,5 +1,10 @@
 package com.smartjinyu.mybookshelf.util;
 
+import android.annotation.TargetApi;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -7,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 
@@ -53,5 +59,21 @@ public class AppUtil {
         }
         Log.i(TAG, "Save image successfully.");
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public static Locale getCurrentLocale(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return context.getResources().getConfiguration().locale;
+        }
+    }
+
+    public static void copyText2Clipboard(Context context, String content) {
+        ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText("text", content);
+        cm.setPrimaryClip(clipData);
     }
 }

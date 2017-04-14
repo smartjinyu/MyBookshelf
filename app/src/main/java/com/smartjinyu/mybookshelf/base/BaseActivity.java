@@ -15,6 +15,9 @@ import com.smartjinyu.mybookshelf.di.component.ActivityComponent;
 import com.smartjinyu.mybookshelf.di.component.DaggerActivityComponent;
 import com.smartjinyu.mybookshelf.di.module.ActivityModule;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
@@ -33,14 +36,12 @@ public abstract class BaseActivity<T extends BasePresenter>
     protected Activity mContext;
     private Unbinder mUnBinder;
 
-    protected int mContentId;
     protected String TAG;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TAG = getTag();
-        logContentView(getContentId(), TAG);
         doSavedInstanceState(savedInstanceState);
         setContentView(getLayoutId());
         mUnBinder = ButterKnife.bind(this);
@@ -93,19 +94,24 @@ public abstract class BaseActivity<T extends BasePresenter>
         return new ActivityModule(this);
     }
 
-    protected void logContentView(String contentId, String tag) {
-        Answers.getInstance().logContentView(new ContentViewEvent()
+    protected void logContentView(String tag, String contentType,
+                                  String contentId, Map<String, String> attrs) {
+        ContentViewEvent event = new ContentViewEvent()
                 .putContentName(tag)
-                .putContentType("Activity")
-                .putContentId(contentId)
-                .putCustomAttribute("onCreate", "onCreate"));
+                .putContentType(contentType)
+                .putContentId(contentId);
+        if (attrs != null) {
+            Set<Map.Entry<String, String>> set = attrs.entrySet();
+            for (Map.Entry<String, String> entry : set)
+                event.putCustomAttribute(entry.getKey(), entry.getValue());
+        }
+        Answers.getInstance().logContentView(event);
     }
 
     protected abstract String getTag();
 
-    protected abstract String getContentId();
-
-    protected abstract void doSavedInstanceState(Bundle savedInstanceState);
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
+    }
 
     protected abstract int getLayoutId();
 

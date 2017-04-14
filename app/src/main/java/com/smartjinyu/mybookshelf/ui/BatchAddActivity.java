@@ -9,8 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -29,16 +27,17 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.adapter.BatchAddFragAdapter;
+import com.smartjinyu.mybookshelf.model.BookLab;
+import com.smartjinyu.mybookshelf.model.BookShelfLab;
+import com.smartjinyu.mybookshelf.model.LabelLab;
+import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
 import com.smartjinyu.mybookshelf.support.DoubanFetcher;
 import com.smartjinyu.mybookshelf.support.OpenLibraryFetcher;
-import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.model.bean.Book;
-import com.smartjinyu.mybookshelf.model.BookLab;
-import com.smartjinyu.mybookshelf.model.bean.BookShelf;
-import com.smartjinyu.mybookshelf.model.BookShelfLab;
-import com.smartjinyu.mybookshelf.model.bean.Label;
-import com.smartjinyu.mybookshelf.model.LabelLab;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ import java.util.List;
 public class BatchAddActivity extends AppCompatActivity {
     private static final String TAG = "BatchAddActivity";
     private static final int CAMERA_PERMISSION = 1;
-    public static TabLayout tabLayout;
+    private TabLayout tabLayout;
 
     FragmentPagerAdapter adapter;
 
@@ -88,7 +87,7 @@ public class BatchAddActivity extends AppCompatActivity {
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.batch_add_view_pager);
-        adapter = new PagerAdapter(getSupportFragmentManager());
+        adapter = new BatchAddFragAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapter);
         tabLayout = (TabLayout) findViewById(R.id.batch_add_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -300,44 +299,6 @@ public class BatchAddActivity extends AppCompatActivity {
         }
     }
 
-
-    public class PagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
-        final int PAGE_COUNT = 2;
-
-        public PagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return PAGE_COUNT;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new BatchScanFragment();
-                case 1:
-                    return new BatchListFragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.batch_add_tab_title_0);
-                case 1:
-                    return String.format(getString(R.string.batch_add_tab_title_1), mBooks.size());
-            }
-            return null;
-        }
-    }
-
-
     public void fetchSucceed(final Book mBook, final String imageURL) {
         mBooks.add(mBook);
         if (mBook.getWebsite() == null) {
@@ -351,11 +312,11 @@ public class BatchAddActivity extends AppCompatActivity {
                 findViewById(R.id.batch_add_linear_layout),
                 String.format(getString(R.string.batch_add_added_snack_bar), mBook.getTitle()),
                 Snackbar.LENGTH_SHORT).show();
-        if(imageURL!=null){
+        if (imageURL != null) {
             CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 1);
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
             coverDownloader.downloadAndSaveImg(imageURL, path);
-        }else{
+        } else {
             mBook.setHasCover(false);
         }
     }
@@ -451,7 +412,6 @@ public class BatchAddActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] results) {
         switch (requestCode) {
@@ -463,7 +423,5 @@ public class BatchAddActivity extends AppCompatActivity {
                 }
         }
     }
-
-
 }
 

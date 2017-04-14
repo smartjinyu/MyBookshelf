@@ -9,6 +9,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.neenbedankt.android-apt'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -42,8 +43,10 @@ android {
             manifestPlaceholders = [fabric_api_key: getApiKey()]
         }
     }
-    lintOptions {
+    lintOptions{
+        checkReleaseBuilds false
         abortOnError false
+        warning 'InvalidPackage'
     }
 
     dataBinding {
@@ -96,6 +99,10 @@ dependencies {
     compile files('libs/opencsv-3.9.jar')
 
     // di
+    compile 'com.google.dagger:dagger:2.10'
+    provided 'com.google.dagger:dagger-compiler:2.10'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    apt 'com.jakewharton:butterknife-compiler:8.5.1'
+
 }

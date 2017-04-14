@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.addbook;
 
 import android.os.Bundle;
 import android.os.Environment;

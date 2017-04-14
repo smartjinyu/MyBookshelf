@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.about;
 
 import android.annotation.TargetApi;
 import android.content.ClipData;

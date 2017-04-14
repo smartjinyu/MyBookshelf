@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.addbook;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

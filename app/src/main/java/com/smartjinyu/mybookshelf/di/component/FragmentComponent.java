@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.smartjinyu.mybookshelf.di.module.FragmentModule;
 import com.smartjinyu.mybookshelf.di.scope.FragmentScope;
-import com.smartjinyu.mybookshelf.ui.BookScanFragment;
+import com.smartjinyu.mybookshelf.ui.addbook.BookScanFragment;
 
 import dagger.Component;
 

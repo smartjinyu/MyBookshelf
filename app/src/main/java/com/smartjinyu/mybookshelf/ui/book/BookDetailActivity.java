@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.book;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

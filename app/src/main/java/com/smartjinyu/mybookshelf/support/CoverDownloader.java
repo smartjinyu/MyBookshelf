@@ -6,7 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.smartjinyu.mybookshelf.model.bean.Book;
-import com.smartjinyu.mybookshelf.ui.BookEditActivity;
+import com.smartjinyu.mybookshelf.ui.book.BookEditActivity;
 import com.smartjinyu.mybookshelf.util.AppUtil;
 
 import okhttp3.ResponseBody;

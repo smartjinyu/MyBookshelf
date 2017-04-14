@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.main;
 
 import android.annotation.TargetApi;
 import android.content.ClipData;
@@ -75,6 +75,11 @@ import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.bean.Label;
 import com.smartjinyu.mybookshelf.model.LabelLab;
+import com.smartjinyu.mybookshelf.ui.book.BookDetailActivity;
+import com.smartjinyu.mybookshelf.ui.about.AboutActivity;
+import com.smartjinyu.mybookshelf.ui.addbook.BatchAddActivity;
+import com.smartjinyu.mybookshelf.ui.addbook.SingleAddActivity;
+import com.smartjinyu.mybookshelf.ui.setting.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;

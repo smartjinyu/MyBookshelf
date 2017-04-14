@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.setting;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

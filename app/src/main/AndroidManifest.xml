@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -30,19 +30,19 @@
                 android:resource="@xml/shortcuts"/>
         </activity>
         <activity
-            android:name=".ui.SingleAddActivity"
+            android:name=".ui.addbook.SingleAddActivity"
             android:theme="@style/AppOverlayTheme"/>
         <activity
-            android:name=".ui.BookEditActivity"
+            android:name=".ui.book.BookEditActivity"
             android:windowSoftInputMode="stateHidden"/>
         <activity
-            android:name=".ui.BookDetailActivity"
+            android:name=".ui.book.BookDetailActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:theme="@style/Theme.Sliding.Light"/>
-        <activity android:name=".ui.AboutActivity"/>
-        <activity android:name=".ui.SettingsActivity"/>
-        <activity android:name=".ui.BatchAddActivity"/>
+        <activity android:name=".ui.about.AboutActivity"/>
+        <activity android:name=".ui.setting.SettingsActivity"/>
+        <activity android:name=".ui.addbook.BatchAddActivity"/>
 
         <activity
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"

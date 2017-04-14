@@ -1,4 +1,4 @@
-package com.smartjinyu.mybookshelf.ui;
+package com.smartjinyu.mybookshelf.ui.addbook;
 
 import android.Manifest;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import com.smartjinyu.mybookshelf.base.SimpleActivity;
 import com.smartjinyu.mybookshelf.callback.OnBookFetchedListener;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.ui.book.BookEditActivity;
 
 import butterknife.BindView;
 

@@ -38,6 +38,13 @@ public abstract class BaseActivity<T extends BasePresenter>
 
     protected String TAG;
 
+    private View.OnClickListener mUpClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onBackPressed();
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,12 +73,7 @@ public abstract class BaseActivity<T extends BasePresenter>
             ab.setDefaultDisplayHomeAsUpEnabled(true);
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(mUpClickListener);
     }
 
     @Override
@@ -106,6 +108,11 @@ public abstract class BaseActivity<T extends BasePresenter>
                 event.putCustomAttribute(entry.getKey(), entry.getValue());
         }
         Answers.getInstance().logContentView(event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onBackPressed();
     }
 
     protected abstract String getTag();

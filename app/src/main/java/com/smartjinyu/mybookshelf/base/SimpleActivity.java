@@ -21,7 +21,7 @@ import butterknife.Unbinder;
 
 public abstract class SimpleActivity extends AppCompatActivity {
 
-    private static final String TAG = SimpleActivity.class.getSimpleName();
+    protected String TAG = SimpleActivity.class.getSimpleName();
 
     private Unbinder mUnBinder;
     protected Activity mContext;
@@ -37,7 +37,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
-
+        TAG = getTag();
         // log content view
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
@@ -56,7 +56,11 @@ public abstract class SimpleActivity extends AppCompatActivity {
         mUnBinder.unbind();
     }
 
-    protected void setToolbar(Toolbar toolbar, String title) {
+    protected void setupToolbar(Toolbar toolbar, int titleId) {
+        this.setupToolbar(toolbar, mContext.getString(titleId));
+    }
+
+    protected void setupToolbar(Toolbar toolbar, String title) {
         setSupportActionBar(toolbar);
         toolbar.setTitle(title);
         ActionBar actionBar = getSupportActionBar();
@@ -66,6 +70,8 @@ public abstract class SimpleActivity extends AppCompatActivity {
         }
         toolbar.setNavigationOnClickListener(mUpClickListener);
     }
+
+    protected abstract String getTag();
 
     protected abstract int getLayoutId();
 

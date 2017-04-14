@@ -1,8 +1,10 @@
 package com.smartjinyu.mybookshelf.model.bean;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.github.promeg.pinyinhelper.Pinyin;
+import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class Book implements Serializable {
     private static final String TAG = "Book";
 
     private String title;
+    private String imgUrl;
     private UUID id; // A unique id to identify each book
     private List<String> authors;
     private List<String> translators;
@@ -220,6 +223,14 @@ public class Book implements Serializable {
         this.labelID = labelID;
     }
 
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
     public static class titleComparator implements Comparator<Book> {
         @Override
         public int compare(Book book1, Book book2) {
@@ -278,11 +289,12 @@ public class Book implements Serializable {
 
     /**
      * Get Formatted authors information
+     *
      * @return A string with different authors divided by ',', e.g.: smartjinyu1,smartjinyu2. Return null if no authors
      */
     @Nullable
-    public String getFormatAuthor(){
-        if(authors.size()!=0) {
+    public String getFormatAuthor() {
+        if (authors.size() != 0) {
             StringBuilder authorsBuilder = new StringBuilder();
             for (String curAuthor : getAuthors()) {
                 authorsBuilder.append(curAuthor);
@@ -292,18 +304,19 @@ public class Book implements Serializable {
                 authorsBuilder.deleteCharAt(authorsBuilder.length() - 1);
             }
             return authorsBuilder.toString();
-        }else{
+        } else {
             return null;
         }
     }
 
     /**
      * Get Formatted translators information
+     *
      * @return A string with translators authors divided by ',', e.g.: smartjinyu1,smartjinyu2. Return null if no translators
      */
     @Nullable
-    public String getFormatTranslator(){
-        if(translators.size()!=0){
+    public String getFormatTranslator() {
+        if (translators.size() != 0) {
             StringBuilder translators = new StringBuilder();
             for (String translator : getTranslators()) {
                 translators.append(translator);
@@ -313,13 +326,14 @@ public class Book implements Serializable {
                 translators.deleteCharAt(translators.length() - 1);
             }
             return translators.toString();
-        }else{
+        } else {
             return null;
         }
     }
 
     /**
      * Get the source of the book info
+     *
      * @return "Douban.com","OpenLibrary.org","Manually"
      */
     public String getDataSource() {
@@ -337,8 +351,81 @@ public class Book implements Serializable {
             }
             return "Manually";
         }
-
     }
 
+    public static Book newInstance(OpenLibraryJson OLJ, String isbn) {
+        if (OLJ == null) return null;
+        Book book = new Book();
+        book.setIsbn(isbn);
+        book.setTitle(OLJ.getTitle());
+        List<String> authors = new ArrayList<>();
+        List<OpenLibraryJson.AuthorsBean> authorsBeen = OLJ.getAuthors();
+        for (OpenLibraryJson.AuthorsBean ab : authorsBeen) {
+            authors.add(ab.getName());
+        }
+        book.setAuthors(authors);
+        // Open Library books are almost English books, no translators
+        book.getWebIds().put("openLibrary", OLJ.getKey());
+        book.setPublisher(OLJ.getPublishers().get(0).getName());
+        String rawDate = OLJ.getPublish_date();
+        int pubYear = 9999;
+        if (rawDate.length() > 4) {
+            pubYear = Integer.parseInt(rawDate.substring(rawDate.length() - 4));
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(pubYear, 0, 1); // Open Library seldom returns month
+        book.setPubTime(calendar);
+        boolean addWebsite = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.AC_WEBSITE, true);
+        if (addWebsite) book.setWebsite("https://openlibrary.org" + OLJ.getKey());
+        book.setImgUrl(OLJ.getCover().getLarge());
+        return book;
+    }
 
+    public static Book newInstance(DouBanJson douBanJson, String isbn) {
+        if (douBanJson == null) return null;
+        Book book = new Book();
+        book.setTitle(douBanJson.getTitle());
+        //mBook.setId(Long.parseLong(response.body().getId(),10));
+        book.setIsbn(isbn);
+        if (douBanJson.getAuthor().size() != 0) {
+            book.setAuthors(douBanJson.getAuthor());
+        } else {
+            book.setAuthors(new ArrayList<String>());
+        }
+        if (douBanJson.getTranslator().size() != 0) {
+            book.setTranslators(douBanJson.getTranslator());
+        } else {
+            book.setTranslators(new ArrayList<String>());
+        }
+
+        book.getWebIds().put("douban", douBanJson.getId());
+        book.setPublisher(douBanJson.getPublisher());
+
+        String rawDate = douBanJson.getPubdate();
+        Log.i(TAG, "Date raw = " + rawDate);
+        String year, month;
+        if (rawDate.contains("-")) {
+            // 2016-11
+            String[] date = rawDate.split("-");
+            year = date[0];
+            // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
+            month = date[1];
+        } else if (rawDate.contains(".")) {
+            String[] date = rawDate.split("\\.");
+            year = date[0];
+            // rawDate sometimes is "2016-11", sometimes is "2000-10-1", sometimes is "2010-1"
+            month = date[1];
+        } else {
+            year = "9999";
+            month = "1";
+        }
+        Log.i(TAG, "Get PubDate Year = " + year + ", month = " + month);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
+        book.setPubTime(calendar);
+        book.setImgUrl(douBanJson.getImages().getLarge());
+        boolean addWebsite = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.AC_WEBSITE, true);
+        if (addWebsite) book.setWebsite("https://book.douban.com/subject/" + douBanJson.getId());
+        return book;
+    }
 }

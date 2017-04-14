@@ -7,37 +7,33 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
-import com.smartjinyu.mybookshelf.support.DoubanFetcher;
-import com.smartjinyu.mybookshelf.support.OpenLibraryFetcher;
 import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.base.BaseActivity;
 import com.smartjinyu.mybookshelf.model.BookLab;
+import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.presenter.SingleAddPresenter;
+import com.smartjinyu.mybookshelf.presenter.component.SingleAddComponent;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
+import butterknife.BindView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 /**
@@ -45,87 +41,71 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  * Scan barcode of a single book
  */
 
-public class SingleAddActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
-    private static final String TAG = "SingleAddActivity";
-
+public class SingleAddActivity extends BaseActivity<SingleAddPresenter>
+        implements ZXingScannerView.ResultHandler, SingleAddComponent.View {
     private static final int CAMERA_PERMISSION = 1;
-
 
     private static final String FLASH_STATE = "FLASH_STATE";
     private ZXingScannerView mScannerView;
     private boolean mFlash;
-    private Toolbar mToolbar;
-
-    private Integer[] selectedServices;
-    private int indexOfServiceTested;
-    // the index of service in selectedServices has been tested.
-    // Initially is -1,when the 0st one is tested, it is 0.
-    // Caution it is selectedServices[x], instead of the id of webServices itself.
-
+    @BindView(R.id.singleScanToolbar)
+    Toolbar mToolbar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected String getTag() {
+        return "SingleAddActivity";
+    }
+
+    @Override
+    protected String getContentId() {
+        return "1003";
+    }
+
+    @Override
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
+        mFlash = savedInstanceState != null && savedInstanceState.getBoolean(FLASH_STATE, false);
+    }
+
+    @Override
+    protected int getLayoutId() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
         }
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1003")
-                .putCustomAttribute("onCreate", "onCreate"));
+        return R.layout.activity_single_add_scan;
+    }
 
+    @Override
+    protected void initInject() {
+        getActivityComponent().inject(this);
+    }
 
-        if (savedInstanceState != null) {
-            mFlash = savedInstanceState.getBoolean(FLASH_STATE, false);
-        } else {
-            mFlash = false;
-        }
-        setContentView(R.layout.activity_single_add_scan);
-
-        mToolbar = (Toolbar) findViewById(R.id.singleScanToolbar);
-        mToolbar.setTitle(R.string.single_scan_toolbar);
-        setSupportActionBar(mToolbar);
-        final ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected void initEventAndData() {
+        setupToolbar(mToolbar, R.string.single_scan_toolbar);
 
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.singleScanFrame);
-
         mScannerView = new ZXingScannerView(this);
         contentFrame.addView(mScannerView);
         mScannerView.setResultHandler(this);
         mScannerView.setAutoFocus(true);
         mScannerView.setFlash(mFlash);
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem;
+        getMenuInflater().inflate(R.menu.menu_singleadd, menu);
 
+        MenuItem menuItem = menu.findItem(R.id.menu_simple_add_flash);
         if (mFlash) {
-            menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_flash, 0, R.string.menu_single_add_flash_on);
+            menuItem.setTitle(R.string.menu_single_add_flash_on);
             menuItem.setIcon(R.drawable.ic_flash_on);
         } else {
-            menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_flash, 0, R.string.menu_single_add_flash_off);
+            menuItem.setTitle(R.string.menu_single_add_flash_off);
             menuItem.setIcon(R.drawable.ic_flash_off);
         }
-
-        MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-        menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_manually, 0, R.string.menu_single_add_manually);
-        MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_NEVER);
-
-        menuItem = menu.add(Menu.NONE, R.id.menu_simple_add_totally_manual, 1, R.string.menu_single_add_totally_manually);
-        MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_NEVER);
-        // add a book without isbn directly
-
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
@@ -134,7 +114,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         outState.putBoolean(FLASH_STATE, mFlash);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -142,7 +121,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.setAutoFocus(true);
         mScannerView.setFlash(mFlash);
         mScannerView.startCamera();
-
     }
 
     @Override
@@ -151,14 +129,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.stopCamera();
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                finish();
-                break;
             case R.id.menu_simple_add_flash:
                 mFlash = !mFlash;
                 if (mFlash) {
@@ -179,7 +152,8 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                addBook(dialog.getInputEditText().getText().toString());
+                                EditText et = dialog.getInputEditText();
+                                if (et != null) addBook(et.getText().toString());
                             }
                         })
                         .negativeText(android.R.string.cancel)
@@ -194,7 +168,7 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                         .input(R.string.input_isbn_manually_edit_text, 0, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                int length = dialog.getInputEditText().getText().length();
+                                int length = input.length();
                                 if (length == 10 || length == 13) {
                                     dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
                                 } else {
@@ -214,8 +188,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 startActivity(i);
                 finish();
                 break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -233,14 +205,14 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         }
 
         if (isExist) {//The book is already in the list
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
+            new MaterialDialog.Builder(this)
                     .title(R.string.book_duplicate_dialog_title)
                     .content(R.string.book_duplicate_dialog_content)
                     .positiveText(R.string.book_duplicate_dialog_positive)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            beginFetcher(isbn);
+                            mPresenter.fetchBookInfo(isbn);
                         }
                     })
                     .negativeText(android.R.string.cancel)
@@ -252,37 +224,133 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                     })
                     .show();
         } else {
-            beginFetcher(isbn);
+            mPresenter.fetchBookInfo(isbn);
         }
     }
 
-    private void beginFetcher(String isbn) {
-        indexOfServiceTested = 0;
-        String rawWS = PreferenceManager.getDefaultSharedPreferences(this).getString("webServices", null);
-        if (rawWS != null) {
-            Type type = new TypeToken<Integer[]>() {
-            }.getType();
-            Gson gson = new Gson();
-            selectedServices = gson.fromJson(rawWS, type);
-        } else {
-            selectedServices = new Integer[]{0, 1}; //two webServices currently
-        }
+    @Override
+    public void showContent(final Book book) {
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("ADD")
+                .putContentId("1201")
+                .putCustomAttribute("ADD Succeeded", 1));
 
-        if (selectedServices[indexOfServiceTested] == 0) {
-            DoubanFetcher fetcher = new DoubanFetcher();
-            fetcher.getBookInfo(this, isbn, 0);
-        } else if (selectedServices[indexOfServiceTested] == 1) {
-            OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-            fetcher.getBookInfo(this, isbn, 0);
-        }
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        mHandler.post(new Runnable() {//on the main thread
+            @Override
+            public void run() {
+                Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                i.putExtra(BookEditActivity.BOOK, book);
+                if (book.getImgUrl() != null) {
+                    i.putExtra(BookEditActivity.downloadCover, true);
+                    i.putExtra(BookEditActivity.imageURL, book.getImgUrl());
+                } else {
+                    i.putExtra(BookEditActivity.downloadCover, false);
+                    book.setHasCover(false);
+                }
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
+    /**
+     * event = 0, unexpected response code
+     * event = 1, request failed
+     */
+    @Override
+    public void showNetError(String errMsg, final String isbn) {
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Fetcher")
+                .putContentId("1101")
+                .putCustomAttribute("fetchFailed event = ", errMsg));
+        String dialogContent = String.format(getResources().getString(
+                R.string.request_failed_dialog_content), isbn);
+        new MaterialDialog.Builder(this)
+                .title(R.string.isbn_unmatched_dialog_title)
+                .content(dialogContent)
+                .positiveText(R.string.isbn_unmatched_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //create a book only with isbn
+                        Book mBook = new Book();
+                        mBook.setIsbn(isbn);
+                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK, mBook);
+                        i.putExtra(BookEditActivity.downloadCover, false);
+                        startActivity(i);
+                        finish();
+                    }
+                })
+                .negativeText(R.string.isbn_unmatched_dialog_negative)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        resumeCamera();
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        resumeCamera();
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * event = 0, unexpected response code
+     * event = 1, request failed
+     */
+    @Override
+    public void showUnMatchError(String errMsg, final String isbn) {
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(TAG)
+                .putContentType("Fetcher")
+                .putContentId("1101")
+                .putCustomAttribute("fetchFailed event = ", errMsg));
+        String dialogContent = String.format(getResources().getString(
+                R.string.isbn_unmatched_dialog_content), isbn);
+        new MaterialDialog.Builder(this)
+                .title(R.string.isbn_unmatched_dialog_title)
+                .content(dialogContent)
+                .positiveText(R.string.isbn_unmatched_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //create a book only with isbn
+                        Book mBook = new Book();
+                        mBook.setIsbn(isbn);
+                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
+                        i.putExtra(BookEditActivity.BOOK, mBook);
+                        i.putExtra(BookEditActivity.downloadCover, false);
+                        startActivity(i);
+                        finish();
+                    }
+                })
+                .negativeText(R.string.isbn_unmatched_dialog_negative)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        resumeCamera();
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        resumeCamera();
+                    }
+                })
+                .show();
+    }
 
     @Override
     public void handleResult(Result rawResult) {
         Log.i(TAG, "ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
         addBook(rawResult.getText());
-
 
         // Note:
         // * Wait 2 seconds to resume the preview.
@@ -306,145 +374,6 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.startCamera();
     }
 
-
-    public void fetchSucceed(final Book mBook, final String imageURL) {
-
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("ADD")
-                .putContentId("1201")
-                .putCustomAttribute("ADD Succeeded", 1));
-
-        Handler mHandler = new Handler(Looper.getMainLooper());
-        mHandler.post(new Runnable() {//on the main thread
-            @Override
-            public void run() {
-                Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
-                i.putExtra(BookEditActivity.BOOK, mBook);
-                if(imageURL!=null){
-                    i.putExtra(BookEditActivity.downloadCover, true);
-                    i.putExtra(BookEditActivity.imageURL, imageURL);
-                }else{
-                    i.putExtra(BookEditActivity.downloadCover, false);
-                    mBook.setHasCover(false);
-                }
-                startActivity(i);
-                finish();
-            }
-        });
-
-    }
-
-    public void fetchFailed(int fetcherID, int event, String isbn) {
-        /**
-         * event = 0, unexpected response code
-         * event = 1, request failed
-         */
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Fetcher")
-                .putContentId("1101")
-                .putCustomAttribute("fetchFailed event = ", event));
-
-
-        indexOfServiceTested += 1;
-        if (indexOfServiceTested < selectedServices.length) {
-            // test next
-            if (selectedServices[indexOfServiceTested] == 0) {
-                DoubanFetcher fetcher = new DoubanFetcher();
-                fetcher.getBookInfo(this, isbn, 0);
-            } else if (selectedServices[indexOfServiceTested] == 1) {
-                OpenLibraryFetcher fetcher = new OpenLibraryFetcher();
-                fetcher.getBookInfo(this, isbn, 0);
-            }
-        } else {
-            if (event == 0) {
-                event0Dialog(isbn);
-            } else if (event == 1) {
-                event1Dialog(isbn);
-            }
-        }
-
-
-    }
-
-    private void event0Dialog(final String isbn) {
-        String dialogContent = String.format(getResources().getString(
-                R.string.isbn_unmatched_dialog_content), isbn);
-        new MaterialDialog.Builder(this)
-                .title(R.string.isbn_unmatched_dialog_title)
-                .content(dialogContent)
-                .positiveText(R.string.isbn_unmatched_dialog_positive)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //create a book only with isbn
-                        Book mBook = new Book();
-                        mBook.setIsbn(isbn);
-                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
-                        i.putExtra(BookEditActivity.BOOK, mBook);
-                        i.putExtra(BookEditActivity.downloadCover, false);
-                        startActivity(i);
-                        finish();
-
-                    }
-                })
-                .negativeText(R.string.isbn_unmatched_dialog_negative)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        resumeCamera();
-                    }
-                })
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        resumeCamera();
-                    }
-                })
-                .show();
-
-    }
-
-    private void event1Dialog(final String isbn) {
-        String dialogContent = String.format(getResources().getString(
-                R.string.request_failed_dialog_content), isbn);
-        new MaterialDialog.Builder(this)
-                .title(R.string.isbn_unmatched_dialog_title)
-                .content(dialogContent)
-                .positiveText(R.string.isbn_unmatched_dialog_positive)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //create a book only with isbn
-                        Book mBook = new Book();
-                        mBook.setIsbn(isbn);
-                        Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
-                        i.putExtra(BookEditActivity.BOOK, mBook);
-                        i.putExtra(BookEditActivity.downloadCover, false);
-                        startActivity(i);
-                        finish();
-
-                    }
-                })
-                .negativeText(R.string.isbn_unmatched_dialog_negative)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        resumeCamera();
-                    }
-                })
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        resumeCamera();
-                    }
-                })
-                .show();
-
-    }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -456,6 +385,4 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
                 }
         }
     }
-
-
 }

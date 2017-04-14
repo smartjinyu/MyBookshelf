@@ -8,7 +8,6 @@ import android.util.Log;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.DouBanJson;
 import com.smartjinyu.mybookshelf.ui.BatchAddActivity;
-import com.smartjinyu.mybookshelf.ui.SingleAddActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,16 +93,16 @@ public class DoubanFetcher extends BookFetcher {
                         mBook.setWebsite("https://book.douban.com/subject/" + response.body().getId());
                     }
                     if (mode == 0) {
-                        ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
+                        //((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
                     } else if (mode == 1) {
                         ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
                     }
                 } else {
                     Log.w(TAG, "Unexpected response code " + response.code() + ", isbn = " + isbn);
                     if (mode == 0) {
-                        ((SingleAddActivity) mContext).fetchFailed(
-                                BookFetcher.fetcherID_DB, 0, isbn
-                        );
+//                        ((SingleAddActivity) mContext).fetchFailed(
+//                                BookFetcher.fetcherID_DB, 0, isbn
+//                        );
                     } else if (mode == 1) {
                         ((BatchAddActivity) mContext).fetchFailed(
                                 BookFetcher.fetcherID_DB, 0, isbn);
@@ -116,9 +115,9 @@ public class DoubanFetcher extends BookFetcher {
             public void onFailure(Call<DouBanJson> call, Throwable t) {
                 Log.w(TAG, "GET Douban information failed, " + t.toString());
                 if (mode == 0) {
-                    ((SingleAddActivity) mContext).fetchFailed(
-                            BookFetcher.fetcherID_DB, 1, isbn
-                    );
+//                    ((SingleAddActivity) mContext).fetchFailed(
+//                            BookFetcher.fetcherID_DB, 1, isbn
+//                    );
                 } else if (mode == 1) {
                     ((BatchAddActivity) mContext).fetchFailed(
                             BookFetcher.fetcherID_DB, 1, isbn);

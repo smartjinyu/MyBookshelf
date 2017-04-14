@@ -8,7 +8,6 @@ import android.util.Log;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.OpenLibraryJson;
 import com.smartjinyu.mybookshelf.ui.BatchAddActivity;
-import com.smartjinyu.mybookshelf.ui.SingleAddActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,16 +88,16 @@ public class OpenLibraryFetcher extends BookFetcher {
                             imageURL = null;
                         }
                         if (mode == 0) {
-                            ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
+//                            ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
                         } else if (mode == 1) {
                             ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
                         }
                     } else {
                         Log.e(TAG, "Null OpenLibrary Json " + response.code() + ", isbn = " + isbn);
                         if (mode == 0) {
-                            ((SingleAddActivity) mContext).fetchFailed(
-                                    BookFetcher.fetcherID_OL, 0, isbn
-                            );
+//                            ((SingleAddActivity) mContext).fetchFailed(
+//                                    BookFetcher.fetcherID_OL, 0, isbn
+//                            );
                         } else if (mode == 1) {
                             ((BatchAddActivity) mContext).fetchFailed(
                                     BookFetcher.fetcherID_OL, 0, isbn);
@@ -107,9 +106,9 @@ public class OpenLibraryFetcher extends BookFetcher {
                 } else {
                     Log.e(TAG, "Null Response Body, code = " + response.code() + ", isbn = " + isbn);
                     if (mode == 0) {
-                        ((SingleAddActivity) mContext).fetchFailed(
-                                BookFetcher.fetcherID_OL, 0, isbn
-                        );
+//                        ((SingleAddActivity) mContext).fetchFailed(
+//                                BookFetcher.fetcherID_OL, 0, isbn
+//                        );
                     } else if (mode == 1) {
                         ((BatchAddActivity) mContext).fetchFailed(
                                 BookFetcher.fetcherID_OL, 0, isbn);
@@ -122,9 +121,9 @@ public class OpenLibraryFetcher extends BookFetcher {
             public void onFailure(Call<Map<String, OpenLibraryJson>> call, Throwable t) {
                 Log.w(TAG, "GET OpenLibrary information failed, " + t.toString());
                 if (mode == 0) {
-                    ((SingleAddActivity) mContext).fetchFailed(
-                            BookFetcher.fetcherID_OL, 1, isbn
-                    );
+//                    ((SingleAddActivity) mContext).fetchFailed(
+//                            BookFetcher.fetcherID_OL, 1, isbn
+//                    );
                 } else if (mode == 1) {
                     ((BatchAddActivity) mContext).fetchFailed(
                             BookFetcher.fetcherID_OL, 1, isbn);

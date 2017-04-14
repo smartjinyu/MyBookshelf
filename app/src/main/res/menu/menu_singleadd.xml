@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_simple_add_flash"
+        android:icon="@drawable/ic_flash_off"
+        android:title="@string/menu_single_add_flash_off"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_simple_add_manually"
+        android:title="@string/menu_single_add_manually"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_simple_add_totally_manual"
+        android:title="@string/menu_single_add_totally_manually"
+        app:showAsAction="never"/>
+</menu>

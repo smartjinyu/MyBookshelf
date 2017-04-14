@@ -3,6 +3,8 @@ package com.smartjinyu.mybookshelf.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.smartjinyu.mybookshelf.app.BookShelfApp;
+
 /**
  * 作者：Neil on 2016/4/16 23:50.
  * 邮箱：cn.neillee@gmail.com
@@ -16,6 +18,9 @@ public class SharedPrefUtil {
     public static final String IS_RATED = "isRated";
     public static final String ACCEPT_TERM_OF_SERVICE = "isAcceptTermOfService";
     public static final String DONATE_DRAWER_ITEM_SHOW = "isDonateDrawerItemShow";
+    // 0: DOUBAN,1: OL,2: ALL
+    public static final String WEB_SERVICES_TYPE = "webServices";
+    public static final String AC_WEBSITE = "settings_pref_acwebsite";
 
     private static SharedPrefUtil sInstance;
 
@@ -23,7 +28,7 @@ public class SharedPrefUtil {
 
     public static SharedPrefUtil getInstance() {
         if (sInstance == null) {
-            sInstance = new SharedPrefUtil(null);
+            sInstance = new SharedPrefUtil(BookShelfApp.AppContext);
         }
         return sInstance;
     }

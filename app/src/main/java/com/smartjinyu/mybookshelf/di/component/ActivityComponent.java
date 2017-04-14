@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.smartjinyu.mybookshelf.di.module.ActivityModule;
 import com.smartjinyu.mybookshelf.di.scope.ActivityScope;
+import com.smartjinyu.mybookshelf.ui.BatchAddActivity;
 import com.smartjinyu.mybookshelf.ui.SingleAddActivity;
 
 import dagger.Component;
@@ -18,4 +19,6 @@ public interface ActivityComponent {
     Activity getActivity();
 
     void inject(SingleAddActivity singleAddActivity);
+
+    void inject(BatchAddActivity batchAddActivity);
 }

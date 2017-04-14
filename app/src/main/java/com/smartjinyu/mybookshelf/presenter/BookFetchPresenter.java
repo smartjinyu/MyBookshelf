@@ -5,7 +5,7 @@ import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.DouBanJson;
 import com.smartjinyu.mybookshelf.model.bean.OpenLibraryJson;
 import com.smartjinyu.mybookshelf.model.http.RetrofitHelper;
-import com.smartjinyu.mybookshelf.presenter.component.SingleAddComponent;
+import com.smartjinyu.mybookshelf.presenter.component.BookFetchComponent;
 import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.util.HashMap;
@@ -22,14 +22,14 @@ import retrofit2.Response;
  * 邮箱：cn.neillee@gmail.com
  */
 
-public class SingleAddPresenter extends SimplePresenter<SingleAddComponent.View>
-        implements SingleAddComponent.Presenter {
+public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
+        implements BookFetchComponent.Presenter {
     private RetrofitHelper mRetrofitHelper;
     private int triedService = -1;
     private final int webServicesType;
 
     @Inject
-    SingleAddPresenter(RetrofitHelper retrofitHelper) {
+    BookFetchPresenter(RetrofitHelper retrofitHelper) {
         mRetrofitHelper = retrofitHelper;
         webServicesType = SharedPrefUtil.getInstance().getInt(SharedPrefUtil.WEB_SERVICES_TYPE, 0);
     }

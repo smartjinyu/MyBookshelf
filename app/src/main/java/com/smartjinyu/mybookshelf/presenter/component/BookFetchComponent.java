@@ -9,7 +9,7 @@ import com.smartjinyu.mybookshelf.model.bean.Book;
  * 邮箱：cn.neillee@gmail.com
  */
 
-public interface SingleAddComponent {
+public interface BookFetchComponent {
     interface View extends BaseView {
         void showContent(Book book);
 

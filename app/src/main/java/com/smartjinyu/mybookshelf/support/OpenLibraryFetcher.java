@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.OpenLibraryJson;
-import com.smartjinyu.mybookshelf.ui.BatchAddActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -90,7 +89,7 @@ public class OpenLibraryFetcher extends BookFetcher {
                         if (mode == 0) {
 //                            ((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
                         } else if (mode == 1) {
-                            ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
+//                            ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
                         }
                     } else {
                         Log.e(TAG, "Null OpenLibrary Json " + response.code() + ", isbn = " + isbn);
@@ -99,8 +98,8 @@ public class OpenLibraryFetcher extends BookFetcher {
 //                                    BookFetcher.fetcherID_OL, 0, isbn
 //                            );
                         } else if (mode == 1) {
-                            ((BatchAddActivity) mContext).fetchFailed(
-                                    BookFetcher.fetcherID_OL, 0, isbn);
+//                            ((BatchAddActivity) mContext).fetchFailed(
+//                                    BookFetcher.fetcherID_OL, 0, isbn);
                         }
                     }
                 } else {
@@ -110,8 +109,8 @@ public class OpenLibraryFetcher extends BookFetcher {
 //                                BookFetcher.fetcherID_OL, 0, isbn
 //                        );
                     } else if (mode == 1) {
-                        ((BatchAddActivity) mContext).fetchFailed(
-                                BookFetcher.fetcherID_OL, 0, isbn);
+//                        ((BatchAddActivity) mContext).fetchFailed(
+//                                BookFetcher.fetcherID_OL, 0, isbn);
                     }
 
                 }
@@ -125,8 +124,8 @@ public class OpenLibraryFetcher extends BookFetcher {
 //                            BookFetcher.fetcherID_OL, 1, isbn
 //                    );
                 } else if (mode == 1) {
-                    ((BatchAddActivity) mContext).fetchFailed(
-                            BookFetcher.fetcherID_OL, 1, isbn);
+//                    ((BatchAddActivity) mContext).fetchFailed(
+//                            BookFetcher.fetcherID_OL, 1, isbn);
                 }
 
             }

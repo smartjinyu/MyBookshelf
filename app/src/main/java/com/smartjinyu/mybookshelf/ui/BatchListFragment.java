@@ -1,11 +1,9 @@
 package com.smartjinyu.mybookshelf.ui;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,18 +11,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.adapter.BatchAddedAdapter;
+import com.smartjinyu.mybookshelf.callback.BookFetchedCallback;
 import com.smartjinyu.mybookshelf.callback.RecyclerViewItemClickListener;
+import com.smartjinyu.mybookshelf.model.BookLab;
+import com.smartjinyu.mybookshelf.model.BookShelfLab;
+import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
 
 import java.io.File;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,10 +41,24 @@ public class BatchListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
+    private BatchAddActivity mContext;
+    private List<Book> mBooks;// books added
+    private BookFetchedCallback mCallback = new BookFetchedCallback() {
+        @Override
+        public void onBookFetched(Book book) {
+            mBooks.add(book);
+        }
+    };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mBooks = new ArrayList<>();
+        mContext = (BatchAddActivity) getActivity();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_batch_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.bachlist_recycler_view);
@@ -54,7 +72,6 @@ public class BatchListFragment extends Fragment {
                 mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
             }
 
             @Override
@@ -66,16 +83,15 @@ public class BatchListFragment extends Fragment {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                if (BatchAddActivity.mBooks.get(position).isHasCover()) {
-                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + BatchAddActivity.mBooks.get(position).getCoverPhotoFileName());
+                                if (mBooks.get(position).isHasCover()) {
+                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                                            + "/" + mBooks.get(position).getCoverPhotoFileName());
                                     boolean succeeded = file.delete();
                                     Log.i(TAG, "Remove cover result = " + succeeded);
                                 }
-                                BatchAddActivity.mBooks.remove(position);
+                                mBooks.remove(position);
                                 mRecyclerViewAdapter.notifyDataSetChanged();
-                                BatchAddActivity.tabLayout.getTabAt(1).
-                                        setText(String.format(getString(R.string.batch_add_tab_title_1),
-                                                BatchAddActivity.mBooks.size()));
+                                mContext.notifyTabTitle();
                             }
                         })
                         .negativeText(android.R.string.cancel)
@@ -96,106 +112,162 @@ public class BatchListFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             updateUI();
-
         }
     }
 
     public void updateUI() {
         if (mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new BookAdapter(BatchAddActivity.mBooks);
+            mRecyclerViewAdapter = new BatchAddedAdapter(mBooks, mContext);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         } else {
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
-    public class BookHolder extends RecyclerView.ViewHolder {
-
-        private ImageView mCoverImageView;
-        private TextView mTitleTextView;
-        private TextView mPublisherTextView;
-        private TextView mPubtimeTextView;
-        private RelativeLayout mRelativeLayout;
-
-        public BookHolder(View itemView) {
-            super(itemView);
-            mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
-            mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
-            mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
-            mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
-        }
-
-        public void bindBook(Book book) {
-            mTitleTextView.setText(book.getTitle());
-
-            StringBuilder authorAndPub = new StringBuilder();
-            String authors = book.getFormatAuthor();
-            if(authors!=null){
-                authorAndPub.append(authors);
-            }
-
-            if (book.getPublisher().length() != 0) {
-                if (authorAndPub.length() != 0) {
-                    authorAndPub.append(" ");
-                    authorAndPub.append(getResources().getString(R.string.author_suffix));
-                    authorAndPub.append(",   ");
-                }
-                authorAndPub.append(book.getPublisher());
-            }
-            mPublisherTextView.setText(authorAndPub);
-            Calendar calendar = book.getPubTime();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            StringBuilder pubDate = new StringBuilder();
-            if (year == 9999) {
-                pubDate.append(getResources().getString(R.string.pubdate_unset));
-            } else {
-                pubDate.append(year);
-                pubDate.append("-");
-                if (month < 9) {
-                    pubDate.append("0");
-                }
-                pubDate.append(month + 1);
-            }
-
-            mPubtimeTextView.setText(pubDate);
-            mRelativeLayout.setBackgroundColor(Color.WHITE);
-            if (book.isHasCover()) {
-                String path =
-                        getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
-                Bitmap src = BitmapFactory.decodeFile(path);
-                mCoverImageView.setImageBitmap(src);
-            }
-
-        }
+    public void chooseBookshelf() {
+        final BookShelfLab bookShelfLab = BookShelfLab.get(mContext);
+        final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
+        new MaterialDialog.Builder(mContext)
+                .title(R.string.move_to_dialog_title)
+                .items(bookShelves)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                        List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
+                        for (BookShelf bookShelf : bookShelves) {
+                            if (bookShelf.getTitle().equals(text)) {
+                                // selected bookshelf
+                                for (Book book : mBooks) {
+                                    book.setBookshelfID(bookShelf.getId());
+                                }
+                                break;
+                            }
+                        }
+                        dialog.dismiss();
+                        addLabel();
+                        // add label
+                    }
+                })
+                .neutralText(R.string.move_to_dialog_neutral)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog listdialog, @NonNull DialogAction which) {
+                        // create new bookshelf
+                        new MaterialDialog.Builder(mContext)
+                                .title(R.string.custom_book_shelf_dialog_title)
+                                .inputRange(1,
+                                        getResources().getInteger(R.integer.bookshelf_name_max_length))
+                                .input(
+                                        R.string.custom_book_shelf_dialog_edit_text,
+                                        0,
+                                        new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                // nothing to do here
+                                            }
+                                        })
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        BookShelf bookShelfToAdd = new BookShelf();
+                                        bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
+                                        bookShelfLab.addBookShelf(bookShelfToAdd);
+                                        Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
+                                        listdialog.getItems().add(bookShelfToAdd.getTitle());
+                                        listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                })
+                .autoDismiss(false)
+                // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
+                .show();
     }
 
-    public class BookAdapter extends RecyclerView.Adapter<BookHolder> {
-        public BookAdapter(List<Book> books) {
-            BatchAddActivity.mBooks = books;
-        }
+    private void addLabel() {
+        final LabelLab labelLab = LabelLab.get(mContext);
+        final List<Label> labels = labelLab.getLabels();
+        new MaterialDialog.Builder(mContext)
+                .title(R.string.add_label_dialog_title)
+                .items(labels)
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        List<Label> labels = labelLab.getLabels();
+                        // must refresh labels here because if user add label, the list won't update,
+                        // and select the newly add label won't take effect
+                        for (int i = 0; i < which.length; i++) {
+                            for (Label label : labels) {
+                                if (label.getTitle().equals(text[i])) {
+                                    // selected label
+                                    for (Book book : mBooks) {
+                                        book.addLabel(label);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        dialog.dismiss();
+                        BookLab.get(mContext).addBooks(mBooks);
+                        Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentName(TAG)
+                                .putContentType("ADD")
+                                .putContentId("1202")
+                                .putCustomAttribute("ADD Succeeded", mBooks.size()));
+                        mContext.finish();
+                        return true;
 
-        @Override
-        public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview, parent, false);
-            return new BookHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(BookHolder holder, int position) {
-            Book book = BatchAddActivity.mBooks.get(position);
-            holder.bindBook(book);
-            Log.d(TAG, "onBindViewHolder " + position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return BatchAddActivity.mBooks.size();
-        }
-
+                    }
+                })
+                .neutralText(R.string.label_choice_dialog_neutral)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
+                        // create new label
+                        new MaterialDialog.Builder(mContext)
+                                .title(R.string.label_add_new_dialog_title)
+                                .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
+                                .input(R.string.label_add_new_dialog_edit_text, 0,
+                                        new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                                                // nothing to do here
+                                            }
+                                        })
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        Label labelToAdd = new Label();
+                                        labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                        labelLab.addLabel(labelToAdd);
+                                        Log.i(TAG, "New label created " + labelToAdd.getTitle());
+                                        listDialog.getItems().add(labelToAdd.getTitle());
+                                        listDialog.notifyItemInserted(listDialog.getItems().size() - 1);
+                                    }
+                                })
+                                .negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        inputDialog.dismiss();
+                                    }
+                                }).show();
+                    }
+                })
+                .positiveText(android.R.string.ok)
+                .autoDismiss(false)
+                .show();
     }
 
-
+    public BookFetchedCallback getCallback() {
+        return mCallback;
+    }
 }

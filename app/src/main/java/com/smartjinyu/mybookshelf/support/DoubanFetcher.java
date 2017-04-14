@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.DouBanJson;
-import com.smartjinyu.mybookshelf.ui.BatchAddActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,7 +94,7 @@ public class DoubanFetcher extends BookFetcher {
                     if (mode == 0) {
                         //((SingleAddActivity) mContext).fetchSucceed(mBook, imageURL);
                     } else if (mode == 1) {
-                        ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
+//                        ((BatchAddActivity) mContext).fetchSucceed(mBook, imageURL);
                     }
                 } else {
                     Log.w(TAG, "Unexpected response code " + response.code() + ", isbn = " + isbn);
@@ -104,8 +103,8 @@ public class DoubanFetcher extends BookFetcher {
 //                                BookFetcher.fetcherID_DB, 0, isbn
 //                        );
                     } else if (mode == 1) {
-                        ((BatchAddActivity) mContext).fetchFailed(
-                                BookFetcher.fetcherID_DB, 0, isbn);
+//                        ((BatchAddActivity) mContext).fetchFailed(
+//                                BookFetcher.fetcherID_DB, 0, isbn);
                     }
                 }
 
@@ -119,8 +118,8 @@ public class DoubanFetcher extends BookFetcher {
 //                            BookFetcher.fetcherID_DB, 1, isbn
 //                    );
                 } else if (mode == 1) {
-                    ((BatchAddActivity) mContext).fetchFailed(
-                            BookFetcher.fetcherID_DB, 1, isbn);
+//                    ((BatchAddActivity) mContext).fetchFailed(
+//                            BookFetcher.fetcherID_DB, 1, isbn);
                 }
             }
         });

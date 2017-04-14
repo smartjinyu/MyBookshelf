@@ -28,8 +28,8 @@ import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.base.BaseActivity;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
-import com.smartjinyu.mybookshelf.presenter.SingleAddPresenter;
-import com.smartjinyu.mybookshelf.presenter.component.SingleAddComponent;
+import com.smartjinyu.mybookshelf.presenter.BookFetchPresenter;
+import com.smartjinyu.mybookshelf.presenter.component.BookFetchComponent;
 
 import java.util.List;
 
@@ -41,8 +41,8 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  * Scan barcode of a single book
  */
 
-public class SingleAddActivity extends BaseActivity<SingleAddPresenter>
-        implements ZXingScannerView.ResultHandler, SingleAddComponent.View {
+public class SingleAddActivity extends BaseActivity<BookFetchPresenter>
+        implements ZXingScannerView.ResultHandler, BookFetchComponent.View {
     private static final int CAMERA_PERMISSION = 1;
 
     private static final String FLASH_STATE = "FLASH_STATE";
@@ -54,11 +54,6 @@ public class SingleAddActivity extends BaseActivity<SingleAddPresenter>
     @Override
     protected String getTag() {
         return "SingleAddActivity";
-    }
-
-    @Override
-    protected String getContentId() {
-        return "1003";
     }
 
     @Override

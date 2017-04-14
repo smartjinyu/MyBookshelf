@@ -5,8 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.ui.BatchListFragment;
-import com.smartjinyu.mybookshelf.ui.BatchScanFragment;
+
+import java.util.List;
 
 /**
  * 作者：Neil on 2017/4/14 16:38.
@@ -14,30 +14,23 @@ import com.smartjinyu.mybookshelf.ui.BatchScanFragment;
  */
 
 public class BatchAddFragAdapter extends android.support.v4.app.FragmentPagerAdapter {
-    private final int PAGE_COUNT = 2;
     private Context mContext;
-    private int bookAddedSize = 0;
+    private List<Fragment> mFragments;
 
-    public BatchAddFragAdapter(FragmentManager fm, Context context) {
+    public BatchAddFragAdapter(FragmentManager fm, Context context, List<Fragment> fragments) {
         super(fm);
         this.mContext = context;
+        this.mFragments = fragments;
     }
 
     @Override
     public int getCount() {
-        return PAGE_COUNT;
+        return mFragments.size();
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return new BatchScanFragment();
-            case 1:
-                return new BatchListFragment();
-            default:
-                return null;
-        }
+        return mFragments.get(position);
     }
 
     @Override
@@ -46,16 +39,8 @@ public class BatchAddFragAdapter extends android.support.v4.app.FragmentPagerAda
             case 0:
                 return mContext.getString(R.string.batch_add_tab_title_0);
             case 1:
-                return String.format(mContext.getString(R.string.batch_add_tab_title_1), bookAddedSize);
+                return String.format(mContext.getString(R.string.batch_add_tab_title_1), 0);
         }
         return null;
-    }
-
-    public int getBookAddedSize() {
-        return bookAddedSize;
-    }
-
-    public void setBookAddedSize(int bookAddedSize) {
-        this.bookAddedSize = bookAddedSize;
     }
 }

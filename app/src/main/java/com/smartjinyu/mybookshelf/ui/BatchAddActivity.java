@@ -74,9 +74,9 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
 
     @Override
     protected void initEventAndData() {
-        setupToolbar(mToolbar, R.string.batch_add_title);
         mToolbar.setNavigationIcon(R.drawable.ic_close);
         mToolbar.setNavigationContentDescription(R.string.batch_add_navigation_close);
+        setupToolbar(mToolbar, R.string.batch_add_title);
 
         mFragments = new ArrayList<>();
         mFragments.add(INDEX_SCAN_FRAGMENT, BookScanFragment.newInstance());
@@ -128,23 +128,24 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
     @Override
     public void onBackPressed() {
         if (mAddedCount <= 0) finish();
-        new MaterialDialog.Builder(this)
-                .title(R.string.batch_add_activity_discard_dialog_title)
-                .content(R.string.batch_add_activity_discard_dialog_content)
-                .positiveText(R.string.batch_add_activity_discard_dialog_positive)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        finish();
-                    }
-                })
-                .negativeText(android.R.string.cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+        else
+            new MaterialDialog.Builder(this)
+                    .title(R.string.batch_add_activity_discard_dialog_title)
+                    .content(R.string.batch_add_activity_discard_dialog_content)
+                    .positiveText(R.string.batch_add_activity_discard_dialog_positive)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            finish();
+                        }
+                    })
+                    .negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
     }
 
     @Override

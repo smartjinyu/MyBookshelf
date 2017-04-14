@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -42,8 +41,6 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     private ZXingScannerView mScannerView;
     public static boolean mFlash = false;
 
-    private BatchAddActivity mContext;
-
     private OnBookFetchedListener mOnBookFetchedListener;
 
     public static BookScanFragment newInstance() {
@@ -56,24 +53,15 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mContext = (BatchAddActivity) getActivity();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        mScannerView.setResultHandler(this);
-        mScannerView.setAutoFocus(true);
-        mScannerView.setFlash(mFlash);
-        mScannerView.startCamera();
+        resumeCamera();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mScannerView.stopCamera();
+        stopScannerView();
     }
 
     @Override
@@ -159,7 +147,7 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         if (book.getWebsite() == null) book.setWebsite("");
         if (book.getNotes() == null) book.setNotes("");
 
-        Snackbar.make(mContext.findViewById(R.id.batch_add_linear_layout),
+        Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
                 String.format(getString(R.string.batch_add_added_snack_bar),
                         book.getTitle()), Snackbar.LENGTH_SHORT).show();
         if (book.getImgUrl() != null) {
@@ -211,9 +199,12 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         mOnBookFetchedListener = onBookFetchedListener;
     }
 
-    public void startScannerView() {
-        mFlash = !mFlash;
+    public void resumeCamera() {
+        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
+        mScannerView.setResultHandler(this);
+        mScannerView.setAutoFocus(true);
         mScannerView.setFlash(mFlash);
+        mScannerView.startCamera();
     }
 
     public void stopScannerView() {
@@ -222,7 +213,7 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         }
     }
 
-    public void setScannerViewFlash() {
+    public void reverseScannerViewFlash() {
         if (mScannerView != null) {
             mFlash = !mFlash;
             mScannerView.setFlash(mFlash);
@@ -231,5 +222,9 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
 
     public boolean isScannerViewFlash() {
         return mFlash;
+    }
+
+    public void fetchBookInfo(String isbn) {
+        mPresenter.fetchBookInfo(isbn);
     }
 }

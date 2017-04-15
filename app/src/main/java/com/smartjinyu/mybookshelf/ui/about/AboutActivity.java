@@ -1,54 +1,42 @@
 package com.smartjinyu.mybookshelf.ui.about;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.base.SimpleActivity;
+
+import butterknife.BindView;
 
 /**
  * about page
  * Created by smartjinyu on 2017/2/7.
  */
 
-public class AboutActivity extends AppCompatActivity {
-    private static final String TAG = "AboutActivity";
+public class AboutActivity extends SimpleActivity {
+    @BindView(R.id.about_toolbar)
+    Toolbar mToolbar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1005")
-                .putCustomAttribute("onCreate", "onCreate"));
+    protected String getTag() {
+        return "AboutActivity";
+    }
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.about_toolbar);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.about_preference_category_title);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_about;
+    }
+
+    @Override
+    protected void initEventAndData() {
+        setupToolbar(mToolbar, R.string.about_preference_category_title);
+    }
+
+    @Override
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             AboutFragment aboutFragment = new AboutFragment();
             getFragmentManager().beginTransaction().add(R.id.activity_about_container, aboutFragment).commit();
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 }

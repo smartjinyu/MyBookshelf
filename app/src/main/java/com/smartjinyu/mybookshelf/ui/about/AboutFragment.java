@@ -1,10 +1,6 @@
 package com.smartjinyu.mybookshelf.ui.about;
 
-import android.annotation.TargetApi;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -12,10 +8,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -24,8 +16,8 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.BuildConfig;
 import com.smartjinyu.mybookshelf.R;
-
-import java.util.Locale;
+import com.smartjinyu.mybookshelf.util.AlertUtil;
+import com.smartjinyu.mybookshelf.util.AppUtil;
 
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
@@ -34,27 +26,43 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk;
  * Created by smartjinyu on 2017/2/5.
  */
 
-public class AboutFragment extends PreferenceFragment {
+public class AboutFragment extends PreferenceFragment
+        implements Preference.OnPreferenceClickListener {
     private static final String TAG = "AboutFragment";
 
-    private Preference namePreference;
-    private Preference donatePreference;
-    private Preference feedbackPreference;
-    private Preference licensePreference;
-    private Preference termOfServicePreference;
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.about_preference);
 
-        namePreference = findPreference("about_pref_name");
-        namePreference.setSummary(BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")");
+        mContext = getActivity();
+        initAllPreferences();
+    }
 
-        donatePreference = findPreference("about_pref_donate");
-        donatePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+    private void initAllPreferences() {
+        Preference namePreference = findPreference("about_pref_name");
+        Preference donatePreference = findPreference("about_pref_donate");
+        Preference feedbackPreference = findPreference("about_pref_feedback");
+        Preference licensePreference = findPreference("about_pref_license");
+        Preference termOfServicePreference = findPreference("about_pref_term_of_service");
+
+//        namePreference.setOnPreferenceClickListener(this);
+        donatePreference.setOnPreferenceClickListener(this);
+        feedbackPreference.setOnPreferenceClickListener(this);
+        licensePreference.setOnPreferenceClickListener(this);
+        termOfServicePreference.setOnPreferenceClickListener(this);
+
+        namePreference.setSummary(BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")");
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+//            case "about_pref_name":
+//                break;
+            case "about_pref_donate":
                 Answers.getInstance().logContentView(new ContentViewEvent()
                         .putContentName(TAG)
                         .putContentType("Donate")
@@ -77,22 +85,12 @@ public class AboutFragment extends PreferenceFragment {
                                             .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
                                     dialog.dismiss();
                                 }
-                            })
-                            .negativeText(R.string.about_donate_dialog_negative0)
+                            }).negativeText(R.string.about_donate_dialog_negative0)
                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    ClipboardManager clipboardManager =
-                                            (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                                    Toast.makeText(
-                                            getActivity(),
-                                            getResources().getString(R.string.about_preference_donate_toast),
-                                            Toast.LENGTH_SHORT)
-                                            .show();
-                                    ClipData clipData = ClipData.newPlainText(
-                                            getString(R.string.app_name),
-                                            "smartjinyu@gmail.com");
-                                    clipboardManager.setPrimaryClip(clipData);
+                                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                                    Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
                                     Answers.getInstance().logContentView(new ContentViewEvent()
                                             .putContentName(TAG)
                                             .putContentType("Donate")
@@ -110,11 +108,9 @@ public class AboutFragment extends PreferenceFragment {
                                             .putContentType("Donate")
                                             .putContentId("2023")
                                             .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
-
                                     dialog.dismiss();
                                 }
-                            })
-                            .show();
+                            }).show();
                 } else {
                     new MaterialDialog.Builder(getActivity())
                             .title(R.string.about_preference_rate_title)
@@ -123,17 +119,8 @@ public class AboutFragment extends PreferenceFragment {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    ClipboardManager clipboardManager =
-                                            (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                                    Toast.makeText(
-                                            getActivity(),
-                                            getResources().getString(R.string.about_preference_donate_toast),
-                                            Toast.LENGTH_SHORT)
-                                            .show();
-                                    ClipData clipData = ClipData.newPlainText(
-                                            getString(R.string.app_name),
-                                            "smartjinyu@gmail.com");
-                                    clipboardManager.setPrimaryClip(clipData);
+                                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                                    Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
                                     Answers.getInstance().logContentView(new ContentViewEvent()
                                             .putContentName(TAG)
                                             .putContentType("Donate")
@@ -154,112 +141,25 @@ public class AboutFragment extends PreferenceFragment {
 
                                     dialog.dismiss();
                                 }
-                            })
-                            .show();
-
+                            }).show();
                 }
-                return true;
-            }
-        });
-
-        feedbackPreference = findPreference("about_pref_feedback");
-        feedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+                break;
+            case "about_pref_feedback":
                 Intent mail = new Intent(Intent.ACTION_SENDTO);
                 mail.setData(Uri.parse("mailto:smartjinyu@gmail.com"));
                 mail.putExtra(Intent.EXTRA_SUBJECT, "MyBookshelf Feedback");
                 String content = getEmailContent();
                 mail.putExtra(Intent.EXTRA_TEXT, content);
                 startActivity(mail);
-                return true;
-            }
-        });
-
-        licensePreference = findPreference("about_pref_license");
-        licensePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                alert.setTitle(getString(R.string.about_preference_license_dialog));
-
-                WebView wv = new WebView(getActivity());
-                wv.loadUrl("file:///android_asset/license.html");
-                wv.setWebViewClient(new WebViewClient() {
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-
-                    @TargetApi(Build.VERSION_CODES.N)
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                        final Uri uri = request.getUrl();
-                        view.loadUrl(uri.toString());
-                        return true;
-                    }
-
-                });
-
-                alert.setView(wv);
-                alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-
-                return true;
-            }
-        });
-
-        termOfServicePreference = findPreference("about_pref_term_of_service");
-        termOfServicePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                alert.setTitle(getString(R.string.about_preference_term_of_service));
-
-                WebView wv = new WebView(getActivity());
-                if (getCurrentLocale().equals(Locale.CHINA)) {
-                    wv.loadUrl("file:///android_asset/termOfService_zh.html");
-                } else {
-                    wv.loadUrl("file:///android_asset/termOfService_en.html");
-                }
-                wv.setWebViewClient(new WebViewClient() {
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-
-                    @TargetApi(Build.VERSION_CODES.N)
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                        final Uri uri = request.getUrl();
-                        view.loadUrl(uri.toString());
-                        return true;
-                    }
-
-                });
-
-                alert.setView(wv);
-                alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-
-                return true;
-            }
-        });
-
+                break;
+            case "about_pref_license":
+                AlertUtil.alertWebview(mContext, getString(R.string.about_preference_license_dialog), "license.html");
+                break;
+            case "about_pref_term_of_service":
+                AlertUtil.alertWebview(mContext, getString(R.string.about_preference_term_of_service), "termOfService.html");
+                break;
+        }
+        return false;
     }
 
     private String getEmailContent() {
@@ -269,18 +169,5 @@ public class AboutFragment extends PreferenceFragment {
         content += "App Version Code: " + BuildConfig.VERSION_CODE + "\n";
         content += "Device Model: " + Build.MODEL + "\n" + "Device Brand: " + Build.BRAND + "\n" + "SDK Version: " + Build.VERSION.SDK_INT + "\n" + "------------------------";
         return content;
-
     }
-
-    @TargetApi(Build.VERSION_CODES.N)
-    private Locale getCurrentLocale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return getResources().getConfiguration().getLocales().get(0);
-        } else {
-            //noinspection deprecation
-            return getResources().getConfiguration().locale;
-        }
-    }
-
-
 }

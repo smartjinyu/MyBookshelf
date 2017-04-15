@@ -1479,9 +1479,9 @@ public class MainActivity extends AppCompatActivity {
 
             WebView wv = new WebView(this);
             if (getCurrentLocale().equals(Locale.CHINA)) {
-                wv.loadUrl("file:///android_asset/termOfService_zh.html");
+                wv.loadUrl("file:///android_asset/termOfService.html");
             } else {
-                wv.loadUrl("file:///android_asset/termOfService_en.html");
+                wv.loadUrl("file:///android_asset/termOfService.html");
             }
             wv.setWebViewClient(new WebViewClient() {
                 @SuppressWarnings("deprecation")

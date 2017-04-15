@@ -36,6 +36,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        doSavedInstanceState(savedInstanceState);
         setContentView(getLayoutId());
         TAG = getTag();
         // log content view
@@ -48,6 +49,10 @@ public abstract class SimpleActivity extends AppCompatActivity {
         mUnBinder = ButterKnife.bind(this);
         mContext = this;
         initEventAndData();
+    }
+
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
+
     }
 
     @Override

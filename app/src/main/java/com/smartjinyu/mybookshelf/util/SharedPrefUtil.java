@@ -18,6 +18,7 @@ public class SharedPrefUtil {
     public static final String IS_RATED = "isRated";
     public static final String ACCEPT_TERM_OF_SERVICE = "isAcceptTermOfService";
     public static final String DONATE_DRAWER_ITEM_SHOW = "isDonateDrawerItemShow";
+    public static final String BACK_LOCATION = "settings_pref_backup_location";
     // 0: DOUBAN,1: OL,2: ALL
     public static final String WEB_SERVICES_TYPE = "webServices";
     public static final String AC_WEBSITE = "settings_pref_acwebsite";

@@ -229,6 +229,9 @@
     <string name="new_version_find_dialog_title">发现新版本</string>
     <string name="settings_export_to_csv_summary">导出为.csv文件以便管理</string>
     <string name="settings_export_to_csv_title">导出为.csv文件</string>
+    <string name="settings_general">General</string>
+    <string name="settings_check_update_title">启动时检查更新</string>
+
     <string name="shortcut_name_add">添加书籍</string>
     <string name="shortcut_name_search">搜索</string>
     <string name="storage_permission_toast5">请授予存储空间权限以导出您的书籍！</string>

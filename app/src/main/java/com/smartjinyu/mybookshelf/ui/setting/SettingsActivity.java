@@ -1,38 +1,29 @@
 package com.smartjinyu.mybookshelf.ui.setting;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.base.SimpleActivity;
+
+import butterknife.BindView;
 
 /**
  * settings activity
  * Created by smartjinyu on 2017/2/8.
  */
 
-public class SettingsActivity extends AppCompatActivity {
-    private static final String TAG = "SettingsActivity";
+public class SettingsActivity extends SimpleActivity {
+    @BindView(R.id.settings_toolbar)
+    Toolbar mToolbar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1006")
-                .putCustomAttribute("onCreate", "onCreate"));
+    protected String getTag() {
+        return "SettingsActivity";
+    }
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.settings_settings);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             SettingsFragment settingsFragment = new SettingsFragment();
             getFragmentManager().beginTransaction().replace(R.id.activity_settings_container, settingsFragment).commit();
@@ -40,15 +31,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getLayoutId() {
+        return R.layout.activity_settings;
     }
 
+    @Override
+    protected void initEventAndData() {
+        setupToolbar(mToolbar, R.string.settings_settings);
+    }
 }

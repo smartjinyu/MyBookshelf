@@ -57,7 +57,6 @@ public class SettingsFragment extends PreferenceFragment
     private Preference backupLocationPreference;
 
     private Context mContext;
-    private String backupLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +80,10 @@ public class SettingsFragment extends PreferenceFragment
         exportCSVPreference.setOnPreferenceClickListener(this);
         backupPreference.setOnPreferenceClickListener(this);
         restorePreference.setOnPreferenceClickListener(this);
+        // init backupLocationPreference summary
+        String backupLocation = SharedPrefUtil.getInstance().getString(SharedPrefUtil.BACK_LOCATION,
+                Environment.getExternalStorageDirectory().getAbsolutePath() + "/backups");
+        backupLocationPreference.setSummary(backupLocation);
     }
 
     @Override
@@ -148,7 +151,7 @@ public class SettingsFragment extends PreferenceFragment
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_BACKUP);
                 } else {
-                    backupLocation = backupLocationPreference.getSummary().toString();
+                    String backupLocation = backupLocationPreference.getSummary().toString();
                     new BackupTask(mContext, backupLocation).execute();
                 }
                 break;
@@ -340,7 +343,7 @@ public class SettingsFragment extends PreferenceFragment
                     Toast.makeText(getActivity(), getString(R.string.storage_permission_toast2), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Storage Permission Denied 2");
                 } else {
-                    backupLocation = backupLocationPreference.getSummary().toString();
+                    String backupLocation = backupLocationPreference.getSummary().toString();
                     new BackupTask(mContext, backupLocation).execute();
                 }
                 break;

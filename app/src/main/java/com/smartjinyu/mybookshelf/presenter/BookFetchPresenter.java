@@ -30,7 +30,7 @@ public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
 
     private RetrofitHelper mRetrofitHelper;
     private int triedService = 0;
-    private final int[] mSelectedWS;
+    private final Integer[] mSelectedWS;
     private boolean isContinue = true;
 
     @Inject

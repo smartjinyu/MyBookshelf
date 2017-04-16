@@ -1,5 +1,7 @@
 package com.smartjinyu.mybookshelf.presenter;
 
+import android.util.Log;
+
 import com.smartjinyu.mybookshelf.base.SimplePresenter;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.DouBanJson;
@@ -24,22 +26,40 @@ import retrofit2.Response;
 
 public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
         implements BookFetchComponent.Presenter {
+    private static final String TAG = "BookFetchPresenter";
+
     private RetrofitHelper mRetrofitHelper;
-    private int triedService = -1;
-    private final int webServicesType;
+    private int triedService = 0;
+    private final int[] mSelectedWS;
+    private boolean isContinue = true;
 
     @Inject
     BookFetchPresenter(RetrofitHelper retrofitHelper) {
         mRetrofitHelper = retrofitHelper;
-        webServicesType = SharedPrefUtil.getInstance().getInt(SharedPrefUtil.WEB_SERVICES_TYPE, 0);
+        mSelectedWS = SharedPrefUtil.getInstance().getWebServicesSelected();
     }
 
     @Override
     public void fetchBookInfo(String isbn) {
-        if (webServicesType == 0 || webServicesType == 2) {
-            fetchDouBan(isbn);
-        } else if (webServicesType == 1) {
-            fetchOpenLib(isbn);
+        if (mSelectedWS.length <= 0) mView.showUnMatchError("no available webservice", isbn);
+        isContinue = true;
+        triedService = 0;
+        doFetch(isbn);
+    }
+
+    private void doFetch(String isbn) {
+        if (triedService == mSelectedWS.length - 1) {
+            isContinue = false;
+        }
+        int type = mSelectedWS[triedService];
+        triedService++;
+        switch (type) {
+            case 0:
+                fetchDouBan(isbn);
+                break;
+            case 1:
+                fetchOpenLib(isbn);
+                break;
         }
     }
 
@@ -55,16 +75,31 @@ public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
                     if (response.raw().body().contentLength() > 0) {
                         mView.showContent(Book.newInstance(response.body(), isbn));
                     } else {// content is empty
-                        mView.showUnMatchError("not match", isbn);
+                        Log.e(TAG, "fetchOpenLib not successful not match(" + isbn + ")");
+                        if (isContinue) {
+                            doFetch(isbn);
+                        } else {
+                            mView.showUnMatchError("not match", isbn);
+                        }
                     }
                 } else {
-                    mView.showUnMatchError(response.errorBody().toString(), isbn);
+                    Log.e(TAG, "fetchOpenLib " + response.errorBody().toString() + "(" + isbn + ")");
+                    if (isContinue) {
+                        doFetch(isbn);
+                    } else {
+                        mView.showUnMatchError(response.errorBody().toString(), isbn);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<OpenLibraryJson> call, Throwable t) {
-                mView.showNetError(t.getMessage(), isbn);
+                Log.e(TAG, "fetchDouBan onFailure (" + isbn + ")");
+                if (isContinue) {
+                    doFetch(isbn);
+                } else {
+                    mView.showNetError(t.getMessage(), isbn);
+                }
             }
         });
     }
@@ -74,11 +109,12 @@ public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
             @Override
             public void onResponse(Call<DouBanJson> call, Response<DouBanJson> response) {
                 if (response.isSuccessful()) {
+                    Log.e(TAG, "fetchDouBan onResponse isSuccessful (" + isbn + ")");
                     mView.showContent(Book.newInstance(response.body(), isbn));
                 } else {
-                    if (webServicesType == 0 && triedService < 0) {
-                        triedService = 0;
-                        fetchOpenLib(isbn);
+                    Log.e(TAG, "fetchDouBan onResponse NOT Successful (" + isbn + ")" + response.errorBody().toString());
+                    if (isContinue) {
+                        doFetch(isbn);
                     } else {
                         mView.showUnMatchError(response.errorBody().toString(), isbn);
                     }
@@ -87,7 +123,12 @@ public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
 
             @Override
             public void onFailure(Call<DouBanJson> call, Throwable t) {
-                mView.showNetError(t.getMessage(), isbn);
+                Log.e(TAG, "fetchDouBan onFailure (" + isbn + ")");
+                if (isContinue) {
+                    doFetch(isbn);
+                } else {
+                    mView.showNetError(t.getMessage(), isbn);
+                }
             }
         });
     }

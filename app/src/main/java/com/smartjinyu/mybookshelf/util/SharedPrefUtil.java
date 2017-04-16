@@ -3,7 +3,11 @@ package com.smartjinyu.mybookshelf.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.smartjinyu.mybookshelf.app.BookShelfApp;
+
+import java.lang.reflect.Type;
 
 /**
  * 作者：Neil on 2016/4/16 23:50.
@@ -65,4 +69,15 @@ public class SharedPrefUtil {
         return mPrefs.getString(key, defValue);
     }
 
+    public int[] getWebServicesSelected(){
+        String rawWS = getString(WEB_SERVICES_TYPE, null);
+        if (rawWS != null) {
+            Type type = new TypeToken<Integer[]>() {
+            }.getType();
+            Gson gson = new Gson();
+            return gson.fromJson(rawWS, type);
+        } else {
+            return new int[]{0, 1}; //two webServices currently
+        }
+    }
 }

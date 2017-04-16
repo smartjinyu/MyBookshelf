@@ -69,7 +69,7 @@ public class SharedPrefUtil {
         return mPrefs.getString(key, defValue);
     }
 
-    public int[] getWebServicesSelected(){
+    public Integer[] getWebServicesSelected(){
         String rawWS = getString(WEB_SERVICES_TYPE, null);
         if (rawWS != null) {
             Type type = new TypeToken<Integer[]>() {
@@ -77,7 +77,7 @@ public class SharedPrefUtil {
             Gson gson = new Gson();
             return gson.fromJson(rawWS, type);
         } else {
-            return new int[]{0, 1}; //two webServices currently
+            return new Integer[]{0, 1}; //two webServices currently
         }
     }
 }

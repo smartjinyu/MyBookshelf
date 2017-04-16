@@ -18,10 +18,13 @@ import com.google.zxing.Result;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.base.BaseFragment;
 import com.smartjinyu.mybookshelf.callback.OnBookFetchedListener;
+import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.presenter.BookFetchPresenter;
 import com.smartjinyu.mybookshelf.presenter.component.BookFetchComponent;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
+
+import java.util.List;
 
 import butterknife.BindView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -140,22 +143,50 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     }
 
     @Override
-    public void showContent(Book book) {
-        if (mOnBookFetchedListener != null)
-            mOnBookFetchedListener.onBookFetched(book);
+    public void showContent(final Book book) {
+        BookLab bookLab = BookLab.get(mContext);
+        List<Book> mBooks = bookLab.getBooks();
+        boolean isExist = false;
+        for (Book book1 : mBooks) {
+            if (book.getIsbn().equals(book1.getIsbn())) {
+                isExist = true;
+                break;
+            }
+        }
 
         if (book.getWebsite() == null) book.setWebsite("");
         if (book.getNotes() == null) book.setNotes("");
 
-        Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
-                String.format(getString(R.string.batch_add_added_snack_bar),
-                        book.getTitle()), Snackbar.LENGTH_SHORT).show();
-        if (book.getImgUrl() != null) {
-            CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
-            String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
-            coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
+        if (isExist) {//The book is already in the list
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.book_duplicate_dialog_title)
+                    .content(R.string.book_duplicate_dialog_content)
+                    .positiveText(R.string.book_duplicate_dialog_positive)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            BookLab.get(mContext).addBook(book);
+                        }
+                    }).negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mActivity.finish();
+                        }
+                    }).show();
         } else {
-            book.setHasCover(false);
+            if (mOnBookFetchedListener != null)
+                mOnBookFetchedListener.onBookFetched(book);
+            Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
+                    String.format(getString(R.string.batch_add_added_snack_bar),
+                            book.getTitle()), Snackbar.LENGTH_SHORT).show();
+            if (book.getImgUrl() != null) {
+                CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
+                String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
+                coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
+            } else {
+                book.setHasCover(false);
+            }
         }
     }
 

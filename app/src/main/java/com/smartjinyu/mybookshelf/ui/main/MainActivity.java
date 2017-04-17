@@ -1,28 +1,15 @@
 package com.smartjinyu.mybookshelf.ui.main;
 
-import android.annotation.TargetApi;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,22 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ActionMode;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -67,26 +46,28 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.adapter.BatchAddedAdapter;
 import com.smartjinyu.mybookshelf.callback.RecyclerViewItemClickListener;
-import com.smartjinyu.mybookshelf.support.UpdateCheck;
-import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.BookLab;
-import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
-import com.smartjinyu.mybookshelf.model.bean.Label;
 import com.smartjinyu.mybookshelf.model.LabelLab;
-import com.smartjinyu.mybookshelf.ui.book.BookDetailActivity;
+import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
+import com.smartjinyu.mybookshelf.support.UpdateCheck;
 import com.smartjinyu.mybookshelf.ui.about.AboutActivity;
 import com.smartjinyu.mybookshelf.ui.addbook.BatchAddActivity;
 import com.smartjinyu.mybookshelf.ui.addbook.SingleAddActivity;
+import com.smartjinyu.mybookshelf.ui.book.BookDetailActivity;
 import com.smartjinyu.mybookshelf.ui.setting.SettingsActivity;
+import com.smartjinyu.mybookshelf.util.AlertUtil;
+import com.smartjinyu.mybookshelf.util.AppUtil;
+import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
@@ -110,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private SearchView mSearchView;
     private CoordinatorLayout mCoordinatorLayout;
 
-    private BookAdapter mRecyclerViewAdapter;
+    private BatchAddedAdapter mRecyclerViewAdapter;
     private ActionMode mActionMode;
 
     private boolean isMultiSelect = false;
@@ -120,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean showBookshelfMenuItem = false;
     private boolean showLabelMenuItem = false;
     private int sortMethod;
-    private SharedPreferences defaultSharedPreferences;
     private boolean actionSearch = false;
 
 
@@ -136,12 +116,10 @@ public class MainActivity extends AppCompatActivity {
                 .putContentId("1001")
                 .putCustomAttribute("onCreate", "onCreate"));
 
-
-        defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sortMethod = defaultSharedPreferences.getInt(SORT_METHOD, 0);
+        SharedPrefUtil.getInstance().getInt(SORT_METHOD, 0);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
-        checkTermOfService();
+        AlertUtil.alertWebview(this, getString(R.string.about_preference_term_of_service), "termOfService.html");
         setRecyclerView();
         setFloatingActionButton();
         setToolbar();
@@ -156,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             actionSearch = true;
         }
 
-        if(defaultSharedPreferences.getBoolean("settings_pref_check_update",true)){
+        if (SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.CHECK_UPDATE, true)) {
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -564,7 +542,7 @@ public class MainActivity extends AppCompatActivity {
         //.withSavedInstance(savedInstanceState) do not use this
         // because we will add items after .build()
         // donate
-        boolean isDonateShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow", true);
+        boolean isDonateShow = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, true);
         if (isDonateShow) {
             IDrawerItem drawerItem = new PrimaryDrawerItem()
                     .withName(R.string.drawer_item_donate)
@@ -688,139 +666,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class BookHolder extends RecyclerView.ViewHolder {
-
-        private ImageView mCoverImageView;
-        private TextView mTitleTextView;
-        private TextView mPublisherTextView;
-        private TextView mPubtimeTextView;
-        private RelativeLayout mRelativeLayout;
-
-        public BookHolder(View itemView) {
-            super(itemView);
-            mCoverImageView = (ImageView) itemView.findViewById(R.id.list_cover_image_view);
-            mTitleTextView = (TextView) itemView.findViewById(R.id.list_title_text_view);
-            mPublisherTextView = (TextView) itemView.findViewById(R.id.list_publisher_text_view);
-            mPubtimeTextView = (TextView) itemView.findViewById(R.id.list_pubtime_text_view);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.list_item_relative_layout);
-        }
-
-        public void bindBook(Book book) {
-            mTitleTextView.setText(book.getTitle());
-
-            StringBuilder authorAndPub = new StringBuilder();
-            String authors = book.getFormatAuthor();
-            if(authors!=null){
-                authorAndPub.append(authors);
-            }
-
-            if (book.getPublisher().length() != 0) {
-                if (authorAndPub.length() != 0) {
-                    authorAndPub.append(" ");
-                    //authorAndPub.append(getResources().getString(R.string.author_suffix));
-                    authorAndPub.append(",   ");
-                }
-                authorAndPub.append(book.getPublisher());
-            }
-            mPublisherTextView.setText(authorAndPub);
-            Calendar calendar = book.getPubTime();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            StringBuilder pubDate = new StringBuilder();
-            if (year == 9999) {
-                pubDate.append(getResources().getString(R.string.pubdate_unset));
-            } else {
-                pubDate.append(year);
-                pubDate.append("-");
-                if (month < 9) {
-                    pubDate.append("0");
-                }
-                pubDate.append(month + 1);
-            }
-
-            mPubtimeTextView.setText(pubDate);
-            if (multiSelectList.contains(book)) {//set select
-                mRelativeLayout.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.recycler_item_selected));
-                mCoverImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_check_circle));
-            } else {//back to normal
-                mRelativeLayout.setBackgroundColor(Color.WHITE);
-                if (book.isHasCover()) {
-                    String path =
-                            getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
-                    Bitmap src = BitmapFactory.decodeFile(path);
-                    mCoverImageView.setImageBitmap(src);
-                }
-            }
-
-        }
-
-    }
-
-    private class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTextView;
-
-        public HeaderViewHolder(View itemView) {
-            super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.recyclerview_header_text);
-        }
-
-        public void setCount(int count) {
-            mTextView.setText(String.valueOf(count));
-        }
-    }
-
-
-    private class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        // implement header
-        private static final int TYPE_HEADER = 0;
-        private static final int TYPE_ITEM = 1;
-
-        public BookAdapter(List<Book> books) {
-            mBooks = books;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            if (viewType == TYPE_ITEM) {
-                View view = layoutInflater.inflate(R.layout.item_booklist_recyclerview, parent, false);
-                return new BookHolder(view);
-            } else if (viewType == TYPE_HEADER) {
-                View view = layoutInflater.inflate(R.layout.header_booklist_recyclerview, parent, false);
-                return new HeaderViewHolder(view);
-            }
-            throw new RuntimeException("no type  matches the type " + viewType + " + make sure your using types correctly");
-
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof BookHolder) {
-                Book book = mBooks.get(position - 1); // remember to -1 because of the header
-                ((BookHolder) holder).bindBook(book);
-            } else if (holder instanceof HeaderViewHolder) {
-                // set header
-                ((HeaderViewHolder) holder).setCount(mBooks.size());
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (position == 0) {
-                return TYPE_HEADER;
-            } else {
-                return TYPE_ITEM;
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return mBooks.size() + 1;
-        }
-
-    }
-
-
     /**
      * setBookShelfSpinner
      *
@@ -933,9 +778,7 @@ public class MainActivity extends AppCompatActivity {
                 comparator = new Book.titleComparator();
         }
         Collections.sort(mBooks, comparator);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit()
-                .putInt(SORT_METHOD, sortMethod).apply();
+        SharedPrefUtil.getInstance().putInt(SORT_METHOD, sortMethod);
     }
 
     /**
@@ -947,7 +790,7 @@ public class MainActivity extends AppCompatActivity {
         }
         sortBooks();
         if (mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new BookAdapter(mBooks);
+            mRecyclerViewAdapter = new BatchAddedAdapter(mBooks, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         } else {
             mRecyclerViewAdapter.notifyDataSetChanged();
@@ -1273,26 +1116,22 @@ public class MainActivity extends AppCompatActivity {
         if (mDrawer != null && mDrawer.isDrawerOpen()) {
             mDrawer.closeDrawer();
         } else {
-            if (defaultSharedPreferences != null) {
-                int startTimes = defaultSharedPreferences.getInt("launchTimes", 1);
-                Log.i(TAG, "startTimes = " + startTimes);
-                defaultSharedPreferences.edit().putInt("launchTimes", startTimes + 1).apply();
-                boolean muteRatings = defaultSharedPreferences.getBoolean("muteRatings", false);
-                boolean isRated = defaultSharedPreferences.getBoolean("isRated", false);
-                boolean isDonateItemShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow", true);
-                Log.i(TAG, "rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
-                if (!muteRatings &&
-                        !isRated &&
-                        startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
-                        mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)) {
-                    // show ratings dialog
-                    showRatingDialog();
-                } else if (isDonateItemShow &&
-                        startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
-                    showDonateDialog();
-                } else {
-                    super.onBackPressed();
-                }
+            int startTimes = SharedPrefUtil.getInstance().getInt(SharedPrefUtil.LAUNCH_TIMES, 1);
+            Log.i(TAG, "startTimes = " + startTimes);
+            SharedPrefUtil.getInstance().putInt(SharedPrefUtil.LAUNCH_TIMES, startTimes + 1);
+            boolean muteRatings = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.MUTE_RATINGS, false);
+            boolean isRated = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.IS_RATED, false);
+            boolean isDonateItemShow = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, true);
+            Log.i(TAG, "rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
+            if (!muteRatings &&
+                    !isRated &&
+                    startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
+                    mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)) {
+                // show ratings dialog
+                showRatingDialog();
+            } else if (isDonateItemShow &&
+                    startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
+                showDonateDialog();
             } else {
                 super.onBackPressed();
             }
@@ -1313,7 +1152,7 @@ public class MainActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        defaultSharedPreferences.edit().putBoolean("isRated", true).apply();
+                        SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
                         startActivity(i);
@@ -1342,7 +1181,7 @@ public class MainActivity extends AppCompatActivity {
                 .onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        defaultSharedPreferences.edit().putBoolean("muteRatings", true).apply();
+                        SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
                         Answers.getInstance().logContentView(new ContentViewEvent()
                                 .putContentName(TAG)
                                 .putContentType("Rating")
@@ -1378,7 +1217,7 @@ public class MainActivity extends AppCompatActivity {
                                     .putContentType("Donate")
                                     .putContentId("2031")
                                     .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
+                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
                         }
@@ -1387,23 +1226,18 @@ public class MainActivity extends AppCompatActivity {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            ClipboardManager clipboardManager =
-                                    (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                            AppUtil.copyText2Clipboard(MainActivity.this, "smartjinyu@gmail.com");
                             Toast.makeText(
                                     MainActivity.this,
                                     getResources().getString(R.string.about_preference_donate_toast),
                                     Toast.LENGTH_SHORT)
                                     .show();
-                            ClipData clipData = ClipData.newPlainText(
-                                    getString(R.string.app_name),
-                                    "smartjinyu@gmail.com");
-                            clipboardManager.setPrimaryClip(clipData);
                             Answers.getInstance().logContentView(new ContentViewEvent()
                                     .putContentName(TAG)
                                     .putContentType("Donate")
                                     .putContentId("2032")
                                     .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
+                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
                         }
@@ -1430,23 +1264,18 @@ public class MainActivity extends AppCompatActivity {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            ClipboardManager clipboardManager =
-                                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            AppUtil.copyText2Clipboard(MainActivity.this, "smartjinyu@gmail.com");
                             Toast.makeText(
                                     MainActivity.this,
                                     getResources().getString(R.string.about_preference_donate_toast),
                                     Toast.LENGTH_SHORT)
                                     .show();
-                            ClipData clipData = ClipData.newPlainText(
-                                    getString(R.string.app_name),
-                                    "smartjinyu@gmail.com");
-                            clipboardManager.setPrimaryClip(clipData);
                             Answers.getInstance().logContentView(new ContentViewEvent()
                                     .putContentName(TAG)
                                     .putContentType("Donate")
                                     .putContentId("2032")
                                     .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
-                            defaultSharedPreferences.edit().putBoolean("isDonateDrawerItemShow", false).apply();
+                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
                             setDrawer(mDrawer.getCurrentSelection());
 
@@ -1466,72 +1295,8 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .canceledOnTouchOutside(false)
                     .show();
-
-        }
-
-    }
-
-    private void checkTermOfService() {
-        boolean isAccepted = defaultSharedPreferences.getBoolean("isAcceptTermOfService", false);
-        if (!isAccepted) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle(getString(R.string.about_preference_term_of_service));
-
-            WebView wv = new WebView(this);
-            if (getCurrentLocale().equals(Locale.CHINA)) {
-                wv.loadUrl("file:///android_asset/termOfService.html");
-            } else {
-                wv.loadUrl("file:///android_asset/termOfService.html");
-            }
-            wv.setWebViewClient(new WebViewClient() {
-                @SuppressWarnings("deprecation")
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    view.loadUrl(url);
-                    return true;
-                }
-
-                @TargetApi(Build.VERSION_CODES.N)
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    final Uri uri = request.getUrl();
-                    view.loadUrl(uri.toString());
-                    return true;
-                }
-
-            });
-
-            alert.setView(wv);
-            alert.setPositiveButton(R.string.accept_term_of_service_dialog_positive, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    defaultSharedPreferences.edit().putBoolean("isAcceptTermOfService", true).apply();
-                    dialog.dismiss();
-                }
-            });
-            alert.setNegativeButton(R.string.accept_term_of_service_dialog_negative, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    Toast.makeText(MainActivity.this, R.string.accept_term_of_service_dialog_deny_toast, Toast.LENGTH_LONG)
-                            .show();
-                    finish();
-                }
-            });
-            alert.show();
-
         }
     }
-
-    @TargetApi(Build.VERSION_CODES.N)
-    private Locale getCurrentLocale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return getResources().getConfiguration().getLocales().get(0);
-        } else {
-            //noinspection deprecation
-            return getResources().getConfiguration().locale;
-        }
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1548,6 +1313,4 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
 }

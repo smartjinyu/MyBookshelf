@@ -67,11 +67,12 @@ public abstract class SimpleActivity extends AppCompatActivity {
 
     protected void setupToolbar(Toolbar toolbar, String title) {
         setSupportActionBar(toolbar);
-        toolbar.setTitle(title);
+        if (title != null) toolbar.setTitle(title);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDefaultDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
+            if (title == null) actionBar.setDisplayShowTitleEnabled(false);
         }
         toolbar.setNavigationOnClickListener(mUpClickListener);
     }

@@ -21,7 +21,7 @@ import com.smartjinyu.mybookshelf.callback.OnBookFetchedListener;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.presenter.BookFetchPresenter;
-import com.smartjinyu.mybookshelf.presenter.component.BookFetchComponent;
+import com.smartjinyu.mybookshelf.presenter.component.BookFetchContract;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 
 public class BookScanFragment extends BaseFragment<BookFetchPresenter>
-        implements ZXingScannerView.ResultHandler, BookFetchComponent.View {
+        implements ZXingScannerView.ResultHandler, BookFetchContract.View {
     private static final String TAG = "BookScanFragment";
     private static final String FLASH_STATE = "FLASH_STATE";
 

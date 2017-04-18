@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.smartjinyu.mybookshelf.di.module.FragmentModule;
 import com.smartjinyu.mybookshelf.di.scope.FragmentScope;
 import com.smartjinyu.mybookshelf.ui.addbook.BookScanFragment;
+import com.smartjinyu.mybookshelf.ui.main.MainFragment;
 
 import dagger.Component;
 
@@ -19,8 +20,8 @@ public interface FragmentComponent {
     Activity getActivity();
 
     void inject(BookScanFragment scanFragment);
-//
-//    void inject(LatestFragment latestFragment);
+
+    void inject(MainFragment mainFragment);
 //
 //    void inject(PastFragment pastFragment);
 //

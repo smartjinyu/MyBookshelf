@@ -7,7 +7,7 @@ import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.DouBanJson;
 import com.smartjinyu.mybookshelf.model.bean.OpenLibraryJson;
 import com.smartjinyu.mybookshelf.model.http.RetrofitHelper;
-import com.smartjinyu.mybookshelf.presenter.component.BookFetchComponent;
+import com.smartjinyu.mybookshelf.presenter.component.BookFetchContract;
 import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.util.HashMap;
@@ -24,8 +24,8 @@ import retrofit2.Response;
  * 邮箱：cn.neillee@gmail.com
  */
 
-public class BookFetchPresenter extends SimplePresenter<BookFetchComponent.View>
-        implements BookFetchComponent.Presenter {
+public class BookFetchPresenter extends SimplePresenter<BookFetchContract.View>
+        implements BookFetchContract.Presenter {
     private static final String TAG = "BookFetchPresenter";
 
     private RetrofitHelper mRetrofitHelper;

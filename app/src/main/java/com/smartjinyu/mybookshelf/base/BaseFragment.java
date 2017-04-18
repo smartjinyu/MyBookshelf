@@ -97,7 +97,9 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
         if (mPresenter != null) mPresenter.detachView();
     }
 
-    protected abstract void doSavedInstanceState(Bundle savedInstanceState);
+    protected void doSavedInstanceState(Bundle savedInstanceState) {
+
+    }
 
     protected abstract void initInject();
 

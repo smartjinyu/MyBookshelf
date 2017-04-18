@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        android:id="@+id/drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fitsSystemWindows="true">
 
     <!-- This LinearLayout represents the contents of the screen  -->
     <LinearLayout
@@ -16,11 +16,11 @@
         <include
             layout="@layout/toolbar_main"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
 
         <!-- The main content view where fragments are loaded -->
-        <include layout="@layout/activity_main_coordinate" />
+        <include layout="@layout/activity_main_coordinate"/>
 
 
     </LinearLayout>
@@ -30,15 +30,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.lapism.searchview.SearchBehavior"
+        app:search_clear_on_close="true"
+        app:search_clear_on_open="true"
+        app:search_hide_on_keyboard_close="false"
+        app:search_hint="@string/search_view_hint"
+        app:search_shadow="false"
+        app:search_theme="light"
         app:search_version="menu_item"
         app:search_version_margins="menu_item"
-        app:search_theme="light"
-        app:search_voice="true"
-        app:search_hint="@string/search_view_hint"
-        app:search_hide_on_keyboard_close="false"
-        app:search_clear_on_open="true"
-        app:search_clear_on_close="true"
-        app:search_shadow="false" />
+        app:search_voice="true"/>
 
-
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:itemIconTint="@drawable/nav_menu_item_text_selector"
+        app:itemTextColor="@drawable/nav_menu_item_text_selector"
+        app:menu="@menu/activity_main_drawer"/>
 </android.support.v4.widget.DrawerLayout>

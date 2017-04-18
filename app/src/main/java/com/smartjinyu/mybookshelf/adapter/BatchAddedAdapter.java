@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.smartjinyu.mybookshelf.R;
+import com.smartjinyu.mybookshelf.base.rv.BaseViewHolder;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 
 import java.util.Calendar;
@@ -28,10 +29,16 @@ import butterknife.ButterKnife;
  * 邮箱：cn.neillee@gmail.com
  */
 
-public class BatchAddedAdapter extends RecyclerView.Adapter<BatchAddedAdapter.BookHolder> {
+public class BatchAddedAdapter
+        extends RecyclerView.Adapter<BatchAddedAdapter.BookHolder>
+        implements View.OnClickListener, View.OnLongClickListener {
     private static final String TAG = BatchAddedAdapter.class.getSimpleName();
     private List<Book> mBooks;
     private Context mContext;
+
+    // 监听事件
+    private BookMultiClickAdapter.RecyclerViewOnItemClickListener onItemClickListener;
+    private BookMultiClickAdapter.RecyclerViewOnItemLongClickListener onItemLongClickListener;
 
     public BatchAddedAdapter(List<Book> books, Context context) {
         this.mBooks = books;
@@ -49,6 +56,11 @@ public class BatchAddedAdapter extends RecyclerView.Adapter<BatchAddedAdapter.Bo
     public void onBindViewHolder(BookHolder holder, int position) {
         Book book = mBooks.get(position);
         holder.bindBook(book);
+        // setting listener, tag
+        holder.itemView.setOnClickListener(this);
+        holder.itemView.setOnLongClickListener(this);
+        // tag can pass some variables with view
+        holder.itemView.setTag(holder);
         Log.d(TAG, "onBindViewHolder " + position);
     }
 
@@ -115,5 +127,33 @@ public class BatchAddedAdapter extends RecyclerView.Adapter<BatchAddedAdapter.Bo
                 mCoverImageView.setImageBitmap(src);
             }
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (onItemClickListener == null) return;
+        onItemClickListener.onItemClick((BaseViewHolder) v.getTag());
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return onItemClickListener != null && onItemLongClickListener
+                .onItemLongClick((BaseViewHolder) v.getTag());
+    }
+
+    public void setOnItemClickListener(BookMultiClickAdapter.RecyclerViewOnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(BookMultiClickAdapter.RecyclerViewOnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    public interface RecyclerViewOnItemClickListener {
+        void onItemClick(BaseViewHolder holder);
+    }
+
+    public interface RecyclerViewOnItemLongClickListener {
+        boolean onItemLongClick(BaseViewHolder holder);
     }
 }

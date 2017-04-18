@@ -18,8 +18,9 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.adapter.BatchAddedAdapter;
+import com.smartjinyu.mybookshelf.base.rv.BaseMultiClickAdapter;
+import com.smartjinyu.mybookshelf.base.rv.BaseViewHolder;
 import com.smartjinyu.mybookshelf.callback.BookFetchedCallback;
-import com.smartjinyu.mybookshelf.callback.RecyclerViewItemClickListener;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.LabelLab;
@@ -36,25 +37,29 @@ import java.util.List;
  * Created by smartjinyu on 2017/2/8.
  */
 
-public class BatchListFragment extends Fragment {
+public class BatchListFragment extends Fragment implements BaseMultiClickAdapter.RecyclerViewOnItemLongClickListener {
     private static final String TAG = "BatchListFragment";
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private BatchAddedAdapter mRecyclerViewAdapter;
     private BatchAddActivity mContext;
     private List<Book> mBooks;// books added
     private BookFetchedCallback mCallback = new BookFetchedCallback() {
         @Override
         public void onBookFetched(Book book) {
             mBooks.add(book);
+            mRecyclerViewAdapter.notifyDataSetChanged();
         }
     };
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mBooks = new ArrayList<>();
         mContext = (BatchAddActivity) getActivity();
+        mBooks = new ArrayList<>();
+        mRecyclerViewAdapter = new BatchAddedAdapter(mBooks, mContext);
+        mRecyclerViewAdapter.setOnItemLongClickListener(this);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 
     @Override
@@ -62,50 +67,9 @@ public class BatchListFragment extends Fragment {
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_batch_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.bachlist_recycler_view);
-        setRecyclerView();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
-
-    private void setRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(),
-                mRecyclerView, new RecyclerViewItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-            }
-
-            @Override
-            public void onItemLongClick(View view, final int position) {
-                new MaterialDialog.Builder(getActivity())
-                        .title(R.string.batch_add_delete_book_dialog_title)
-                        .content(R.string.batch_add_delete_book_dialog_content)
-                        .positiveText(R.string.batch_add_delete_book_dialog_positive)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                if (mBooks.get(position).isHasCover()) {
-                                    File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                                            + "/" + mBooks.get(position).getCoverPhotoFileName());
-                                    boolean succeeded = file.delete();
-                                    Log.i(TAG, "Remove cover result = " + succeeded);
-                                }
-                                mBooks.remove(position);
-                                mRecyclerViewAdapter.notifyDataSetChanged();
-                                mContext.notifyTabTitle();
-                            }
-                        })
-                        .negativeText(android.R.string.cancel)
-                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-            }
-        }));
-    }
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -269,5 +233,37 @@ public class BatchListFragment extends Fragment {
 
     public BookFetchedCallback getCallback() {
         return mCallback;
+    }
+
+    @Override
+    public boolean onItemLongClick(BaseViewHolder holder) {
+        final int position = holder.getItemPosition();
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.batch_add_delete_book_dialog_title)
+                .content(R.string.batch_add_delete_book_dialog_content)
+                .positiveText(R.string.batch_add_delete_book_dialog_positive)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if (mBooks.get(position).isHasCover()) {
+                            File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                                    + "/" + mBooks.get(position).getCoverPhotoFileName());
+                            boolean succeeded = file.delete();
+                            Log.i(TAG, "Remove cover result = " + succeeded);
+                        }
+                        mBooks.remove(position);
+                        mRecyclerViewAdapter.notifyDataSetChanged();
+                        mContext.notifyTabTitle();
+                    }
+                })
+                .negativeText(android.R.string.cancel)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+        return false;
     }
 }

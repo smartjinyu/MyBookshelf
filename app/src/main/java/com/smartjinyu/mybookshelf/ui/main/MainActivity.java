@@ -231,6 +231,7 @@ public class MainActivity extends SimpleActivity
                     Log.d(TAG, "Show FAM 2");
                     mActionAddButton.setVisibility(View.VISIBLE);
                     mActionAddButton.showMenuButton(true);
+                    mMainFragment.refreshFetch();
                 }
                 return true;
             }

@@ -61,13 +61,14 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
     private BookMultiClickAdapter mRecyclerViewAdapter;
     private List<Book> mBooks;
     private List<Book> UndoBooks;
-    private List<Book> mMultiSelectedBooks;
+    private List<Integer> mMultiSelectedBooks;
     private int mSortMethod;
     private ActionMode mActionMode;
     private boolean mIsMultiSelectState;
 
     private boolean showBookshelfMenuItem = true;
     private boolean showLabelMenuItem = true;
+    private boolean mIsSnackbarDisappear = true;
 
 
     public static MainFragment newInstance() {
@@ -177,15 +178,6 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
 
         renameBookshelfItem.setVisible(showBookshelfMenuItem);
         deleteBookshelfItem.setVisible(showBookshelfMenuItem);
-//        if (showLabelMenuItem) {
-//            Log.d(TAG, "Hide FAM 1");
-//            mActionAddButton.setVisibility(View.GONE);
-//            mActionAddButton.hideMenuButton(true);
-//        } else {
-//            Log.d(TAG, "Show FAM 1");
-//            mActionAddButton.setVisibility(View.VISIBLE);
-//            mActionAddButton.showMenuButton(true);
-//        }
     }
 
     private void refreshOptionMenu() {
@@ -368,6 +360,186 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         }
     }
 
+    private void actionSelectAll() {
+        mMultiSelectedBooks.clear();
+        for (int i = 0; i < mBooks.size(); i++) {
+            mMultiSelectedBooks.add(i);
+            // TODO 处理全选de视图
+        }
+        String title = getResources().getQuantityString(R.plurals.multi_title,
+                mMultiSelectedBooks.size(), mMultiSelectedBooks.size());
+        mActionMode.setTitle(title);
+    }
+
+    private void actionDelete() {
+        if (mMultiSelectedBooks.size() == 0) return;
+        final BookLab bookLab = BookLab.get(mContext);
+        UndoBooks = new ArrayList<>();
+        for (int i = 0; i < mMultiSelectedBooks.size(); i++) {
+            int index = mMultiSelectedBooks.get(i);
+            Book book = mBooks.get(index);
+            bookLab.deleteBook(book);
+            UndoBooks.add(mBooks.remove(index));
+        }
+        int contentResId = UndoBooks.size() == 1 ?
+                R.string.book_deleted_snack_bar_0 : R.string.book_deleted_snack_bar_1;
+        Snackbar snackbar = Snackbar.make(mRVBooks, contentResId, Snackbar.LENGTH_SHORT);
+        snackbar.setAction(R.string.book_deleted_snack_bar_undo, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bookLab.addBooks(UndoBooks);
+                refreshFetch();
+            }
+        });
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                Log.d(TAG, "Show FAM 4");
+                ((MainActivity) mActivity).showFabMenu();
+                mIsSnackbarDisappear = true;
+                UndoBooks.clear();
+            }
+        });
+        // for that the FAM won't move up when a snackbar shows, just hide it currently
+        snackbar.show();
+        mIsSnackbarDisappear = false;
+        mActionMode.finish();
+    }
+
+    private void actionAddLabel() {
+        final LabelLab labelLab = LabelLab.get(mContext);
+        final List<Label> labels = labelLab.getLabels();
+        new MaterialDialog.Builder(mContext)
+                .title(R.string.add_label_dialog_title)
+                .items(labels)
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        List<Label> labels = labelLab.getLabels();
+                        // must refresh labels here because if user add label, the list won't update,
+                        // and select the newly add label won't take effect
+                        for (int i = 0; i < which.length; i++) {
+                            for (Label label : labels) {
+                                if (label.getTitle().equals(text[i])) {
+                                    // selected label
+                                    for (int j = 0; j < mMultiSelectedBooks.size(); j++) {
+                                        int index = mMultiSelectedBooks.get(j);
+                                        Book book = mBooks.get(index);
+                                        book.addLabel(label);
+                                        BookLab.get(mContext).updateBook(book);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        if (mActionMode != null) mActionMode.finish();
+                        dialog.dismiss();
+                        return true;
+                    }
+                })
+                .neutralText(R.string.label_choice_dialog_neutral)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
+                        // create new label
+                        new MaterialDialog.Builder(mContext)
+                                .title(R.string.label_add_new_dialog_title)
+                                .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
+                                .input(R.string.label_add_new_dialog_edit_text, 0,
+                                        new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                                                // nothing to do here
+                                            }
+                                        })
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        Label labelToAdd = new Label();
+                                        labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                        labelLab.addLabel(labelToAdd);
+                                        Log.i(TAG, "New label created " + labelToAdd.getTitle());
+                                        listDialog.getItems().add(labelToAdd.getTitle());
+                                        listDialog.notifyItemInserted(listDialog.getItems().size() - 1);
+                                    }
+                                }).negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        inputDialog.dismiss();
+                                    }
+                                }).show();
+                    }
+                }).positiveText(android.R.string.ok)
+                .autoDismiss(false).show();
+    }
+
+    private void actionMoveTo() {
+        final BookShelfLab bookShelfLab = BookShelfLab.get(mContext);
+        final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
+        new MaterialDialog.Builder(mContext)
+                .title(R.string.move_to_dialog_title)
+                .items(bookShelves)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                        List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
+                        for (BookShelf bookShelf : bookShelves) {
+                            if (bookShelf.getTitle().equals(text)) {
+                                // selected bookshelf
+                                for (int i = 0; i < mMultiSelectedBooks.size(); i++) {
+                                    Book book = mBooks.get(mMultiSelectedBooks.get(i));
+                                    book.setBookshelfID(bookShelf.getId());
+                                    BookLab.get(mContext).updateBook(book);
+                                }
+                                break;
+                            }
+                        }
+                        if (mActionMode != null) mActionMode.finish();
+                        dialog.dismiss();
+                    }
+                }).positiveText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                }).neutralText(R.string.move_to_dialog_neutral)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog listdialog, @NonNull DialogAction which) {
+                        // create new bookshelf
+                        new MaterialDialog.Builder(mContext)
+                                .title(R.string.custom_book_shelf_dialog_title)
+                                .inputRange(1, getResources().getInteger(R.integer.bookshelf_name_max_length))
+                                .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
+                                    @Override
+                                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                        // nothing to do here
+                                    }
+                                }).onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                BookShelf bookShelfToAdd = new BookShelf();
+                                bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
+                                bookShelfLab.addBookShelf(bookShelfToAdd);
+                                Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
+                                listdialog.getItems().add(bookShelfToAdd.getTitle());
+                                listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
+                            }
+                        }).negativeText(android.R.string.cancel)
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    }
+                }).autoDismiss(false)
+                // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
+                .show();
+    }
+
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -388,192 +560,16 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_multi_select_select_all:
-                    mMultiSelectedBooks = mBooks;
-                    String title = getResources().getQuantityString(R.plurals.multi_title,
-                            mMultiSelectedBooks.size(), mMultiSelectedBooks.size());
-                    mActionMode.setTitle(title);
+                    actionSelectAll();
                     break;
                 case R.id.menu_multi_select_delete:
-                    if (mMultiSelectedBooks.size() != 0) {
-                        final BookLab bookLab = BookLab.get(mContext);
-                        UndoBooks = new ArrayList<>();
-                        for (Book book : mMultiSelectedBooks) {
-                            bookLab.deleteBook(book);
-                            UndoBooks.add(book);
-                        }
-                        Snackbar snackbar;
-                        if (UndoBooks.size() == 1) {
-                            snackbar = Snackbar.make(
-                                    mRVBooks,
-                                    R.string.book_deleted_snack_bar_0,
-                                    Snackbar.LENGTH_SHORT);
-                        } else {
-                            snackbar = Snackbar.make(
-                                    mRVBooks,
-                                    R.string.book_deleted_snack_bar_1,
-                                    Snackbar.LENGTH_SHORT);
-                        }
-                        snackbar.setAction(R.string.book_deleted_snack_bar_undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                for (Book book : UndoBooks) {
-                                    bookLab.addBook(book);
-                                }
-                                UndoBooks = new ArrayList<>();
-                            }
-                        });
-                        snackbar.addCallback(new Snackbar.Callback() {
-                            @Override
-                            public void onDismissed(Snackbar snackbar, int event) {
-                                Log.d(TAG, "Show FAM 4");
-                                ((MainActivity) mActivity).showFabMenu();
-                            }
-                        });
-                        // for that the FAM won't move up when a snackbar shows, just hide it currently
-                        snackbar.show();
-                        mActionMode.finish();
-                    }
+                    actionDelete();
                     break;
                 case R.id.menu_multi_select_add_label:
-                    final LabelLab labelLab = LabelLab.get(mContext);
-                    final List<Label> labels = labelLab.getLabels();
-                    new MaterialDialog.Builder(mContext)
-                            .title(R.string.add_label_dialog_title)
-                            .items(labels)
-                            .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
-                                @Override
-                                public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                    List<Label> labels = labelLab.getLabels();
-                                    // must refresh labels here because if user add label, the list won't update,
-                                    // and select the newly add label won't take effect
-                                    for (int i = 0; i < which.length; i++) {
-                                        for (Label label : labels) {
-                                            if (label.getTitle().equals(text[i])) {
-                                                // selected label
-                                                for (Book book : mMultiSelectedBooks) {
-                                                    book.addLabel(label);
-                                                    BookLab.get(mContext).updateBook(book);
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (mActionMode != null) {
-                                        mActionMode.finish();
-                                    }
-                                    dialog.dismiss();
-                                    return true;
-                                }
-                            })
-                            .neutralText(R.string.label_choice_dialog_neutral)
-                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
-                                    // create new label
-                                    new MaterialDialog.Builder(mContext)
-                                            .title(R.string.label_add_new_dialog_title)
-                                            .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
-                                            .input(
-                                                    R.string.label_add_new_dialog_edit_text,
-                                                    0,
-                                                    new MaterialDialog.InputCallback() {
-                                                        @Override
-                                                        public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
-                                                            // nothing to do here
-                                                        }
-                                                    })
-                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                                                    Label labelToAdd = new Label();
-                                                    labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
-                                                    labelLab.addLabel(labelToAdd);
-                                                    Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                                                    listDialog.getItems().add(labelToAdd.getTitle());
-                                                    listDialog.notifyItemInserted(listDialog.getItems().size() - 1);
-                                                }
-                                            })
-                                            .negativeText(android.R.string.cancel)
-                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                                                    inputDialog.dismiss();
-                                                }
-                                            })
-                                            .show();
-                                }
-                            })
-                            .positiveText(android.R.string.ok)
-                            .autoDismiss(false)
-                            .show();
+                    actionAddLabel();
                     break;
                 case R.id.menu_multi_select_move_to:
-                    final BookShelfLab bookShelfLab = BookShelfLab.get(mContext);
-                    final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-                    new MaterialDialog.Builder(mContext)
-                            .title(R.string.move_to_dialog_title)
-                            .items(bookShelves)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                                    List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-                                    for (BookShelf bookShelf : bookShelves) {
-                                        if (bookShelf.getTitle().equals(text)) {
-                                            // selected bookshelf
-                                            for (Book book : mMultiSelectedBooks) {
-                                                book.setBookshelfID(bookShelf.getId());
-                                                BookLab.get(mContext).updateBook(book);
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    if (mActionMode != null) {
-                                        mActionMode.finish();
-                                    }
-                                    dialog.dismiss();
-                                }
-                            }).positiveText(android.R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    dialog.dismiss();
-                                }
-                            }).neutralText(R.string.move_to_dialog_neutral)
-                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull final MaterialDialog listdialog, @NonNull DialogAction which) {
-                                    // create new bookshelf
-                                    new MaterialDialog.Builder(mContext)
-                                            .title(R.string.custom_book_shelf_dialog_title)
-                                            .inputRange(1, getResources().getInteger(R.integer.bookshelf_name_max_length))
-                                            .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
-                                                @Override
-                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                    // nothing to do here
-                                                }
-                                            }).onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            BookShelf bookShelfToAdd = new BookShelf();
-                                            bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
-                                            bookShelfLab.addBookShelf(bookShelfToAdd);
-                                            Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
-                                            listdialog.getItems().add(bookShelfToAdd.getTitle());
-                                            listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
-                                        }
-                                    }).negativeText(android.R.string.cancel)
-                                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).show();
-                                }
-                            }).autoDismiss(false)
-                            // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
-                            .show();
-                    break;
-                default:
+                    actionMoveTo();
                     break;
             }
             return true;
@@ -584,9 +580,11 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
             mActionMode = null;
             mMultiSelectedBooks.clear();
             mIsMultiSelectState = false;
+            refreshFetch();
             Log.d(TAG, "Show FAM 5");
-            ((MainActivity) mActivity).showFabMenu();
-            mRecyclerViewAdapter.notifyDataSetChanged();
+            if (mIsSnackbarDisappear) {
+                ((MainActivity) mActivity).showFabMenu();
+            }
         }
     };
 
@@ -594,12 +592,17 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
     public void selectLabel(Label label) {
         mCurrentLabel = label;
         refreshOptionMenu();
-        mPresenter.fetchBooks(mContext, mCurrentBookshelf, mCurrentLabel);
+        refreshFetch();
     }
 
     public void selectBookshelf(BookShelf bookShelf) {
         mCurrentBookshelf = bookShelf;
         refreshOptionMenu();
+        refreshFetch();
+    }
+
+    // 用于刷新，当Search view消失时回调
+    public void refreshFetch() {
         mPresenter.fetchBooks(mContext, mCurrentBookshelf, mCurrentLabel);
     }
 
@@ -641,10 +644,10 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
     private void multiSelect(int position, BookViewHolder bookViewHolder) {
         //Add/Remove items from list
         if (mActionMode != null) {
-            int index = mMultiSelectedBooks.indexOf(mBooks.get(position));
+            int index = mMultiSelectedBooks.indexOf(position);
             Log.d(TAG, "Select in List Position " + index);
             if (index == -1) {//not in the list
-                mMultiSelectedBooks.add(mBooks.get(position));
+                mMultiSelectedBooks.add(position);
                 bookViewHolder.setIsSelected(true);
             } else {
                 mMultiSelectedBooks.remove(index);
@@ -657,7 +660,6 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
             } else {
                 mActionMode.finish();
             }
-//            mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 }

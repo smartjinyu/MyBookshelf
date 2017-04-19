@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.base.rv.BaseViewHolder;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 
 import java.util.Calendar;
@@ -37,8 +36,8 @@ public class BatchAddedAdapter
     private Context mContext;
 
     // 监听事件
-    private BookMultiClickAdapter.RecyclerViewOnItemClickListener onItemClickListener;
-    private BookMultiClickAdapter.RecyclerViewOnItemLongClickListener onItemLongClickListener;
+    private RecyclerViewOnItemClickListener onItemClickListener;
+    private RecyclerViewOnItemLongClickListener onItemLongClickListener;
 
     public BatchAddedAdapter(List<Book> books, Context context) {
         this.mBooks = books;
@@ -60,7 +59,7 @@ public class BatchAddedAdapter
         holder.itemView.setOnClickListener(this);
         holder.itemView.setOnLongClickListener(this);
         // tag can pass some variables with view
-        holder.itemView.setTag(holder);
+        holder.itemView.setTag(position);
         Log.d(TAG, "onBindViewHolder " + position);
     }
 
@@ -69,7 +68,7 @@ public class BatchAddedAdapter
         return mBooks.size();
     }
 
-    class BookHolder extends RecyclerView.ViewHolder {
+    public class BookHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.list_cover_image_view)
         ImageView mCoverImageView;
         @BindView(R.id.list_title_text_view)
@@ -132,28 +131,28 @@ public class BatchAddedAdapter
     @Override
     public void onClick(View v) {
         if (onItemClickListener == null) return;
-        onItemClickListener.onItemClick((BaseViewHolder) v.getTag());
+        onItemClickListener.onItemClick((Integer) v.getTag());
     }
 
     @Override
     public boolean onLongClick(View v) {
-        return onItemClickListener != null && onItemLongClickListener
-                .onItemLongClick((BaseViewHolder) v.getTag());
+        return onItemLongClickListener != null && onItemLongClickListener
+                .onItemLongClick((Integer) v.getTag());
     }
 
-    public void setOnItemClickListener(BookMultiClickAdapter.RecyclerViewOnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(RecyclerViewOnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void setOnItemLongClickListener(BookMultiClickAdapter.RecyclerViewOnItemLongClickListener onItemLongClickListener) {
+    public void setOnItemLongClickListener(RecyclerViewOnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public interface RecyclerViewOnItemClickListener {
-        void onItemClick(BaseViewHolder holder);
+        void onItemClick(int position);
     }
 
     public interface RecyclerViewOnItemLongClickListener {
-        boolean onItemLongClick(BaseViewHolder holder);
+        boolean onItemLongClick(int position);
     }
 }

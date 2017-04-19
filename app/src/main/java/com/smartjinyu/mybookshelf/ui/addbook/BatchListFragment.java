@@ -18,8 +18,6 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.adapter.BatchAddedAdapter;
-import com.smartjinyu.mybookshelf.base.rv.BaseMultiClickAdapter;
-import com.smartjinyu.mybookshelf.base.rv.BaseViewHolder;
 import com.smartjinyu.mybookshelf.callback.BookFetchedCallback;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
@@ -37,7 +35,7 @@ import java.util.List;
  * Created by smartjinyu on 2017/2/8.
  */
 
-public class BatchListFragment extends Fragment implements BaseMultiClickAdapter.RecyclerViewOnItemLongClickListener {
+public class BatchListFragment extends Fragment implements BatchAddedAdapter.RecyclerViewOnItemLongClickListener {
     private static final String TAG = "BatchListFragment";
 
     private RecyclerView mRecyclerView;
@@ -70,23 +68,23 @@ public class BatchListFragment extends Fragment implements BaseMultiClickAdapter
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            updateUI();
-        }
-    }
-
-    public void updateUI() {
-        if (mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new BatchAddedAdapter(mBooks, mContext);
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        } else {
-            mRecyclerViewAdapter.notifyDataSetChanged();
-        }
-    }
+//
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//        if (isVisibleToUser) {
+//            updateUI();
+//        }
+//    }
+//
+//    public void updateUI() {
+//        if (mRecyclerViewAdapter == null) {
+//            mRecyclerViewAdapter = new BatchAddedAdapter(mBooks, mContext);
+//            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+//        } else {
+//            mRecyclerViewAdapter.notifyDataSetChanged();
+//        }
+//    }
 
     public void chooseBookshelf() {
         final BookShelfLab bookShelfLab = BookShelfLab.get(mContext);
@@ -236,8 +234,7 @@ public class BatchListFragment extends Fragment implements BaseMultiClickAdapter
     }
 
     @Override
-    public boolean onItemLongClick(BaseViewHolder holder) {
-        final int position = holder.getItemPosition();
+    public boolean onItemLongClick(final int position) {
         new MaterialDialog.Builder(getActivity())
                 .title(R.string.batch_add_delete_book_dialog_title)
                 .content(R.string.batch_add_delete_book_dialog_content)
@@ -253,7 +250,7 @@ public class BatchListFragment extends Fragment implements BaseMultiClickAdapter
                         }
                         mBooks.remove(position);
                         mRecyclerViewAdapter.notifyDataSetChanged();
-                        mContext.notifyTabTitle();
+                        mContext.notifyTabTitle(true);
                     }
                 })
                 .negativeText(android.R.string.cancel)

@@ -118,7 +118,8 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
         return super.onOptionsItemSelected(item);
     }
 
-    public void notifyTabTitle() {
+    public void notifyTabTitle(boolean decrease) {
+        mAddedCount = decrease ? mAddedCount - 1 : mAddedCount + 1;
         TabLayout.Tab tabItem = tabLayout.getTabAt(1);
         if (tabItem == null) return;
         String titleFormat = getString(R.string.batch_add_tab_title_1);
@@ -162,8 +163,7 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
 
     @Override
     public void onBookFetched(Book book) {
-        mAddedCount++;
-        notifyTabTitle();
+        notifyTabTitle(false);
         mCallback.onBookFetched(book);
     }
 }

@@ -287,6 +287,7 @@ public class MainActivity extends SimpleActivity
         if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             refreshBookShelfSpinner();
+            mMainFragment.refreshFetch();
         }
         Log.d(TAG, "ACTION_SEARCH = " + actionSearch);
         if (actionSearch) {

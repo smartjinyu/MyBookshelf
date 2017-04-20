@@ -155,11 +155,10 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         } else {
             mNoBooksLL.setVisibility(View.GONE);
         }
-        if (mCurrentLabel!=null) {
+        if (mCurrentLabel != null) {
             mLLLabel.setVisibility(View.VISIBLE);
             mTVLabel.setText(mCurrentLabel.getTitle());
-        }
-        else mLLLabel.setVisibility(View.VISIBLE);
+        } else mLLLabel.setVisibility(View.GONE);
     }
 
     @Override

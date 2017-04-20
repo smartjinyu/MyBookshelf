@@ -8,7 +8,7 @@ TODO:
 - ~~BookList 显示状态化（参照 TODO ）~~
 - MaterialDialog 功能提取
 - ~~打点逻辑功能提取~~
-- 书籍添加后，到 MainActivity 回调，刷新书籍列表显示
+- ~~书籍添加后，到 MainActivity 回调，刷新书籍列表显示~~
 
 发起 pull request
 

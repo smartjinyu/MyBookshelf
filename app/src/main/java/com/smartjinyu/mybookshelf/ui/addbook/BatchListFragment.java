@@ -50,13 +50,7 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
         @Override
         public void onBookFetched(Book book) {
             mBooks.add(book);
-            mRecyclerViewAdapter.notifyDataSetChanged();
-            if (mBooks == null || mBooks.size() <= 0) {
-                mNoBooksText.setText(R.string.batch_add_no_books);
-                mNoBooksLL.setVisibility(View.VISIBLE);
-            } else {
-                mNoBooksLL.setVisibility(View.GONE);
-            }
+            refreshRecyclerView();
         }
     };
 
@@ -258,7 +252,7 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                             Log.i(TAG, "Remove cover result = " + succeeded);
                         }
                         mBooks.remove(position);
-                        mRecyclerViewAdapter.notifyDataSetChanged();
+                        refreshRecyclerView();
                         mContext.notifyTabTitle(true);
                     }
                 }).negativeText(android.R.string.cancel)
@@ -270,5 +264,15 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                 })
                 .show();
         return false;
+    }
+
+    private void refreshRecyclerView(){
+        mRecyclerViewAdapter.notifyDataSetChanged();
+        if (mBooks == null || mBooks.size() <= 0) {
+            mNoBooksText.setText(R.string.batch_add_no_books);
+            mNoBooksLL.setVisibility(View.VISIBLE);
+        } else {
+            mNoBooksLL.setVisibility(View.GONE);
+        }
     }
 }

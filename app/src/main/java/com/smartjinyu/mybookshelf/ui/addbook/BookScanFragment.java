@@ -140,7 +140,7 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
                             mActivity.finish();
                         }
                     }).show();
-        }
+        } else mPresenter.fetchBookInfo(isbn);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

@@ -10,12 +10,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.database.BookBaseHelper;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -123,11 +122,7 @@ public class RestoreTask extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean isSucceed) {
         mDialog.dismiss();
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Restore")
-                .putContentId("2010")
-                .putCustomAttribute("Restore Result = ", isSucceed.toString()));
+        AnswersUtil.logContentView(TAG, "Restore", "2010", "Backup Result =", isSucceed.toString());
         if (isSucceed) {
             Toast.makeText(mContext, mContext.getString(R.string.restore_succeed_toast), Toast.LENGTH_LONG).show();
             Handler handler = new Handler();
@@ -156,7 +151,7 @@ public class RestoreTask extends AsyncTask<String, Void, Boolean> {
             boolean result = file.mkdirs();
         }
         try (ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)))) {
-            ZipEntry ze = null;
+            ZipEntry ze;
             while ((ze = zipInputStream.getNextEntry()) != null) {
                 String path = location + ze.getName();
                 File unzipFile = new File(path);
@@ -214,7 +209,7 @@ public class RestoreTask extends AsyncTask<String, Void, Boolean> {
     }
 
     //delete folder
-    void deleteRecursive(File fileOrDirectory) {
+    private void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
                 deleteRecursive(child);
@@ -222,8 +217,8 @@ public class RestoreTask extends AsyncTask<String, Void, Boolean> {
     }
 
     private void restartApp() {
-        Intent i = ((Activity)mContext).getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(((Activity)mContext).getBaseContext().getPackageName());
+        Intent i = ((Activity) mContext).getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(((Activity) mContext).getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(i);
         Runtime.getRuntime().exit(0);

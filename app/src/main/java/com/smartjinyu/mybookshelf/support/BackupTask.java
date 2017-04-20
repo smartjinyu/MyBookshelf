@@ -7,13 +7,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.BuildConfig;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.database.BookBaseHelper;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -92,11 +91,7 @@ public class BackupTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean isSucceed) {
         mDialog.dismiss();
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Backup")
-                .putContentId("2011")
-                .putCustomAttribute("Backup Result = ", isSucceed.toString()));
+        AnswersUtil.logContentView(TAG, "Backup", "2011", "Backup Result =", isSucceed.toString());
 
         if (isSucceed) {
             String content = String.format(mContext.getString(R.string.backup_succeed_toast), mZipFile);

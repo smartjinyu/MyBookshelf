@@ -12,12 +12,11 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.BuildConfig;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.util.AlertUtil;
 import com.smartjinyu.mybookshelf.util.AppUtil;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
@@ -63,11 +62,7 @@ public class AboutFragment extends PreferenceFragment
 //            case "about_pref_name":
 //                break;
             case "about_pref_donate":
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Donate")
-                        .putContentId("2020")
-                        .putCustomAttribute("Donate Clicked", "Donate Clicked"));
+                AnswersUtil.logContentView(TAG, "Donate", "2020", "Donate Clicked", "Donate Clicked");
                 boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(getActivity());
                 if (hasInstalledAlipayClient) {
                     new MaterialDialog.Builder(getActivity())
@@ -78,11 +73,7 @@ public class AboutFragment extends PreferenceFragment
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     AlipayZeroSdk.startAlipayClient(getActivity(), getString(R.string.about_donate_alipay_qrcode));
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Donate")
-                                            .putContentId("2021")
-                                            .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
+                                    AnswersUtil.logContentView(TAG, "Donate", "2021", "Alipay Clicked", "Alipay Clicked");
                                     dialog.dismiss();
                                 }
                             }).negativeText(R.string.about_donate_dialog_negative0)
@@ -91,11 +82,7 @@ public class AboutFragment extends PreferenceFragment
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
                                     Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Donate")
-                                            .putContentId("2022")
-                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                    AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
                                     dialog.dismiss();
                                 }
                             })
@@ -103,11 +90,7 @@ public class AboutFragment extends PreferenceFragment
                             .onNeutral(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Donate")
-                                            .putContentId("2023")
-                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                                    AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
                                     dialog.dismiss();
                                 }
                             }).show();
@@ -121,11 +104,7 @@ public class AboutFragment extends PreferenceFragment
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
                                     Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Donate")
-                                            .putContentId("2022")
-                                            .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                                    AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
                                     dialog.dismiss();
                                 }
                             })
@@ -133,11 +112,7 @@ public class AboutFragment extends PreferenceFragment
                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Donate")
-                                            .putContentId("2023")
-                                            .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                                    AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
 
                                     dialog.dismiss();
                                 }

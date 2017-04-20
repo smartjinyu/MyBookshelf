@@ -8,15 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.app.BookShelfApp;
 import com.smartjinyu.mybookshelf.di.component.ActivityComponent;
 import com.smartjinyu.mybookshelf.di.component.DaggerActivityComponent;
 import com.smartjinyu.mybookshelf.di.module.ActivityModule;
-
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -96,23 +91,8 @@ public abstract class BaseActivity<T extends BasePresenter>
         return new ActivityModule(this);
     }
 
-    protected void logContentView(String tag, String contentType,
-                                  String contentId, Map<String, String> attrs) {
-        ContentViewEvent event = new ContentViewEvent()
-                .putContentName(tag)
-                .putContentType(contentType)
-                .putContentId(contentId);
-        if (attrs != null) {
-            Set<Map.Entry<String, String>> set = attrs.entrySet();
-            for (Map.Entry<String, String> entry : set)
-                event.putCustomAttribute(entry.getKey(), entry.getValue());
-        }
-        Answers.getInstance().logContentView(event);
-    }
-
     @Override
     public void onBackPressed() {
-        onBackPressed();
     }
 
     protected abstract String getTag();

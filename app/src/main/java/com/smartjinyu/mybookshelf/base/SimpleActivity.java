@@ -8,8 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,11 +39,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         TAG = getTag();
         // log content view
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1005")
-                .putCustomAttribute("onCreate", "onCreate"));
+        AnswersUtil.logContentView(TAG, "Activity", "1005", "onCreate", "onCreate");
 
         mUnBinder = ButterKnife.bind(this);
         mContext = this;

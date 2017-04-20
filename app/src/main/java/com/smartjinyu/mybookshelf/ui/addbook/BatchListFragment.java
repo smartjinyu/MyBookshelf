@@ -17,8 +17,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.adapter.BatchAddedAdapter;
 import com.smartjinyu.mybookshelf.callback.BookFetchedCallback;
@@ -28,6 +26,7 @@ import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.bean.Label;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -189,11 +188,7 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                         }
                         dialog.dismiss();
                         BookLab.get(mContext).addBooks(mBooks);
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("ADD")
-                                .putContentId("1202")
-                                .putCustomAttribute("ADD Succeeded", mBooks.size()));
+                        AnswersUtil.logContentView(TAG, "ADD", "1202", "ADD Succeeded", mBooks.size() + "");
                         mContext.finish();
                         return true;
 

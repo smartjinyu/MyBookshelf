@@ -31,8 +31,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.base.SimpleActivity;
 import com.smartjinyu.mybookshelf.model.BookLab;
@@ -42,6 +40,7 @@ import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.bean.Label;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,12 +115,7 @@ public class BookEditActivity extends SimpleActivity {
 
     @Override
     protected void initEventAndData() {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1007")
-                .putCustomAttribute("onCreate", "onCreate"));
-
+        AnswersUtil.logContentView(TAG, "ADD", "1007", "onCreate", "onCreate");
 
         Intent i = getIntent();
 
@@ -569,11 +563,7 @@ public class BookEditActivity extends SimpleActivity {
         mBookCoverImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Change Cover")
-                        .putContentId("2050")
-                        .putCustomAttribute("Change Cover", 1));
+                AnswersUtil.logContentView(TAG, "Change Cover", "2050", "Change Cover", 1 + "");
 
                 new MaterialDialog.Builder(BookEditActivity.this)
                         .title(R.string.cover_change_dialog_title)
@@ -582,11 +572,7 @@ public class BookEditActivity extends SimpleActivity {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                                 if (position == 0) {
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Take New Picture")
-                                            .putContentId("2051")
-                                            .putCustomAttribute("Take New Picture", 1));
+                                    AnswersUtil.logContentView(TAG, "Take New Picture", "2051", "Take New Picture", 1 + "");
                                     if (ContextCompat.checkSelfPermission(BookEditActivity.this, Manifest.permission.CAMERA)
                                             != PackageManager.PERMISSION_GRANTED) {
                                         ActivityCompat.requestPermissions(BookEditActivity.this,

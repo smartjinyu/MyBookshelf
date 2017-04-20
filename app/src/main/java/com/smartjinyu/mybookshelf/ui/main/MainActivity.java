@@ -27,9 +27,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.lapism.searchview.SearchView;
@@ -46,6 +43,7 @@ import com.smartjinyu.mybookshelf.ui.addbook.SingleAddActivity;
 import com.smartjinyu.mybookshelf.ui.setting.SettingsActivity;
 import com.smartjinyu.mybookshelf.util.AlertUtil;
 import com.smartjinyu.mybookshelf.util.AppUtil;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.util.ArrayList;
@@ -53,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import io.fabric.sdk.android.Fabric;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 import static com.smartjinyu.mybookshelf.util.SharedPrefUtil.LAUNCH_TIMES;
@@ -102,17 +99,13 @@ public class MainActivity extends SimpleActivity
 
     @Override
     protected int getLayoutId() {
-        Fabric.with(this, new Crashlytics());
+        AnswersUtil.init(this);
         return R.layout.activity_main;
     }
 
     @Override
     protected void initEventAndData() {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1001")
-                .putCustomAttribute("onCreate", "onCreate"));
+        AnswersUtil.logContentView(TAG, "Activity", "1001", "onCreate", "onCreate");
         mContext = MainActivity.this;
 
         mMainFragment = MainFragment.newInstance();
@@ -209,11 +202,7 @@ public class MainActivity extends SimpleActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "Search " + query);
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Activity")
-                        .putContentId("1002")
-                        .putCustomAttribute("Search", "Search Text Submitted"));
+                AnswersUtil.logContentView(TAG, "Activity", "1002", "Search", "Search Text Submitted");
                 mSearchView.hideKeyboard();
                 mMainFragment.doSearch(query);
                 return true;
@@ -330,11 +319,7 @@ public class MainActivity extends SimpleActivity
     }
 
     private void showRatingDialog() {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Rating")
-                .putContentId("2100")
-                .putCustomAttribute("Rating Dialog show", 1));
+        AnswersUtil.logContentView(TAG, "Rating", "2100", "Rating Dialog show", 1 + "");
 
         new MaterialDialog.Builder(this)
                 .title(R.string.rating_dialog_title)
@@ -347,11 +332,7 @@ public class MainActivity extends SimpleActivity
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
                         startActivity(i);
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2101")
-                                .putCustomAttribute("Go to Store", 1));
+                        AnswersUtil.logContentView(TAG, "Rating", "2101", "Go to Store", 1 + "");
 
                         MainActivity.super.onBackPressed();
                     }
@@ -360,11 +341,7 @@ public class MainActivity extends SimpleActivity
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2102")
-                                .putCustomAttribute("Cancel Rating", 1));
+                        AnswersUtil.logContentView(TAG, "Rating", "2102", "Cancel Rating", 1 + "");
                         MainActivity.super.onBackPressed();
                     }
                 })
@@ -373,11 +350,7 @@ public class MainActivity extends SimpleActivity
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2102")
-                                .putCustomAttribute("Mute Rating", 1));
+                        AnswersUtil.logContentView(TAG, "Rating", "2102", "Mute Rating", 1 + "");
                         MainActivity.super.onBackPressed();
                     }
                 })
@@ -387,11 +360,7 @@ public class MainActivity extends SimpleActivity
     }
 
     private void showDonateDialog() {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Donate")
-                .putContentId("2030")
-                .putCustomAttribute("Donate Clicked", "Donate Clicked"));
+        AnswersUtil.logContentView(TAG, "Donate", "2030", "Donate Clicked", "Donate Clicked");
         Log.i(TAG, "Donate Dialog show");
         boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
         if (hasInstalledAlipayClient) {
@@ -403,11 +372,7 @@ public class MainActivity extends SimpleActivity
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
-                            Answers.getInstance().logContentView(new ContentViewEvent()
-                                    .putContentName(TAG)
-                                    .putContentType("Donate")
-                                    .putContentId("2031")
-                                    .putCustomAttribute("Alipay Clicked", "Alipay Clicked"));
+                            AnswersUtil.logContentView(TAG, "Donate", "2031", "Alipay Clicked", "Alipay Clicked");
                             SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
 //                            setDrawer(mDrawer.getCurrentSelection());
@@ -423,11 +388,7 @@ public class MainActivity extends SimpleActivity
                                     getResources().getString(R.string.about_preference_donate_toast),
                                     Toast.LENGTH_SHORT)
                                     .show();
-                            Answers.getInstance().logContentView(new ContentViewEvent()
-                                    .putContentName(TAG)
-                                    .putContentType("Donate")
-                                    .putContentId("2032")
-                                    .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                            AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
                             SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
 //                            setDrawer(mDrawer.getCurrentSelection());
@@ -437,11 +398,7 @@ public class MainActivity extends SimpleActivity
                     .onNeutral(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Answers.getInstance().logContentView(new ContentViewEvent()
-                                    .putContentName(TAG)
-                                    .putContentType("Donate")
-                                    .putContentId("2033")
-                                    .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                            AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
                             dialog.dismiss();
                         }
                     })
@@ -461,11 +418,7 @@ public class MainActivity extends SimpleActivity
                                     getResources().getString(R.string.about_preference_donate_toast),
                                     Toast.LENGTH_SHORT)
                                     .show();
-                            Answers.getInstance().logContentView(new ContentViewEvent()
-                                    .putContentName(TAG)
-                                    .putContentType("Donate")
-                                    .putContentId("2032")
-                                    .putCustomAttribute("Copy to clipboard Clicked", "Copy to clipboard Clicked"));
+                            AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
                             SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
                             dialog.dismiss();
 //                            setDrawer(mDrawer.getCurrentSelection());
@@ -475,11 +428,7 @@ public class MainActivity extends SimpleActivity
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Answers.getInstance().logContentView(new ContentViewEvent()
-                                    .putContentName(TAG)
-                                    .putContentType("Donate")
-                                    .putContentId("2033")
-                                    .putCustomAttribute("Cancel Clicked", "Cancel Clicked"));
+                            AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
                             dialog.dismiss();
                         }
                     })

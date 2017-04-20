@@ -19,8 +19,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nononsenseapps.filepicker.FilePickerActivity;
@@ -29,6 +27,7 @@ import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.support.BackupTask;
 import com.smartjinyu.mybookshelf.support.ExportCSVTask;
 import com.smartjinyu.mybookshelf.support.RestoreTask;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.io.File;
@@ -126,11 +125,7 @@ public class SettingsFragment extends PreferenceFragment
                         }).canceledOnTouchOutside(false).show();
                 break;
             case "settings_pref_export_to_csv":
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Export CSV")
-                        .putContentId("2030")
-                        .putCustomAttribute("Click Export to csv", 1));
+                AnswersUtil.logContentView(TAG, "Export CSV", "2030", "Click Export to csv", 1 + "");
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
@@ -140,11 +135,7 @@ public class SettingsFragment extends PreferenceFragment
                 }
                 break;
             case "settings_pref_backup":
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Backup")
-                        .putContentId("2006")
-                        .putCustomAttribute("Click Backup", 1));
+                AnswersUtil.logContentView(TAG, "Backup", "2006", "Click Backup", 1 + "");
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -159,11 +150,7 @@ public class SettingsFragment extends PreferenceFragment
                 String path = SharedPrefUtil.getInstance().getString(SharedPrefUtil.BACK_LOCATION,
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/backups");
                 backupLocationPreference.setSummary(path);
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Backup Location")
-                        .putContentId("2005")
-                        .putCustomAttribute("Click Backup Location", 1));
+                AnswersUtil.logContentView(TAG, "Backup Location", "2005", "Click Backup Location", 1 + "");
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -179,11 +166,7 @@ public class SettingsFragment extends PreferenceFragment
                     return true;
                 }
             case "settings_pref_restore":
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Restore")
-                        .putContentId("2007")
-                        .putCustomAttribute("Click Restore", 1));
+                AnswersUtil.logContentView(TAG, "Restore", "2007", "Click Restore", 1 + "");
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {

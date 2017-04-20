@@ -6,8 +6,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.opencsv.CSVWriter;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.model.BookLab;
@@ -15,6 +13,8 @@ import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
+import com.smartjinyu.mybookshelf.util.AnswersUtil;
 import com.smartjinyu.mybookshelf.util.SharedPrefUtil;
 
 import java.io.FileOutputStream;
@@ -136,11 +136,7 @@ public class ExportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
                         entry.add("");
                     } else {
                         int month = calendar.get(Calendar.MONTH) + 1;
-                        StringBuilder pubtime = new StringBuilder();
-                        pubtime.append(year);
-                        pubtime.append(" - ");
-                        pubtime.append(month);
-                        entry.add(pubtime.toString());
+                        entry.add(String.valueOf(year) + " - " + month);
                     }
                 }
                 if (items[5] == 1) {
@@ -155,7 +151,7 @@ public class ExportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
                 if (items[7] == 1) {
                     // bookshelf
                     BookShelf bookShelf = BookShelfLab.get(mContext).getBookShelf(mBook.getBookshelfID());
-                    entry.add(bookShelf.getTitle());
+                    entry.add(bookShelf == null ? "" : bookShelf.getTitle());
                 }
                 if (items[8] == 1) {
                     // labels
@@ -163,7 +159,8 @@ public class ExportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
                     if (labelID.size() != 0) {
                         StringBuilder labelsTitle = new StringBuilder();
                         for (UUID id : labelID) {
-                            labelsTitle.append(LabelLab.get(mContext).getLabel(id).getTitle());
+                            Label label = LabelLab.get(mContext).getLabel(mBook.getBookshelfID());
+                            labelsTitle.append(label == null ? "" : label.getTitle());
                             labelsTitle.append(",");
                         }
                         labelsTitle.deleteCharAt(labelsTitle.length() - 1);
@@ -200,11 +197,7 @@ public class ExportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean isSucceed) {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Export CSV")
-                .putContentId("2031")
-                .putCustomAttribute("Export Result = ", isSucceed.toString()));
+        AnswersUtil.logContentView(TAG, "Export CSV", "2031", "Backup Result =", isSucceed.toString());
         mDialog.dismiss();
         if (isSucceed) {
             String toastText = String.format(mContext.getString(R.string.export_csv_export_succeed_toast), mCsvName);

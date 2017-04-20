@@ -42,7 +42,7 @@ public class BookViewHolder extends BaseViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    void bindBook(Book book, int position, Context context) {
+    void bindBook(Book book, boolean checked, Context context) {
         mTitleTextView.setText(book.getTitle());
         StringBuilder authorAndPub = new StringBuilder();
         String authors = book.getFormatAuthor();
@@ -76,7 +76,9 @@ public class BookViewHolder extends BaseViewHolder {
 
         mPubtimeTextView.setText(pubDate);
         mRelativeLayout.setBackgroundColor(Color.WHITE);
-        if (book.isHasCover()) {
+        if (checked)
+            mCoverImageView.setImageResource(R.drawable.ic_check_circle);
+        if (!checked && book.isHasCover()) {
             mImagePath = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                     + "/" + book.getCoverPhotoFileName();
             Bitmap src = BitmapFactory.decodeFile(mImagePath);

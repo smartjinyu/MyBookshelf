@@ -368,6 +368,7 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         mMultiSelectedBooks.clear();
         for (int i = 0; i < mBooks.size(); i++) {
             mMultiSelectedBooks.add(i);
+            mRecyclerViewAdapter.selectAll();
             // TODO 处理全选de视图
         }
         String title = getResources().getQuantityString(R.plurals.multi_title,

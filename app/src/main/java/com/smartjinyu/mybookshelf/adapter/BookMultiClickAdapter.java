@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.base.rv.BaseMultiClickAdapter;
+import com.smartjinyu.mybookshelf.base.rv.BaseViewHolder;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 
 import java.util.List;
@@ -21,6 +22,8 @@ public class BookMultiClickAdapter extends BaseMultiClickAdapter<Book, BookViewH
         implements View.OnClickListener, View.OnLongClickListener {
     private static final String TAG = BatchAddedAdapter.class.getSimpleName();
 
+    private boolean mAllSelected;
+
     public BookMultiClickAdapter(List<Book> books, Context context) {
         super(books, context);
     }
@@ -33,8 +36,27 @@ public class BookMultiClickAdapter extends BaseMultiClickAdapter<Book, BookViewH
     }
 
     @Override
+    public void onClick(View v) {
+        mAllSelected = false;
+        if (onItemClickListener == null) return;
+        onItemClickListener.onItemClick((BaseViewHolder) v.getTag());
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        mAllSelected = false;
+        return onItemClickListener != null && onItemLongClickListener
+                .onItemLongClick((BaseViewHolder) v.getTag());
+    }
+
+    public void selectAll() {
+        mAllSelected = true;
+        notifyDataSetChanged();
+    }
+
+    @Override
     protected void bindBaseVH(BookViewHolder holder, int position, Book book) {
-        holder.bindBook(book, position, mContext);
+        holder.bindBook(book, mAllSelected, mContext);
         Log.d(TAG, "onBindViewHolder " + position);
     }
 }

@@ -572,6 +572,7 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
                                 if (bookshelfList == null) return;
                                 bookshelfList.add(bookShelfToAdd.getTitle());
                                 listdialog.notifyItemInserted(bookshelfList.size() - 1);
+                                ((MainActivity) mActivity).refreshBookShelfSpinner();
                             }
                         }).negativeText(android.R.string.cancel)
                                 .onNegative(new MaterialDialog.SingleButtonCallback() {

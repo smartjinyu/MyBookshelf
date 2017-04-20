@@ -303,13 +303,15 @@ public class SettingsFragment extends PreferenceFragment
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            List<CharSequence> itemList = dialogList.getItems();
+                                            if (itemList == null) return;
                                             String path = backupLocationPreference.getSummary().toString() + "/"
                                                     + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
                                             File file = new File(path);
                                             if (file.exists()) {
                                                 file.delete();
                                             }
-                                            dialogList.getItems().remove(position);
+                                            itemList.remove(position);
                                             dialogList.notifyItemsChanged();
                                         }
                                     }).negativeText(android.R.string.cancel)

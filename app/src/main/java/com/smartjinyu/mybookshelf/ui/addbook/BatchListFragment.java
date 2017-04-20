@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -117,39 +118,36 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                         // create new bookshelf
                         new MaterialDialog.Builder(mContext)
                                 .title(R.string.custom_book_shelf_dialog_title)
-                                .inputRange(1,
-                                        getResources().getInteger(R.integer.bookshelf_name_max_length))
-                                .input(
-                                        R.string.custom_book_shelf_dialog_edit_text,
-                                        0,
-                                        new MaterialDialog.InputCallback() {
-                                            @Override
-                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                // nothing to do here
-                                            }
-                                        })
+                                .inputRange(1, getResources().getInteger(R.integer.bookshelf_name_max_length))
+                                .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
+                                    @Override
+                                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                        // nothing to do here
+                                    }
+                                })
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        EditText etBookShelf = dialog.getInputEditText();
+                                        if (etBookShelf == null) return;
                                         BookShelf bookShelfToAdd = new BookShelf();
-                                        bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
+                                        bookShelfToAdd.setTitle(etBookShelf.getText().toString());
                                         bookShelfLab.addBookShelf(bookShelfToAdd);
                                         Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
-                                        listdialog.getItems().add(bookShelfToAdd.getTitle());
-                                        listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
+                                        List<CharSequence> itemList = listdialog.getItems();
+                                        if (itemList == null) return;
+                                        itemList.add(bookShelfToAdd.getTitle());
+                                        listdialog.notifyItemInserted(itemList.size() - 1);
                                     }
-                                })
-                                .negativeText(android.R.string.cancel)
+                                }).negativeText(android.R.string.cancel)
                                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         dialog.dismiss();
                                     }
-                                })
-                                .show();
+                                }).show();
                     }
-                })
-                .autoDismiss(false)
+                }).autoDismiss(false)
                 // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
                 .show();
     }
@@ -207,11 +205,15 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        EditText etLabel = inputDialog.getInputEditText();
+                                        if (etLabel == null) return;
                                         Label labelToAdd = new Label();
-                                        labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                        labelToAdd.setTitle(etLabel.getText().toString());
                                         labelLab.addLabel(labelToAdd);
                                         Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                                        listDialog.getItems().add(labelToAdd.getTitle());
+                                        ArrayList<CharSequence> itemList = listDialog.getItems();
+                                        if (itemList == null) return;
+                                        itemList.add(labelToAdd.getTitle());
                                         listDialog.notifyItemInserted(listDialog.getItems().size() - 1);
                                     }
                                 })
@@ -252,8 +254,7 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
                         mRecyclerViewAdapter.notifyDataSetChanged();
                         mContext.notifyTabTitle(true);
                     }
-                })
-                .negativeText(android.R.string.cancel)
+                }).negativeText(android.R.string.cancel)
                 .onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

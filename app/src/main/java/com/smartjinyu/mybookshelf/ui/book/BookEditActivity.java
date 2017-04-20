@@ -188,8 +188,8 @@ public class BookEditActivity extends AppCompatActivity {
         } else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
-            String authors = authorEditText.getText().toString().replace("\n","");
-            if(authors.trim().length()!=0){
+            String authors = authorEditText.getText().toString().replace("\n", "");
+            if (authors.trim().length() != 0) {
                 String[] authorArray;
                 if (authors.contains("、")) {
                     authorArray = authors.split("、");
@@ -205,8 +205,8 @@ public class BookEditActivity extends AppCompatActivity {
             }
             //
             //translators
-            String translators = translatorEditText.getText().toString().replace("\n","");
-            if(translators.trim().length()!=0){
+            String translators = translatorEditText.getText().toString().replace("\n", "");
+            if (translators.trim().length() != 0) {
                 String[] translatorArray;
                 if (translators.contains("、")) {
                     translatorArray = translators.split("、");
@@ -302,6 +302,7 @@ public class BookEditActivity extends AppCompatActivity {
         if (mBook.getLabelID() != null && mBook.getLabelID().size() != 0) {
             for (UUID labelID : mBook.getLabelID()) {
                 Label curLabel = labelLab.getLabel(labelID);
+                if (curLabel == null) continue;
                 labelsTitle.append(curLabel.getTitle());
                 labelsTitle.append(",");
                 // set EditText, show already selected labels
@@ -336,6 +337,7 @@ public class BookEditActivity extends AppCompatActivity {
                                         List<CharSequence> allItems = dialog.getItems();
                                         List<Integer> whichList = Arrays.asList(which);
                                         List<Label> labels = labelLab.getLabels();
+                                        if (allItems == null) return false;
                                         // refresh label list for that user may add label
                                         for (int i = 0; i < allItems.size(); i++) {
                                             if (whichList.contains(i)) {
@@ -383,12 +385,16 @@ public class BookEditActivity extends AppCompatActivity {
                                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
                                             public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                                EditText etLabel = inputDialog.getInputEditText();
+                                                if (etLabel == null) return;
                                                 Label labelToAdd = new Label();
-                                                labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                                labelToAdd.setTitle(etLabel.getText().toString());
                                                 labelLab.addLabel(labelToAdd);
                                                 Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                                                multiChoiceDialog.getItems().add(labelToAdd.getTitle());
-                                                multiChoiceDialog.notifyItemInserted(multiChoiceDialog.getItems().size() - 1);
+                                                List<CharSequence> itemList = multiChoiceDialog.getItems();
+                                                if (itemList == null) return;
+                                                itemList.add(labelToAdd.getTitle());
+                                                multiChoiceDialog.notifyItemInserted(itemList.size() - 1);
                                             }
                                         })
                                         .negativeText(android.R.string.cancel)
@@ -397,19 +403,15 @@ public class BookEditActivity extends AppCompatActivity {
                                             public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
                                                 inputDialog.dismiss();
                                             }
-                                        })
-                                        .show();
+                                        }).show();
                             }
-                        })
-                        .positiveText(android.R.string.ok)
+                        }).positiveText(android.R.string.ok)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 dialog.dismiss();
                             }
-                        })
-
-                        .autoDismiss(false)
+                        }).autoDismiss(false)
                         .show();
 
             }
@@ -430,18 +432,18 @@ public class BookEditActivity extends AppCompatActivity {
 
         titleEditText.setText(mBook.getTitle());
         String authors = mBook.getFormatAuthor();
-        if(authors!=null){
+        if (authors != null) {
             authorEditText.setText(authors);
         }
         String translators = mBook.getFormatTranslator();
-        if(translators!=null){
+        if (translators != null) {
             translatorEditText.setText(translators);
         }
 
         publisherEditText.setText(mBook.getPublisher());
         if (mBook.getPubTime() != null) {
             int year = mBook.getPubTime().get(Calendar.YEAR);
-            if(year!=9999){
+            if (year != 9999) {
                 pubyearEditText.setText(String.valueOf(year));
                 int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
                 StringBuilder month = new StringBuilder();
@@ -450,14 +452,12 @@ public class BookEditActivity extends AppCompatActivity {
                 }
                 month.append(String.valueOf(mon));
                 pubmonthEditText.setText(month);
-
             }
         }
 
-
         isbnEditText.setText(mBook.getIsbn());
 
-        String detailBarText = String.format(getString(R.string.book_info_title),mBook.getDataSource());
+        String detailBarText = String.format(getString(R.string.book_info_title), mBook.getDataSource());
         detailBarTextView.setText(detailBarText);
     }
 
@@ -467,7 +467,7 @@ public class BookEditActivity extends AppCompatActivity {
         bookshelfSpinner = (Spinner) findViewById(R.id.book_shelf_spinner);
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
-        final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
+        final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<>(
                 this, R.layout.spinner_item, bookShelves);
         //overload toString method in BookShelf
         BookShelf customShelf = new BookShelf();
@@ -496,7 +496,7 @@ public class BookEditActivity extends AppCompatActivity {
                 String selectedName = selectedBS.toString();
                 if (selectedName.equals(getResources().getString(R.string.custom_spinner_item))) {
                     Log.i(TAG, "Custom Bookshelf clicked");
-                    MaterialDialog inputDialog = new MaterialDialog.Builder(BookEditActivity.this)
+                    new MaterialDialog.Builder(BookEditActivity.this)
                             .title(R.string.custom_book_shelf_dialog_title)
                             .inputRange(1, getResources().getInteger(R.integer.bookshelf_name_max_length))
                             .input(R.string.custom_book_shelf_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
@@ -508,9 +508,11 @@ public class BookEditActivity extends AppCompatActivity {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    EditText etBookshelf = dialog.getInputEditText();
+                                    if (etBookshelf == null) return;
                                     BookShelf bookShelf = new BookShelf();
-                                    if (dialog.getInputEditText().getText() != null) {
-                                        bookShelf.setTitle(dialog.getInputEditText().getText().toString());
+                                    if (etBookshelf.getText() != null) {
+                                        bookShelf.setTitle(etBookshelf.getText().toString());
                                     } else {
                                         bookShelf.setTitle("");
                                     }
@@ -741,6 +743,4 @@ public class BookEditActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

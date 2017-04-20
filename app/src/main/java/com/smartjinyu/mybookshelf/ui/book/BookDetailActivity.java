@@ -21,11 +21,12 @@ import android.widget.Toast;
 
 import com.klinker.android.sliding.SlidingActivity;
 import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.BookLab;
-import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
 import com.smartjinyu.mybookshelf.model.LabelLab;
+import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -132,7 +133,7 @@ public class BookDetailActivity extends SlidingActivity {
 
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         String authors = mBook.getFormatAuthor();
-        if (authors!=null) {
+        if (authors != null) {
             authorTextView.setText(authors);
             authorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -156,7 +157,7 @@ public class BookDetailActivity extends SlidingActivity {
 
         String translators = mBook.getFormatTranslator();
 
-        if (translators!=null) {
+        if (translators != null) {
             translatorTextView.setText(translators);
             translatorRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -250,7 +251,7 @@ public class BookDetailActivity extends SlidingActivity {
             isbnRelativeLayout.setVisibility(View.GONE);
         }
 
-        String detailBarText = String.format(getString(R.string.book_info_title),mBook.getDataSource());
+        String detailBarText = String.format(getString(R.string.book_info_title), mBook.getDataSource());
         infoTitleTextView.setText(detailBarText);
 
     }
@@ -294,6 +295,7 @@ public class BookDetailActivity extends SlidingActivity {
         });
 
         BookShelf bookShelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
+        if (bookShelf == null) return;
         bookshelfTextView.setText(bookShelf.getTitle());
 
         if (mBook.getNotes().length() != 0) {
@@ -317,7 +319,9 @@ public class BookDetailActivity extends SlidingActivity {
         if (labelID.size() != 0) {
             StringBuilder labelsTitle = new StringBuilder();
             for (UUID id : labelID) {
-                labelsTitle.append(LabelLab.get(this).getLabel(id).getTitle());
+                Label label = LabelLab.get(this).getLabel(id);
+                if (label == null) continue;
+                labelsTitle.append(label.getTitle());
                 labelsTitle.append(",");
             }
             labelsTitle.deleteCharAt(labelsTitle.length() - 1);

@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -554,8 +555,10 @@ public class MainActivity extends SimpleActivity
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                        EditText etLabel = inputDialog.getInputEditText();
+                        if (etLabel == null) return;
                         Label labelToAdd = new Label();
-                        labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                        labelToAdd.setTitle(etLabel.getText().toString());
                         LabelLab.get(MainActivity.this).addLabel(labelToAdd);
                         Log.i(TAG, "New label created " + labelToAdd.getTitle());
                         mLabelMap.put(mLabelMap.size() + 1, labelToAdd);

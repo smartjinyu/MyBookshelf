@@ -175,7 +175,7 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
 
     @Override
     public void onBookFetched(Book book) {
-        Snackbar.make(mContext.findViewById(R.id.batch_add_view_pager),
+        Snackbar.make(mContext.findViewById(R.id.singleScanFrame),
                 String.format(getString(R.string.batch_add_added_snack_bar),
                         book.getTitle()), Snackbar.LENGTH_SHORT).show();
         if (book.getImgUrl() != null) {

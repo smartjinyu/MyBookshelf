@@ -293,6 +293,7 @@
     <string name="batch_add_delete_book_dialog_title">Delete Book</string>
     <string name="batch_add_delete_book_dialog_content">Are you sure to delete the book from your list?</string>
     <string name="batch_add_delete_book_dialog_positive">Delete</string>
+    <string name="batch_add_book_existed_in_added_list">\"%1$s\" exists in to-add list!</string>
     <string name="batch_add_menu_item_save">Save</string>
     <string name="batch_add_no_books">No Books to be added</string>
 

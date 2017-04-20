@@ -163,7 +163,6 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
 
     @Override
     public void onBookFetched(Book book) {
-        notifyTabTitle(false);
         mCallback.onBookFetched(book);
     }
 }

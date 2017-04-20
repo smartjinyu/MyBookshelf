@@ -1,10 +1,8 @@
 package com.smartjinyu.mybookshelf.ui.addbook;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +20,6 @@ import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.presenter.BookFetchPresenter;
 import com.smartjinyu.mybookshelf.presenter.component.BookFetchContract;
-import com.smartjinyu.mybookshelf.support.CoverDownloader;
 
 import butterknife.BindView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -167,16 +164,6 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
 
         if (mOnBookFetchedListener != null)
             mOnBookFetchedListener.onBookFetched(book);
-        Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
-                String.format(getString(R.string.batch_add_added_snack_bar),
-                        book.getTitle()), Snackbar.LENGTH_SHORT).show();
-        if (book.getImgUrl() != null) {
-            CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
-            String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
-            coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
-        } else {
-            book.setHasCover(false);
-        }
     }
 
     @Override

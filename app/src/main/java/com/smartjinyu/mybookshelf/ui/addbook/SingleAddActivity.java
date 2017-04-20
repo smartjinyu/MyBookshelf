@@ -3,7 +3,9 @@ package com.smartjinyu.mybookshelf.ui.addbook;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +23,7 @@ import com.smartjinyu.mybookshelf.base.SimpleActivity;
 import com.smartjinyu.mybookshelf.callback.OnBookFetchedListener;
 import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.support.CoverDownloader;
 import com.smartjinyu.mybookshelf.ui.book.BookEditActivity;
 
 import butterknife.BindView;
@@ -172,6 +175,14 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
 
     @Override
     public void onBookFetched(Book book) {
+        Snackbar.make(mContext.findViewById(R.id.batch_add_view_pager),
+                String.format(getString(R.string.batch_add_added_snack_bar),
+                        book.getTitle()), Snackbar.LENGTH_SHORT).show();
+        if (book.getImgUrl() != null) {
+            CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
+            String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
+            coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
+        } else book.setHasCover(false);
         BookLab.get(mContext).addBook(book);
         this.finish();
     }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import com.smartjinyu.mybookshelf.model.LabelLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.bean.Label;
+import com.smartjinyu.mybookshelf.support.CoverDownloader;
 import com.smartjinyu.mybookshelf.util.AnswersUtil;
 
 import java.io.File;
@@ -49,10 +51,33 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
     private BookFetchedCallback mCallback = new BookFetchedCallback() {
         @Override
         public void onBookFetched(Book book) {
-            mBooks.add(book);
-            refreshRecyclerView();
+            boolean isAdded = containsInBooks(book);
+
+            if (isAdded) {
+                Snackbar.make(mContext.findViewById(R.id.batch_add_view_pager),
+                        String.format(getString(R.string.batch_add_book_existed_in_added_list),
+                                book.getTitle()), Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(mContext.findViewById(R.id.batch_add_view_pager),
+                        String.format(getString(R.string.batch_add_added_snack_bar),
+                                book.getTitle()), Snackbar.LENGTH_SHORT).show();
+                if (book.getImgUrl() != null) {
+                    CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
+                    String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
+                    coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
+                } else book.setHasCover(false);
+                mBooks.add(book);
+                ((BatchAddActivity)(mContext)).notifyTabTitle(false);
+                refreshRecyclerView();
+            }
         }
     };
+
+    private boolean containsInBooks(Book book) {
+        for (Book b : mBooks)
+            if (b.getIsbn().equals(book.getIsbn())) return true;
+        return false;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -266,7 +291,7 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
         return false;
     }
 
-    private void refreshRecyclerView(){
+    private void refreshRecyclerView() {
         mRecyclerViewAdapter.notifyDataSetChanged();
         if (mBooks == null || mBooks.size() <= 0) {
             mNoBooksText.setText(R.string.batch_add_no_books);

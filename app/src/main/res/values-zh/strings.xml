@@ -15,6 +15,7 @@
     <string name="batch_add_activity_discard_dialog_positive">舍弃</string>
     <string name="batch_add_activity_discard_dialog_title">舍弃书籍</string>
     <string name="batch_add_added_snack_bar">\"%1$s\" 添加成功</string>
+    <string name="batch_add_book_existed_in_added_list">\"%1$s\" 在待添加列表中已存在！</string>
     <string name="batch_add_delete_book_dialog_content">确认要把此书从列表中删除吗？</string>
     <string name="batch_add_delete_book_dialog_positive">删除</string>
     <string name="batch_add_delete_book_dialog_title">删除书籍</string>

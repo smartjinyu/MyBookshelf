@@ -61,6 +61,10 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
     LinearLayout mNoBooksLL;
     @BindView(R.id.no_books_text)
     TextView mNoBooksText;
+    @BindView(R.id.ll_label)
+    LinearLayout mLLLabel;
+    @BindView(R.id.tv_label)
+    TextView mTVLabel;
 
     private BookShelf mCurrentBookshelf;
     private Label mCurrentLabel;
@@ -151,6 +155,11 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         } else {
             mNoBooksLL.setVisibility(View.GONE);
         }
+        if (mCurrentLabel!=null) {
+            mLLLabel.setVisibility(View.VISIBLE);
+            mTVLabel.setText(mCurrentLabel.getTitle());
+        }
+        else mLLLabel.setVisibility(View.VISIBLE);
     }
 
     @Override

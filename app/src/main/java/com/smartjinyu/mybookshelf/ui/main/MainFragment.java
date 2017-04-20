@@ -417,7 +417,10 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
             int index = mMultiSelectedBooks.get(i);
             Book book = mBooks.get(index);
             bookLab.deleteBook(book);
-            UndoBooks.add(mBooks.remove(index));
+            UndoBooks.add(book);
+        }
+        for (Book book : UndoBooks) {
+            mBooks.remove(book);
         }
         int contentResId = UndoBooks.size() == 1 ?
                 R.string.book_deleted_snack_bar_0 : R.string.book_deleted_snack_bar_1;

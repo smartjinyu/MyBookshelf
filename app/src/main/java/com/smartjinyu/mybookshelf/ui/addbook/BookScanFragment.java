@@ -24,8 +24,6 @@ import com.smartjinyu.mybookshelf.presenter.BookFetchPresenter;
 import com.smartjinyu.mybookshelf.presenter.component.BookFetchContract;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
 
-import java.util.List;
-
 import butterknife.BindView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -52,7 +50,8 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
 
     @Override
     protected void doSavedInstanceState(Bundle savedInstanceState) {
-        mFlash = savedInstanceState != null && savedInstanceState.getBoolean(FLASH_STATE, false);
+        mFlash = savedInstanceState != null
+                && savedInstanceState.getBoolean(FLASH_STATE, false);
     }
 
     @Override
@@ -122,7 +121,26 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     @Override
     public void handleResult(Result rawResult) {
         Log.i(TAG, "ScanResult Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
-        mPresenter.fetchBookInfo(rawResult.getText());
+        final String isbn = rawResult.getText();
+        boolean isExist = BookLab.get(mContext).isIsbnExists(isbn);
+        if (isExist) {//The book is already in the list
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.book_duplicate_dialog_title)
+                    .content(R.string.book_duplicate_dialog_content)
+                    .positiveText(R.string.book_duplicate_dialog_positive)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mPresenter.fetchBookInfo(isbn);
+                        }
+                    }).negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mActivity.finish();
+                        }
+                    }).show();
+        }
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -144,49 +162,20 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
 
     @Override
     public void showContent(final Book book) {
-        BookLab bookLab = BookLab.get(mContext);
-        List<Book> mBooks = bookLab.getBooks();
-        boolean isExist = false;
-        for (Book book1 : mBooks) {
-            if (book.getIsbn().equals(book1.getIsbn())) {
-                isExist = true;
-                break;
-            }
-        }
-
         if (book.getWebsite() == null) book.setWebsite("");
         if (book.getNotes() == null) book.setNotes("");
 
-        if (isExist) {//The book is already in the list
-            new MaterialDialog.Builder(mContext)
-                    .title(R.string.book_duplicate_dialog_title)
-                    .content(R.string.book_duplicate_dialog_content)
-                    .positiveText(R.string.book_duplicate_dialog_positive)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            BookLab.get(mContext).addBook(book);
-                        }
-                    }).negativeText(android.R.string.cancel)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mActivity.finish();
-                        }
-                    }).show();
+        if (mOnBookFetchedListener != null)
+            mOnBookFetchedListener.onBookFetched(book);
+        Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
+                String.format(getString(R.string.batch_add_added_snack_bar),
+                        book.getTitle()), Snackbar.LENGTH_SHORT).show();
+        if (book.getImgUrl() != null) {
+            CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
+            String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
+            coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
         } else {
-            if (mOnBookFetchedListener != null)
-                mOnBookFetchedListener.onBookFetched(book);
-            Snackbar.make(mActivity.findViewById(R.id.batch_add_frame_scan),
-                    String.format(getString(R.string.batch_add_added_snack_bar),
-                            book.getTitle()), Snackbar.LENGTH_SHORT).show();
-            if (book.getImgUrl() != null) {
-                CoverDownloader coverDownloader = new CoverDownloader(mContext, book, 1);
-                String path = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName();
-                coverDownloader.downloadAndSaveImg(book.getImgUrl(), path);
-            } else {
-                book.setHasCover(false);
-            }
+            book.setHasCover(false);
         }
     }
 

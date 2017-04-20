@@ -511,9 +511,7 @@ public class MainActivity extends SimpleActivity
                         labelToAdd.setTitle(etLabel.getText().toString());
                         LabelLab.get(MainActivity.this).addLabel(labelToAdd);
                         Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                        mLabelMap.put(mLabelMap.size() + 1, labelToAdd);
-                        mLabelsSubMenu.add(0, mLabelMap.size() + 1, 0, labelToAdd.getTitle())
-                                .setIcon(R.drawable.ic_label).setCheckable(true);
+                        refreshLabelMenuItem();
                     }
                 }).negativeText(android.R.string.cancel)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {

@@ -8,14 +8,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -27,7 +25,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,14 +33,15 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
-import com.smartjinyu.mybookshelf.support.CoverDownloader;
 import com.smartjinyu.mybookshelf.R;
-import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.base.SimpleActivity;
 import com.smartjinyu.mybookshelf.model.BookLab;
-import com.smartjinyu.mybookshelf.model.bean.BookShelf;
 import com.smartjinyu.mybookshelf.model.BookShelfLab;
-import com.smartjinyu.mybookshelf.model.bean.Label;
 import com.smartjinyu.mybookshelf.model.LabelLab;
+import com.smartjinyu.mybookshelf.model.bean.Book;
+import com.smartjinyu.mybookshelf.model.bean.BookShelf;
+import com.smartjinyu.mybookshelf.model.bean.Label;
+import com.smartjinyu.mybookshelf.support.CoverDownloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +51,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import butterknife.BindView;
 import id.zelory.compressor.Compressor;
 import id.zelory.compressor.FileUtil;
 
@@ -62,8 +61,7 @@ import id.zelory.compressor.FileUtil;
  * This activity is to edit book details.
  */
 
-public class BookEditActivity extends AppCompatActivity {
-    private static final String TAG = "BookEditActivity";
+public class BookEditActivity extends SimpleActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CHOOSE_IMAGE = 2;
     private static final int CAMERA_PERMISSION = 5;
@@ -72,34 +70,52 @@ public class BookEditActivity extends AppCompatActivity {
     public static String downloadCover = "DOWNLOADCOVER";
     public static String imageURL = "IMAGEURL";
 
+    @BindView(R.id.bookedit_toolbar)
+    Toolbar mBookeditToolbar;
+    @BindView(R.id.book_cover_image_view)
+    ImageView mBookCoverImageView;
+    @BindView(R.id.book_title_edit_text)
+    EditText mBookTitleEditText;
+    @BindView(R.id.book_author_edit_text)
+    EditText mBookAuthorEditText;
+    @BindView(R.id.book_translator_edit_text)
+    EditText mBookTranslatorEditText;
+    @BindView(R.id.book_publisher_edit_text)
+    EditText mBookPublisherEditText;
+    @BindView(R.id.book_pubyear_edit_text)
+    EditText mBookPubyearEditText;
+    @BindView(R.id.book_pubmonth_edit_text)
+    EditText mBookPubmonthEditText;
+    @BindView(R.id.book_isbn_edit_text)
+    EditText mBookIsbnEditText;
+    @BindView(R.id.book_edit_detail_bar_text_view)
+    TextView mBookEditDetailBarTextView;
+    @BindView(R.id.reading_status_spinner)
+    Spinner mReadingStatusSpinner;
+    @BindView(R.id.book_shelf_spinner)
+    Spinner mBookShelfSpinner;
+    @BindView(R.id.book_notes_edit_text)
+    EditText mBookNotesEditText;
+    @BindView(R.id.book_labels_edit_text)
+    EditText mBookLabelsEditText;
+    @BindView(R.id.book_website_edit_text)
+    EditText mBookWebsiteEditText;
+
     private String customPhotoName = null;
-
-
     private Book mBook;
 
-    private Toolbar mToolbar;
-    private EditText titleEditText;
-    private EditText authorEditText;
-    private EditText translatorEditText;
-    private EditText publisherEditText;
-    private EditText pubyearEditText;
-    private EditText pubmonthEditText;
-    private EditText isbnEditText;
-    private ImageView coverImageView;
-    private Spinner readingStatusSpinner;
-    private Spinner bookshelfSpinner;
-    private EditText labelsEditText;
-    private EditText notesEditText;
-    private EditText websiteEditText;
-    private LinearLayout translator_layout;
-    private TextView detailBarTextView;
-
+    @Override
+    protected String getTag() {
+        return "BookEditActivity";
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_edit);
+    protected int getLayoutId() {
+        return R.layout.activity_book_edit;
+    }
 
+    @Override
+    protected void initEventAndData() {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
                 .putContentType("Activity")
@@ -109,16 +125,14 @@ public class BookEditActivity extends AppCompatActivity {
 
         Intent i = getIntent();
 
-        mBook = (Book) i.getSerializableExtra(BOOK);
+        mBook = (Book) getIntent().getSerializableExtra(BOOK);
 
-        setToolbar();
+        setupToolbar(mBookeditToolbar, R.id.bookedit_toolbar);
         setBookInfo();
         setReadingStatus();
         setBookShelf();
         setLabels();
 
-
-        coverImageView = (ImageView) findViewById(R.id.book_cover_image_view);
         if (i.getBooleanExtra(downloadCover, false)) {
             CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 0);
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
@@ -128,17 +142,13 @@ public class BookEditActivity extends AppCompatActivity {
         }
         setCoverChange();
 
-
-        notesEditText = (EditText) findViewById(R.id.book_notes_edit_text);
         if (mBook.getNotes() != null) {
-            notesEditText.setText(mBook.getNotes());
+            mBookNotesEditText.setText(mBook.getNotes());
         }
 
-        websiteEditText = (EditText) findViewById(R.id.book_website_edit_text);
         if (mBook.getWebsite() != null) {
-            websiteEditText.setText(mBook.getWebsite());
+            mBookWebsiteEditText.setText(mBook.getWebsite());
         }
-
     }
 
 
@@ -156,17 +166,14 @@ public class BookEditActivity extends AppCompatActivity {
      * @return true if save successfully, false means it needs to edit
      */
     private boolean saveBook() {
-        int month;
-        if (pubmonthEditText.getText().length() == 0) {
-            month = 1;//if pass month = 12 in Calendar.set(), it will be changed to default value 0
-        } else {
-            month = Integer.parseInt(pubmonthEditText.getText().toString());
-        }
+        //if pass month = 12 in Calendar.set(), it will be changed to default value 0
+        int month = mBookPubmonthEditText.getText().length() == 0 ?
+                1 : Integer.parseInt(mBookPubmonthEditText.getText().toString());
         if (month > 12 || month < 1) {
             Toast.makeText(this, R.string.month_invalid, Toast.LENGTH_LONG).show();
-            pubmonthEditText.requestFocus();
+            mBookPubmonthEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(pubmonthEditText, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(mBookPubmonthEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
         }
 //        else if (isbnEditText.getText().toString().length() != 10 && isbnEditText.getText().toString().length() != 13) {
@@ -178,17 +185,17 @@ public class BookEditActivity extends AppCompatActivity {
 //            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
 //            return false;
 //        }
-        else if (titleEditText.getText().toString().length() == 0) {
+        else if (mBookTitleEditText.getText().toString().length() == 0) {
             Log.i(TAG, "Title Empty problem.");
             Toast.makeText(this, R.string.title_empty, Toast.LENGTH_LONG).show();
-            titleEditText.requestFocus();
+            mBookTitleEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(isbnEditText, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(mBookTitleEditText, InputMethodManager.SHOW_IMPLICIT);
             return false;
         } else {
-            mBook.setTitle(titleEditText.getText().toString());
+            mBook.setTitle(mBookTitleEditText.getText().toString());
             // authors
-            String authors = authorEditText.getText().toString().replace("\n", "");
+            String authors = mBookAuthorEditText.getText().toString().replace("\n", "");
             if (authors.trim().length() != 0) {
                 String[] authorArray;
                 if (authors.contains("、")) {
@@ -205,7 +212,7 @@ public class BookEditActivity extends AppCompatActivity {
             }
             //
             //translators
-            String translators = translatorEditText.getText().toString().replace("\n", "");
+            String translators = mBookTranslatorEditText.getText().toString().replace("\n", "");
             if (translators.trim().length() != 0) {
                 String[] translatorArray;
                 if (translators.contains("、")) {
@@ -222,25 +229,20 @@ public class BookEditActivity extends AppCompatActivity {
             }
 
             //
-            mBook.setPublisher(publisherEditText.getText().toString().trim());
+            mBook.setPublisher(mBookPublisherEditText.getText().toString().trim());
             //pubDate
-            int year;
-            if (pubyearEditText.getText().toString().length() == 0) {
-                year = 9999;//default year
-            } else {
-                year = Integer.parseInt(pubyearEditText.getText().toString());
-            }
+            int year = mBookPubyearEditText.getText().toString().length() == 0 ?
+                    9999 : Integer.parseInt(mBookPubyearEditText.getText().toString());
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month - 1, 1);
             mBook.setPubTime(calendar);
             //
-            mBook.setIsbn(isbnEditText.getText().toString());
-            mBook.setNotes(notesEditText.getText().toString());
-            mBook.setWebsite(websiteEditText.getText().toString());
+            mBook.setIsbn(mBookIsbnEditText.getText().toString());
+            mBook.setNotes(mBookNotesEditText.getText().toString());
+            mBook.setWebsite(mBookWebsiteEditText.getText().toString());
             BookLab bookLab = BookLab.get(this);
             bookLab.addBook(mBook);
             return true;
-
         }
     }
 
@@ -248,11 +250,7 @@ public class BookEditActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_book_edit_save:
-                if (saveBook()) {
-                    finish();
-                }
-                break;
-            default:
+                if (saveBook()) finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -296,7 +294,6 @@ public class BookEditActivity extends AppCompatActivity {
     private void setLabels() {
         StringBuilder labelsTitle = new StringBuilder();
         final LabelLab labelLab = LabelLab.get(this);
-        labelsEditText = (EditText) findViewById(R.id.book_labels_edit_text);
         final List<Label> labels = labelLab.getLabels();
         List<Integer> existsLabelIndex = new ArrayList<>();
         if (mBook.getLabelID() != null && mBook.getLabelID().size() != 0) {
@@ -317,13 +314,13 @@ public class BookEditActivity extends AppCompatActivity {
 
             }
             labelsTitle.deleteCharAt(labelsTitle.length() - 1);
-            labelsEditText.setText(labelsTitle);
+            mBookLabelsEditText.setText(labelsTitle);
         } else {
-            labelsEditText.setText("");
+            mBookLabelsEditText.setText("");
         }
         final Integer[] selectedItemIndex = existsLabelIndex.toArray(new Integer[existsLabelIndex.size()]);
 
-        labelsEditText.setOnClickListener(new View.OnClickListener() {
+        mBookLabelsEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(BookEditActivity.this)
@@ -418,53 +415,41 @@ public class BookEditActivity extends AppCompatActivity {
         });
     }
 
-
     private void setBookInfo() {
-        titleEditText = (EditText) findViewById(R.id.book_title_edit_text);
-        authorEditText = (EditText) findViewById(R.id.book_author_edit_text);
-        translatorEditText = (EditText) findViewById(R.id.book_translator_edit_text);
-        publisherEditText = (EditText) findViewById(R.id.book_publisher_edit_text);
-        pubyearEditText = (EditText) findViewById(R.id.book_pubyear_edit_text);
-        pubmonthEditText = (EditText) findViewById(R.id.book_pubmonth_edit_text);
-        isbnEditText = (EditText) findViewById(R.id.book_isbn_edit_text);
-        translator_layout = (LinearLayout) findViewById(R.id.translator_layout);
-        detailBarTextView = (TextView) findViewById(R.id.book_edit_detail_bar_text_view);
-
-        titleEditText.setText(mBook.getTitle());
+        mBookTitleEditText.setText(mBook.getTitle());
         String authors = mBook.getFormatAuthor();
         if (authors != null) {
-            authorEditText.setText(authors);
+            mBookAuthorEditText.setText(authors);
         }
         String translators = mBook.getFormatTranslator();
         if (translators != null) {
-            translatorEditText.setText(translators);
+            mBookTranslatorEditText.setText(translators);
         }
 
-        publisherEditText.setText(mBook.getPublisher());
+        mBookPublisherEditText.setText(mBook.getPublisher());
         if (mBook.getPubTime() != null) {
             int year = mBook.getPubTime().get(Calendar.YEAR);
             if (year != 9999) {
-                pubyearEditText.setText(String.valueOf(year));
+                mBookPubyearEditText.setText(String.valueOf(year));
                 int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
                 StringBuilder month = new StringBuilder();
                 if (mon < 10) {
                     month.append("0");
                 }
                 month.append(String.valueOf(mon));
-                pubmonthEditText.setText(month);
+                mBookPubmonthEditText.setText(month);
             }
         }
 
-        isbnEditText.setText(mBook.getIsbn());
+        mBookIsbnEditText.setText(mBook.getIsbn());
 
         String detailBarText = String.format(getString(R.string.book_info_title), mBook.getDataSource());
-        detailBarTextView.setText(detailBarText);
+        mBookEditDetailBarTextView.setText(detailBarText);
     }
 
     private int curBookshelfPos;
 
     private void setBookShelf() {
-        bookshelfSpinner = (Spinner) findViewById(R.id.book_shelf_spinner);
         final BookShelfLab bookShelfLab = BookShelfLab.get(this);
         final List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
         final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<>(
@@ -475,7 +460,7 @@ public class BookEditActivity extends AppCompatActivity {
         //customShelf is only used to add an item to spinner, it will never add to bookshelfList
         arrayAdapter.add(customShelf);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bookshelfSpinner.setAdapter(arrayAdapter);
+        mBookShelfSpinner.setAdapter(arrayAdapter);
 
         BookShelf curBookshelf = bookShelves.get(0);//default
         for (BookShelf bookShelf : bookShelves) {
@@ -488,11 +473,11 @@ public class BookEditActivity extends AppCompatActivity {
         // BookShelf curBookshelf = BookShelfLab.get(this).getBookShelf(mBook.getBookshelfID());
         // because even the same bookshelf object in two different lists will not regard equals() = true
         curBookshelfPos = arrayAdapter.getPosition(curBookshelf);
-        bookshelfSpinner.setSelection(curBookshelfPos);
-        bookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mBookShelfSpinner.setSelection(curBookshelfPos);
+        mBookShelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                BookShelf selectedBS = (BookShelf) bookshelfSpinner.getSelectedItem();
+                BookShelf selectedBS = (BookShelf) mBookShelfSpinner.getSelectedItem();
                 String selectedName = selectedBS.toString();
                 if (selectedName.equals(getResources().getString(R.string.custom_spinner_item))) {
                     Log.i(TAG, "Custom Bookshelf clicked");
@@ -526,13 +511,13 @@ public class BookEditActivity extends AppCompatActivity {
                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    bookshelfSpinner.setSelection(curBookshelfPos);
+                                    mBookShelfSpinner.setSelection(curBookshelfPos);
                                 }
                             })
                             .dismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
-                                    bookshelfSpinner.setSelection(curBookshelfPos);
+                                    mBookShelfSpinner.setSelection(curBookshelfPos);
                                 }
                             })
                             .show();
@@ -552,13 +537,13 @@ public class BookEditActivity extends AppCompatActivity {
     }
 
     private void setReadingStatus() {
-        readingStatusSpinner = (Spinner) findViewById(R.id.reading_status_spinner);
+        mReadingStatusSpinner = (Spinner) findViewById(R.id.reading_status_spinner);
         ArrayAdapter<CharSequence> readingStatusArrayAdapter = ArrayAdapter.createFromResource(
                 this, R.array.reading_status_array, R.layout.spinner_item);
         readingStatusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        readingStatusSpinner.setAdapter(readingStatusArrayAdapter);
-        readingStatusSpinner.setSelection(mBook.getReadingStatus());
-        readingStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mReadingStatusSpinner.setAdapter(readingStatusArrayAdapter);
+        mReadingStatusSpinner.setSelection(mBook.getReadingStatus());
+        mReadingStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mBook.setReadingStatus(i);
@@ -573,15 +558,15 @@ public class BookEditActivity extends AppCompatActivity {
     }
 
     public void setBookCover() {
-        if (coverImageView != null && mBook.isHasCover()) {
+        if (mBook.isHasCover()) {
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
             Bitmap bitmap1 = BitmapFactory.decodeFile(path);
-            coverImageView.setImageBitmap(bitmap1);
+            mBookCoverImageView.setImageBitmap(bitmap1);
         }
     }
 
     private void setCoverChange() {
-        coverImageView.setOnClickListener(new View.OnClickListener() {
+        mBookCoverImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Answers.getInstance().logContentView(new ContentViewEvent()
@@ -662,21 +647,6 @@ public class BookEditActivity extends AppCompatActivity {
         );
         customPhotoName = image.getAbsolutePath();
         return image;
-    }
-
-    private void setToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.bookedit_toolbar);
-        mToolbar.setTitle(R.string.book_edit_activity_title);
-        setSupportActionBar(mToolbar);
-        mToolbar.setNavigationIcon(R.drawable.ic_close);
-        mToolbar.setNavigationContentDescription(R.string.tool_bar_navigation_description);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogBeforeDiscard();
-            }
-        });
-
     }
 
     @Override

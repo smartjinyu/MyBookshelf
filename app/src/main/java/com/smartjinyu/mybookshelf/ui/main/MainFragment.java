@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -286,7 +287,9 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         // TODO 处理空指针，并做空字符串判断
-                        String newName = dialog.getInputEditText().getText().toString();
+                        EditText etLabel = dialog.getInputEditText();
+                        if (etLabel == null) return;
+                        String newName = etLabel.getText().toString();
                         LabelLab.get(mContext).renameLabel(mCurrentLabel.getId(), newName);
                         mCurrentLabel.setTitle(newName);
                         ((MainActivity) mActivity).refreshLabelMenuItem();
@@ -345,8 +348,9 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            // TODO 处理空指针，并做空字符串判断
-                            String newName = dialog.getInputEditText().getText().toString();
+                            EditText etBookshelf = dialog.getInputEditText();
+                            if (etBookshelf == null) return;
+                            String newName = etBookshelf.getText().toString();
                             BookShelfLab.get(mContext).renameBookShelf(mCurrentBookshelf.getId(), newName);
                             ((MainActivity) mActivity).refreshBookShelfSpinner();
                         }
@@ -455,12 +459,16 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                        EditText etLabel = inputDialog.getInputEditText();
+                                        if (etLabel == null) return;
                                         Label labelToAdd = new Label();
-                                        labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                        labelToAdd.setTitle(etLabel.getText().toString());
                                         labelLab.addLabel(labelToAdd);
                                         Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                                        listDialog.getItems().add(labelToAdd.getTitle());
-                                        listDialog.notifyItemInserted(listDialog.getItems().size() - 1);
+                                        List<CharSequence> labelList = listDialog.getItems();
+                                        if (labelList == null) return;
+                                        labelList.add(labelToAdd.getTitle());
+                                        listDialog.notifyItemInserted(labelList.size() - 1);
                                     }
                                 }).negativeText(android.R.string.cancel)
                                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -520,12 +528,16 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
                                 }).onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                EditText etBookshelf = dialog.getInputEditText();
+                                if (etBookshelf == null) return;
                                 BookShelf bookShelfToAdd = new BookShelf();
-                                bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
+                                bookShelfToAdd.setTitle(etBookshelf.getText().toString());
                                 bookShelfLab.addBookShelf(bookShelfToAdd);
                                 Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
-                                listdialog.getItems().add(bookShelfToAdd.getTitle());
-                                listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
+                                List<CharSequence> bookshelfList = listdialog.getItems();
+                                if (bookshelfList == null) return;
+                                bookshelfList.add(bookShelfToAdd.getTitle());
+                                listdialog.notifyItemInserted(bookshelfList.size() - 1);
                             }
                         }).negativeText(android.R.string.cancel)
                                 .onNegative(new MaterialDialog.SingleButtonCallback() {

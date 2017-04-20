@@ -243,6 +243,15 @@ public class BookLab {
 
     }
 
+    public boolean isIsbnExists(String isbn){
+        try (BookCursorWrapper cursor = queryBooks(
+                BookDBSchema.BookTable.Cols.ISBN + "= ?",
+                new String[]{isbn})
+        ) {
+            return cursor.getCount() != 0;
+        }
+    }
+
 
     public void addBook(Book book) {
         ContentValues values = getContentValues(book);

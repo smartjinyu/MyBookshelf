@@ -13,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -55,6 +57,10 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
 
     @BindView(R.id.bachlist_recycler_view)
     RecyclerView mRVBooks;
+    @BindView(R.id.no_books)
+    LinearLayout mNoBooksLL;
+    @BindView(R.id.no_books_text)
+    TextView mNoBooksText;
 
     private BookShelf mCurrentBookshelf;
     private Label mCurrentLabel;
@@ -126,6 +132,25 @@ public class MainFragment extends BaseFragment<MainFragPresenter>
         }
         doSortBooks();
         mRecyclerViewAdapter.notifyDataSetChanged();
+        if (mBooks.size() <= 0) {
+            String info = getString(R.string.no_books);
+            if (mCurrentBookshelf != null && mCurrentLabel != null) {
+                info = getString(R.string.no_books_in_bookshelf_and_label,
+                        mCurrentBookshelf.getTitle(), mCurrentLabel.getTitle());
+            }
+            if ((mCurrentBookshelf != null && mCurrentLabel == null)) {
+                info = getString(R.string.no_books_in_bookshelf,
+                        mCurrentBookshelf.getTitle());
+            }
+            if (mCurrentBookshelf == null && mCurrentLabel != null) {
+                info = getString(R.string.no_books_in_label,
+                        mCurrentLabel.getTitle());
+            }
+            mNoBooksText.setText(info);
+            mNoBooksLL.setVisibility(View.VISIBLE);
+        } else {
+            mNoBooksLL.setVisibility(View.GONE);
+        }
     }
 
     @Override

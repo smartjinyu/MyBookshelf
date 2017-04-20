@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,6 +41,8 @@ import java.util.List;
 public class BatchListFragment extends Fragment implements BatchAddedAdapter.RecyclerViewOnItemLongClickListener {
     private static final String TAG = "BatchListFragment";
 
+    private LinearLayout mNoBooksLL;
+    private TextView mNoBooksText;
     private RecyclerView mRecyclerView;
     private BatchAddedAdapter mRecyclerViewAdapter;
     private BatchAddActivity mContext;
@@ -48,6 +52,12 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
         public void onBookFetched(Book book) {
             mBooks.add(book);
             mRecyclerViewAdapter.notifyDataSetChanged();
+            if (mBooks == null || mBooks.size() <= 0) {
+                mNoBooksText.setText(R.string.batch_add_no_books);
+                mNoBooksLL.setVisibility(View.VISIBLE);
+            } else {
+                mNoBooksLL.setVisibility(View.GONE);
+            }
         }
     };
 
@@ -66,6 +76,8 @@ public class BatchListFragment extends Fragment implements BatchAddedAdapter.Rec
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_batch_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.bachlist_recycler_view);
+        mNoBooksLL = (LinearLayout) view.findViewById(R.id.no_books);
+        mNoBooksText = (TextView) view.findViewById(R.id.no_books_text);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }

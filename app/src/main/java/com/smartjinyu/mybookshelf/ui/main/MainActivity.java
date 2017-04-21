@@ -58,39 +58,37 @@ import static com.smartjinyu.mybookshelf.util.SharedPrefUtil.LAUNCH_TIMES;
 
 public class MainActivity extends SimpleActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private static final String TAG = "MainActivity";
     private static final String ACTION_SEARCH = "com.smartjinyu.mybookshelf.ACTION_SEARCH";
 
     @BindView(R.id.main_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.toolbar_spinner)
-    Spinner mSpinner;
-
-    private ArrayAdapter<BookShelf> mBSSpinnerAdapter;
-    private List<BookShelf> mBookShelfList;
-
-    private SubMenu mLabelsSubMenu;
-    // menu id,label name
-    private Map<Integer, Label> mLabelMap;
-
-    @BindView(R.id.fab_menu_add)
-    FloatingActionMenu mActionAddButton;
-    @BindView(R.id.fab_menu_item_1)
-    FloatingActionButton fab1;
-    @BindView(R.id.fab_menu_item_2)
-    FloatingActionButton fab2;
+    Spinner mBookshelfSpinner;
     @BindView(R.id.searchView)
     SearchView mSearchView;
-
-    private MainFragment mMainFragment;
-    private Context mContext;
-
+    @BindView(R.id.fab_menu_add)
+    FloatingActionMenu mFabAddMenu;
+    @BindView(R.id.fab_menu_item_1)
+    FloatingActionButton mFabSingleAdd;
+    @BindView(R.id.fab_menu_item_2)
+    FloatingActionButton mFabBatchAdd;
     @BindView(R.id.nav_view)
     NavigationView mNavView;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    private boolean actionSearch = false;
+    private ArrayAdapter<BookShelf> mBSSpinnerAdapter;
+    private List<BookShelf> mBookshelfList;
+
+    private SubMenu mLabelsSubMenu;
+    // labels display in navigation view,
+    // keys response to the click event, values are labels
+    private Map<Integer, Label> mLabelMap;
+
+    private MainFragment mMainFragment;
+    private Context mContext;
+
+    private boolean actionSearch;
 
     @Override
     protected String getTag() {
@@ -99,6 +97,7 @@ public class MainActivity extends SimpleActivity
 
     @Override
     protected int getLayoutId() {
+        // Fabric init here
         AnswersUtil.init(this);
         return R.layout.activity_main;
     }
@@ -132,7 +131,7 @@ public class MainActivity extends SimpleActivity
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    new UpdateCheck(MainActivity.this);
+                    new UpdateCheck(mContext);
                 }
             }, 3000);
         }
@@ -149,27 +148,19 @@ public class MainActivity extends SimpleActivity
         mNavView.setItemIconTintList(null);
 
         mLabelsSubMenu = mNavView.getMenu().findItem(R.id.drawer_item_added_labels).getSubMenu();
-        List<Label> labels = LabelLab.get(mContext).getLabels();
         mLabelMap = new ArrayMap<>();
-        if (labels == null || labels.size() <= 0) return;
-        int index = 0;
-        for (Label label : labels) {
-            MenuItem item = mLabelsSubMenu.add(0, index, 0, label.getTitle());
-            mLabelMap.put(index, label);
-            item.setIcon(R.drawable.ic_label).setCheckable(true);
-            index++;
-        }
+        refreshLabelMenuItem();
     }
 
     private void setupBookShelfSpinner() {
-        mBookShelfList = new ArrayList<>();
-        mBSSpinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_white, mBookShelfList);
+        mBookshelfList = new ArrayList<>();
+        mBSSpinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_white, mBookshelfList);
         mBSSpinnerAdapter.setDropDownViewResource(R.layout.spinner_drop_down_white);
-        mSpinner.setAdapter(mBSSpinnerAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mBookshelfSpinner.setAdapter(mBSSpinnerAdapter);
+        mBookshelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                BookShelf bookShelf = mBookShelfList.get(i);
+                BookShelf bookShelf = mBookshelfList.get(i);
                 if (bookShelf.getTitle().equals(getString(R.string.spinner_all_bookshelf))) {
                     setToolbarColor(0);
                     bookShelf = null;
@@ -188,12 +179,12 @@ public class MainActivity extends SimpleActivity
 
     public void refreshBookShelfSpinner() {
         List<BookShelf> bookShelfList = BookShelfLab.get(mContext).getBookShelves();
-        mBookShelfList.clear();
+        mBookshelfList.clear();
         BookShelf allBookshelf = new BookShelf();
         allBookshelf.setTitle(getString(R.string.spinner_all_bookshelf));
-        mBookShelfList.add(allBookshelf);
+        mBookshelfList.add(allBookshelf);
         for (int i = 0; i < bookShelfList.size(); i++)
-            mBookShelfList.add(bookShelfList.get(i));
+            mBookshelfList.add(bookShelfList.get(i));
         mBSSpinnerAdapter.notifyDataSetChanged();
     }
 
@@ -217,10 +208,10 @@ public class MainActivity extends SimpleActivity
             @Override
             public boolean onClose() {
                 Log.d(TAG, "SearchView close");
-                if (mActionAddButton != null) {
+                if (mFabAddMenu != null) {
                     Log.d(TAG, "Show FAM 2");
-                    mActionAddButton.setVisibility(View.VISIBLE);
-                    mActionAddButton.showMenuButton(true);
+                    mFabAddMenu.setVisibility(View.VISIBLE);
+                    mFabAddMenu.showMenuButton(true);
                     mMainFragment.refreshFetch();
                 }
                 return true;
@@ -229,10 +220,10 @@ public class MainActivity extends SimpleActivity
             @Override
             public boolean onOpen() {
                 Log.d(TAG, "SearchView open");
-                if (mActionAddButton != null) {
+                if (mFabAddMenu != null) {
                     Log.d(TAG, "Hide FAM 2");
-                    mActionAddButton.setVisibility(View.GONE);
-                    mActionAddButton.hideMenuButton(true);
+                    mFabAddMenu.setVisibility(View.GONE);
+                    mFabAddMenu.hideMenuButton(true);
                 }
                 return false;
             }
@@ -240,26 +231,26 @@ public class MainActivity extends SimpleActivity
     }
 
     private void setFloatingActionButton() {
-        fab1.setOnClickListener(new View.OnClickListener() {
+        mFabSingleAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "fab menu item 1 clicked");
-                Intent i = new Intent(MainActivity.this, SingleAddActivity.class);
+                Intent i = new Intent(mContext, SingleAddActivity.class);
                 startActivity(i);
-                mActionAddButton.close(true);
+                mFabAddMenu.close(true);
             }
         });
-        fab2.setOnClickListener(new View.OnClickListener() {
+        mFabBatchAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "fab menu item 2 clicked");
-                Intent i = new Intent(MainActivity.this, BatchAddActivity.class);
+                Intent i = new Intent(mContext, BatchAddActivity.class);
                 startActivity(i);
-                mActionAddButton.close(true);
+                mFabAddMenu.close(true);
             }
         });
-        mActionAddButton.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(this, R.anim.show_from_bottom));
-        mActionAddButton.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(this, R.anim.hide_to_bottom));
+        mFabAddMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(this, R.anim.show_from_bottom));
+        mFabAddMenu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(this, R.anim.hide_to_bottom));
     }
 
     /**
@@ -284,7 +275,7 @@ public class MainActivity extends SimpleActivity
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
-        if (mSpinner != null) {
+        if (mBookshelfSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             refreshBookShelfSpinner();
             mMainFragment.refreshFetch();
@@ -298,143 +289,34 @@ public class MainActivity extends SimpleActivity
 
     @Override
     public void onBackPressed() {
+        // action menu (multi select) has been processed
+        // first close search view and fab menu
+        boolean isSearchViewOpen = mSearchView.isSearchOpen();
+        boolean isFabMenuOpen = mFabAddMenu.isOpened();
+        if (isSearchViewOpen || isFabMenuOpen) {
+            if (isSearchViewOpen) mSearchView.close(true);
+            if (isFabMenuOpen) mFabAddMenu.close(true);
+            return;
+        }
+
+        // if search view and fab menu are closed, then process others
         int startTimes = SharedPrefUtil.getInstance().getInt(LAUNCH_TIMES, 1);
         Log.i(TAG, "startTimes = " + startTimes);
         SharedPrefUtil.getInstance().putInt(LAUNCH_TIMES, startTimes + 1);
+
         boolean muteRatings = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.MUTE_RATINGS, false);
         boolean isRated = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.IS_RATED, false);
         boolean isDonateItemShow = SharedPrefUtil.getInstance().getBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, true);
         Log.i(TAG, "rating info muteRatings = " + muteRatings + ", isRated = " + isRated);
-//        if (!muteRatings &&
-//                !isRated &&
-//                startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0 &&
-//                mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)) {
-//            // show ratings dialog
-//            showRatingDialog();
-//        } else if (isDonateItemShow &&
-//                startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
-//            showDonateDialog();
-//        } else {
-//            super.onBackPressed();
-//        }
-    }
 
-    private void showRatingDialog() {
-        AnswersUtil.logContentView(TAG, "Rating", "2100", "Rating Dialog show", 1 + "");
-
-        new MaterialDialog.Builder(this)
-                .title(R.string.rating_dialog_title)
-                .content(R.string.rating_dialog_content)
-                .positiveText(R.string.rating_dialog_positive)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
-                        startActivity(i);
-                        AnswersUtil.logContentView(TAG, "Rating", "2101", "Go to Store", 1 + "");
-
-                        MainActivity.super.onBackPressed();
-                    }
-                })
-                .negativeText(android.R.string.cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        AnswersUtil.logContentView(TAG, "Rating", "2102", "Cancel Rating", 1 + "");
-                        MainActivity.super.onBackPressed();
-                    }
-                })
-                .neutralText(R.string.rating_dialog_neutral)
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
-                        AnswersUtil.logContentView(TAG, "Rating", "2102", "Mute Rating", 1 + "");
-                        MainActivity.super.onBackPressed();
-                    }
-                })
-                .canceledOnTouchOutside(false)
-                .show();
-
-    }
-
-    private void showDonateDialog() {
-        AnswersUtil.logContentView(TAG, "Donate", "2030", "Donate Clicked", "Donate Clicked");
-        Log.i(TAG, "Donate Dialog show");
-        boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(MainActivity.this);
-        if (hasInstalledAlipayClient) {
-            new MaterialDialog.Builder(MainActivity.this)
-                    .title(R.string.about_preference_donate_title)
-                    .content(R.string.about_donate_dialog_content)
-                    .positiveText(R.string.about_donate_dialog_positive0)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
-                            AnswersUtil.logContentView(TAG, "Donate", "2031", "Alipay Clicked", "Alipay Clicked");
-                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
-                            dialog.dismiss();
-//                            setDrawer(mDrawer.getCurrentSelection());
-                        }
-                    })
-                    .negativeText(R.string.about_donate_dialog_negative0)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            AppUtil.copyText2Clipboard(MainActivity.this, "smartjinyu@gmail.com");
-                            Toast.makeText(
-                                    MainActivity.this,
-                                    getResources().getString(R.string.about_preference_donate_toast),
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                            AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
-                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
-                            dialog.dismiss();
-//                            setDrawer(mDrawer.getCurrentSelection());
-                        }
-                    })
-                    .neutralText(android.R.string.cancel)
-                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
-                            dialog.dismiss();
-                        }
-                    })
-                    .canceledOnTouchOutside(false)
-                    .show();
+        if (!muteRatings && !isRated && startTimes % getResources().getInteger(R.integer.rating_after_start_times) == 0) {
+            //&&mBooks.size() > getResources().getInteger(R.integer.rating_if_books_more_than)
+            // show ratings dialog
+            showRatingDialog();
+        } else if (isDonateItemShow && startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
+            showDonateDialog();
         } else {
-            new MaterialDialog.Builder(MainActivity.this)
-                    .title(R.string.about_preference_donate_title)
-                    .content(R.string.about_donate_dialog_content)
-                    .positiveText(R.string.about_donate_dialog_negative0)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            AppUtil.copyText2Clipboard(MainActivity.this, "smartjinyu@gmail.com");
-                            Toast.makeText(
-                                    MainActivity.this,
-                                    getResources().getString(R.string.about_preference_donate_toast),
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                            AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
-                            SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
-                            dialog.dismiss();
-//                            setDrawer(mDrawer.getCurrentSelection());
-                        }
-                    })
-                    .negativeText(android.R.string.cancel)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
-                            dialog.dismiss();
-                        }
-                    })
-                    .canceledOnTouchOutside(false)
-                    .show();
+            super.onBackPressed();
         }
     }
 
@@ -444,14 +326,99 @@ public class MainActivity extends SimpleActivity
             List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && results.size() > 0) {
                 String searchWrd = results.get(0);
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    if (mSearchView != null) {
-                        mSearchView.setQuery(searchWrd, true);
-                    }
-                }
+                if (!TextUtils.isEmpty(searchWrd))
+                    if (mSearchView != null) mSearchView.setQuery(searchWrd, true);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void showRatingDialog() {
+        AnswersUtil.logContentView(TAG, "Rating", "2100", "Rating Dialog show", 1 + "");
+
+        new MaterialDialog.Builder(this)
+                .title(R.string.rating_dialog_title).content(R.string.rating_dialog_content)
+                .positiveText(R.string.rating_dialog_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
+                startActivity(i);
+                AnswersUtil.logContentView(TAG, "Rating", "2101", "Go to Store", 1 + "");
+
+                MainActivity.super.onBackPressed();
+            }
+        }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                AnswersUtil.logContentView(TAG, "Rating", "2102", "Cancel Rating", 1 + "");
+                MainActivity.super.onBackPressed();
+            }
+        }).neutralText(R.string.rating_dialog_neutral).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.IS_RATED, true);
+                AnswersUtil.logContentView(TAG, "Rating", "2102", "Mute Rating", 1 + "");
+                MainActivity.super.onBackPressed();
+            }
+        }).canceledOnTouchOutside(false).show();
+    }
+
+    private void showDonateDialog() {
+        AnswersUtil.logContentView(TAG, "Donate", "2030", "Donate Clicked", "Donate Clicked");
+        Log.i(TAG, "Donate Dialog show");
+        boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(mContext);
+        if (hasInstalledAlipayClient) {
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.about_preference_donate_title).content(R.string.about_donate_dialog_content)
+                    .positiveText(R.string.about_donate_dialog_positive0).onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AlipayZeroSdk.startAlipayClient(MainActivity.this, getString(R.string.about_donate_alipay_qrcode));
+                    AnswersUtil.logContentView(TAG, "Donate", "2031", "Alipay Clicked", "Alipay Clicked");
+                    SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
+                    dialog.dismiss();
+//                            setDrawer(mDrawer.getCurrentSelection());
+                }
+            }).negativeText(R.string.about_donate_dialog_negative0).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                    Toast.makeText(mContext, getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
+                    AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
+                    SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
+                    dialog.dismiss();
+//                  setDrawer(mDrawer.getCurrentSelection());
+                }
+            }).neutralText(android.R.string.cancel).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
+                    dialog.dismiss();
+                }
+            }).canceledOnTouchOutside(false).show();
+        } else {
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.about_preference_donate_title).content(R.string.about_donate_dialog_content)
+                    .positiveText(R.string.about_donate_dialog_negative0).onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                    Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
+                    AnswersUtil.logContentView(TAG, "Donate", "2032", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
+                    SharedPrefUtil.getInstance().putBoolean(SharedPrefUtil.DONATE_DRAWER_ITEM_SHOW, false);
+                    dialog.dismiss();
+//                            setDrawer(mDrawer.getCurrentSelection());
+                }
+            }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AnswersUtil.logContentView(TAG, "Donate", "2033", "Cancel Clicked", "Cancel Clicked");
+                    dialog.dismiss();
+                }
+            }).canceledOnTouchOutside(false).show();
+        }
     }
 
     @Override
@@ -492,16 +459,15 @@ public class MainActivity extends SimpleActivity
     }
 
     private void newLabel() {
-        new MaterialDialog.Builder(MainActivity.this)
+        new MaterialDialog.Builder(mContext)
                 .title(R.string.label_add_new_dialog_title)
                 .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
-                .input(R.string.label_add_new_dialog_edit_text, 0,
-                        new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
-                                // nothing to do here
-                            }
-                        })
+                .input(R.string.label_add_new_dialog_edit_text, 0, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                        // nothing to do here
+                    }
+                })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
@@ -509,21 +475,21 @@ public class MainActivity extends SimpleActivity
                         if (etLabel == null) return;
                         Label labelToAdd = new Label();
                         labelToAdd.setTitle(etLabel.getText().toString());
-                        LabelLab.get(MainActivity.this).addLabel(labelToAdd);
+                        LabelLab.get(mContext).addLabel(labelToAdd);
                         Log.i(TAG, "New label created " + labelToAdd.getTitle());
                         refreshLabelMenuItem();
                     }
-                }).negativeText(android.R.string.cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                        inputDialog.dismiss();
-                    }
-                }).show();
+                }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                inputDialog.dismiss();
+            }
+        }).show();
     }
 
     public void refreshLabelMenuItem() {
         List<Label> labelList = LabelLab.get(mContext).getLabels();
+        if (labelList == null || labelList.size() <= 0) return;
         mLabelMap.clear();
         mLabelsSubMenu.clear();
         int index = 0;
@@ -546,27 +512,26 @@ public class MainActivity extends SimpleActivity
     }
 
     public void openFabMenu(boolean state) {
-        if (mActionAddButton == null) return;
-        if (!mActionAddButton.isOpened() && state) {
+        if (mFabAddMenu == null) return;
+        if (!mFabAddMenu.isOpened() && state) {
             openSearchView(false);
-            mActionAddButton.open(true);
+            mFabAddMenu.open(true);
         }
-        if (mActionAddButton.isOpened() && !state)
-            mActionAddButton.close(true);
+        if (mFabAddMenu.isOpened() && !state)
+            mFabAddMenu.close(true);
     }
 
     public boolean isFabMenuOpened() {
-        return mActionAddButton.isOpened();
+        return mFabAddMenu.isOpened();
     }
 
     public void hideFabMenu() {
-        mActionAddButton.setVisibility(View.GONE);
-        mActionAddButton.hideMenuButton(true);
+        mFabAddMenu.setVisibility(View.GONE);
+        mFabAddMenu.hideMenuButton(true);
     }
 
     public void showFabMenu() {
-        mActionAddButton.setVisibility(View.VISIBLE);
-        mActionAddButton.showMenuButton(true);
+        mFabAddMenu.setVisibility(View.VISIBLE);
+        mFabAddMenu.showMenuButton(true);
     }
-
 }

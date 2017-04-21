@@ -408,8 +408,7 @@ public class BookEditActivity extends SimpleActivity {
             if (year != 9999) {
                 mBookPubyearEditText.setText(String.valueOf(year));
                 int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
-                StringBuilder month = new StringBuilder();
-                month.append(String.format("%2d", mon));
+                String month = (mon < 10 ? "0" : "") + mon;
                 mBookPubmonthEditText.setText(month);
             }
         }

@@ -30,7 +30,7 @@ public class UpdateCheck {
 
     public UpdateCheck(Context context) {
         mContext = context;
-        Log.i(TAG,"Update check started");
+        Log.i(TAG, "Update check started");
         Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl("https://raw.githubusercontent.com/smartjinyu/MyBookshelf/master/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -45,39 +45,29 @@ public class UpdateCheck {
                     int newVersionCode = response.body().getVersion_code();
                     Log.i(TAG, "Newest Version Code is = " + newVersionCode + ", current code is " + BuildConfig.VERSION_CODE);
                     if (newVersionCode > BuildConfig.VERSION_CODE) {
+                        String content = String.format(mContext.getString(R.string.new_version_find_dialog_content), response.body().getVersion_name());
                         new MaterialDialog.Builder(mContext)
-                                .title(R.string.new_version_find_dialog_title)
-                                .content(String.format(
-                                        mContext.getString(R.string.new_version_find_dialog_content),
-                                        response.body().getVersion_name()))
-                                .positiveText(R.string.new_version_find_dialog_positive)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
-                                        mContext.startActivity(i);
-                                    }
-                                })
-                                .negativeText(R.string.new_version_find_dialog_negative)
-                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse("https://smartjinyu.com/android/2017/02/09/mybookshelf.html"));
-                                        mContext.startActivity(i);
-                                    }
-                                })
-                                .neutralText(android.R.string.cancel)
-                                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .autoDismiss(false)
-                                .show();
-
+                                .title(R.string.new_version_find_dialog_title).content(content)
+                                .positiveText(R.string.new_version_find_dialog_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
+                                mContext.startActivity(i);
+                            }
+                        }).negativeText(R.string.new_version_find_dialog_negative).onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse("https://smartjinyu.com/android/2017/02/09/mybookshelf.html"));
+                                mContext.startActivity(i);
+                            }
+                        }).neutralText(android.R.string.cancel).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        }).autoDismiss(false).show();
                     }
                 } else {
                     Log.e(TAG, "Failed. Response code = " + response.code() + ", body = " + response.body());
@@ -94,8 +84,5 @@ public class UpdateCheck {
     private interface Version_API {
         @GET("version_update.xml")
         Call<VersionUpdateData> getWebVersion();
-
     }
-
-
 }

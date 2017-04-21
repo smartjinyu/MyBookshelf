@@ -131,22 +131,18 @@ public class BatchAddActivity extends BaseActivity<BookFetchPresenter>
         if (mAddedCount <= 0) finish();
         else
             new MaterialDialog.Builder(this)
-                    .title(R.string.batch_add_activity_discard_dialog_title)
-                    .content(R.string.batch_add_activity_discard_dialog_content)
-                    .positiveText(R.string.batch_add_activity_discard_dialog_positive)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            finish();
-                        }
-                    })
-                    .negativeText(android.R.string.cancel)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                    .title(R.string.batch_add_activity_discard_dialog_title).content(R.string.batch_add_activity_discard_dialog_content)
+                    .positiveText(R.string.batch_add_activity_discard_dialog_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    finish();
+                }
+            }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    dialog.dismiss();
+                }
+            }).show();
     }
 
     @Override

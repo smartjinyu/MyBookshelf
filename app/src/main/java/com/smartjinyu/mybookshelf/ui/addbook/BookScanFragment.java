@@ -122,21 +122,18 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         boolean isExist = BookLab.get(mContext).isIsbnExists(isbn);
         if (isExist) {//The book is already in the list
             new MaterialDialog.Builder(mContext)
-                    .title(R.string.book_duplicate_dialog_title)
-                    .content(R.string.book_duplicate_dialog_content)
-                    .positiveText(R.string.book_duplicate_dialog_positive)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mPresenter.fetchBookInfo(isbn);
-                        }
-                    }).negativeText(android.R.string.cancel)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mActivity.finish();
-                        }
-                    }).show();
+                    .title(R.string.book_duplicate_dialog_title).content(R.string.book_duplicate_dialog_content)
+                    .positiveText(R.string.book_duplicate_dialog_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    mPresenter.fetchBookInfo(isbn);
+                }
+            }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    mActivity.finish();
+                }
+            }).show();
         } else mPresenter.fetchBookInfo(isbn);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

@@ -45,10 +45,8 @@ public class ExportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
     @Override
     protected void onPreExecute() {
         mDialog = new MaterialDialog.Builder(mContext)
-                .title(R.string.export_progress_dialog_title)
-                .content(R.string.export_progress_dialog_content)
-                .progress(true, 0)
-                .progressIndeterminateStyle(false)
+                .title(R.string.export_progress_dialog_title).content(R.string.export_progress_dialog_content)
+                .progress(true, 0).progressIndeterminateStyle(false)
                 .canceledOnTouchOutside(false)
                 .show();
     }

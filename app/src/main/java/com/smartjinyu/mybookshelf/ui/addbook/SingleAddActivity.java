@@ -113,39 +113,30 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
             case R.id.menu_simple_add_manually:
                 mBookScanFragment.stopScannerView();
                 new MaterialDialog.Builder(this)
-                        .title(R.string.input_isbn_manually_title)
-                        .content(R.string.input_isbn_manually_content)
-                        .positiveText(R.string.input_isbn_manually_positive)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                EditText et = dialog.getInputEditText();
-                                if (et == null) return;
-                                mBookScanFragment.fetchBookInfo(et.getText().toString());
-                            }
-                        })
-                        .negativeText(android.R.string.cancel)
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                mBookScanFragment.resumeCamera();
-                            }
-                        })
-                        .alwaysCallInputCallback()
-                        .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input(R.string.input_isbn_manually_edit_text, 0, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                int length = input.length();
-                                if (length == 10 || length == 13) {
-                                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
-                                } else {
-                                    dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                                }
-                            }
-                        })
-                        .canceledOnTouchOutside(false)
-                        .show();
+                        .title(R.string.input_isbn_manually_title).content(R.string.input_isbn_manually_content)
+                        .positiveText(R.string.input_isbn_manually_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        EditText et = dialog.getInputEditText();
+                        if (et == null) return;
+                        mBookScanFragment.fetchBookInfo(et.getText().toString());
+                    }
+                }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        mBookScanFragment.resumeCamera();
+                    }
+                }).alwaysCallInputCallback().inputType(InputType.TYPE_CLASS_NUMBER).input(R.string.input_isbn_manually_edit_text, 0, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        int length = input.length();
+                        if (length == 10 || length == 13) {
+                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                        } else {
+                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                        }
+                    }
+                }).canceledOnTouchOutside(false).show();
                 break;
 
             case R.id.menu_simple_add_totally_manual:

@@ -66,57 +66,47 @@ public class AboutFragment extends PreferenceFragment
                 boolean hasInstalledAlipayClient = AlipayZeroSdk.hasInstalledAlipayClient(getActivity());
                 if (hasInstalledAlipayClient) {
                     new MaterialDialog.Builder(getActivity())
-                            .title(R.string.about_preference_donate_title)
-                            .content(R.string.about_donate_dialog_content)
-                            .positiveText(R.string.about_donate_dialog_positive0)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AlipayZeroSdk.startAlipayClient(getActivity(), getString(R.string.about_donate_alipay_qrcode));
-                                    AnswersUtil.logContentView(TAG, "Donate", "2021", "Alipay Clicked", "Alipay Clicked");
-                                    dialog.dismiss();
-                                }
-                            }).negativeText(R.string.about_donate_dialog_negative0)
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
-                                    Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
-                                    AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
-                                    dialog.dismiss();
-                                }
-                            })
-                            .neutralText(android.R.string.cancel)
-                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
-                                    dialog.dismiss();
-                                }
-                            }).show();
+                            .title(R.string.about_preference_donate_title).content(R.string.about_donate_dialog_content)
+                            .positiveText(R.string.about_donate_dialog_positive0).onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AlipayZeroSdk.startAlipayClient(getActivity(), getString(R.string.about_donate_alipay_qrcode));
+                            AnswersUtil.logContentView(TAG, "Donate", "2021", "Alipay Clicked", "Alipay Clicked");
+                            dialog.dismiss();
+                        }
+                    }).negativeText(R.string.about_donate_dialog_negative0).onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                            Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
+                            AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
+                            dialog.dismiss();
+                        }
+                    }).neutralText(android.R.string.cancel).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
+                            dialog.dismiss();
+                        }
+                    }).show();
                 } else {
                     new MaterialDialog.Builder(getActivity())
-                            .title(R.string.about_preference_rate_title)
-                            .content(R.string.about_donate_dialog_content)
-                            .positiveText(R.string.about_donate_dialog_negative0)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
-                                    Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
-                                    AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
-                                    dialog.dismiss();
-                                }
-                            })
-                            .negativeText(android.R.string.cancel)
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
-
-                                    dialog.dismiss();
-                                }
-                            }).show();
+                            .title(R.string.about_preference_rate_title).content(R.string.about_donate_dialog_content)
+                            .positiveText(R.string.about_donate_dialog_negative0).onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AppUtil.copyText2Clipboard(mContext, "smartjinyu@gmail.com");
+                            Toast.makeText(mContext, getResources().getString(R.string.about_preference_donate_toast), Toast.LENGTH_SHORT).show();
+                            AnswersUtil.logContentView(TAG, "Donate", "2022", "Copy to clipboard Clicked", "Copy to clipboard Clicked");
+                            dialog.dismiss();
+                        }
+                    }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            AnswersUtil.logContentView(TAG, "Donate", "2023", "Cancel Clicked", "Cancel Clicked");
+                            dialog.dismiss();
+                        }
+                    }).show();
                 }
                 break;
             case "about_pref_feedback":

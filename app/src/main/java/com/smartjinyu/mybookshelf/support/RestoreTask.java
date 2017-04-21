@@ -41,10 +41,8 @@ public class RestoreTask extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPreExecute() {
         mDialog = new MaterialDialog.Builder(mContext)
-                .title(R.string.restore_progress_dialog_title)
-                .content(R.string.backup_progress_dialog_content)
-                .progress(true, 0)
-                .progressIndeterminateStyle(false)
+                .title(R.string.restore_progress_dialog_title).content(R.string.backup_progress_dialog_content)
+                .progress(true, 0).progressIndeterminateStyle(false)
                 .canceledOnTouchOutside(false)
                 .show();
     }

@@ -99,34 +99,32 @@ public class SettingsFragment extends PreferenceFragment
                 } else {
                     initialSelected = new Integer[]{0, 1}; //two webServices currently
                 }
-                new MaterialDialog.Builder(getActivity())
+                new MaterialDialog.Builder(mContext)
                         .title(R.string.settings_web_services_title)
                         .items(R.array.settings_web_services_entries)
-                        .positiveText(android.R.string.ok)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Gson gson = new Gson();
-                                String toSave = gson.toJson(dialog.getSelectedIndices());
-                                SharedPrefUtil.getInstance().putString(SharedPrefUtil.WEB_SERVICES_TYPE, toSave);
-                                //TODO this
-//                                setWebServicesPreference(); // refresh initial selected list
-                            }
-                        }).alwaysCallMultiChoiceCallback()
-                        .itemsCallbackMultiChoice(initialSelected, new MaterialDialog.ListCallbackMultiChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                boolean allowSelectionChange = which.length >= 1;
-                                if (!allowSelectionChange) {
-                                    Toast.makeText(getActivity(), R.string.settings_web_services_min_toast, Toast.LENGTH_SHORT).show();
-                                }
-                                return allowSelectionChange;
-                            }
-                        }).canceledOnTouchOutside(false).show();
+                        .positiveText(android.R.string.ok).onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Gson gson = new Gson();
+                        String toSave = gson.toJson(dialog.getSelectedIndices());
+                        SharedPrefUtil.getInstance().putString(SharedPrefUtil.WEB_SERVICES_TYPE, toSave);
+                        //TODO this
+//                      setWebServicesPreference(); // refresh initial selected list
+                    }
+                }).itemsCallbackMultiChoice(initialSelected, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        boolean allowSelectionChange = which.length >= 1;
+                        if (!allowSelectionChange) {
+                            Toast.makeText(mContext, R.string.settings_web_services_min_toast, Toast.LENGTH_SHORT).show();
+                        }
+                        return allowSelectionChange;
+                    }
+                }).alwaysCallMultiChoiceCallback().canceledOnTouchOutside(false).show();
                 break;
             case "settings_pref_export_to_csv":
                 AnswersUtil.logContentView(TAG, "Export CSV", "2030", "Click Export to csv", 1 + "");
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_EXPORT_CSV);
@@ -137,7 +135,7 @@ public class SettingsFragment extends PreferenceFragment
             case "settings_pref_backup":
                 AnswersUtil.logContentView(TAG, "Backup", "2006", "Click Backup", 1 + "");
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_BACKUP);
@@ -152,13 +150,13 @@ public class SettingsFragment extends PreferenceFragment
                 backupLocationPreference.setSummary(path);
                 AnswersUtil.logContentView(TAG, "Backup Location", "2005", "Click Backup Location", 1 + "");
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_LOCATION);
                     return false;
                 } else {
-                    Intent i = new Intent(getActivity(), FilePickerActivity.class);
+                    Intent i = new Intent(mContext, FilePickerActivity.class);
                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                     i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
                     i.putExtra(FilePickerActivity.EXTRA_START_PATH, path);
@@ -168,7 +166,7 @@ public class SettingsFragment extends PreferenceFragment
             case "settings_pref_restore":
                 AnswersUtil.logContentView(TAG, "Restore", "2007", "Click Restore", 1 + "");
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_RESTORE);
@@ -181,55 +179,45 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void exportToCSV() {
-        new MaterialDialog.Builder(getActivity())
+        new MaterialDialog.Builder(mContext)
                 .title(R.string.export_csv_dialog_title)
-                .items(R.array.export_csv_dialog_list)
-                .itemsCallbackMultiChoice(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-                        new MaterialDialog.ListCallbackMultiChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                if (which.length == 1) {
-                                    Toast.makeText(mContext, R.string.export_csv_dialog_at_least_toast, Toast.LENGTH_SHORT).show();
-                                    return false;
-                                }
-                                return true;
-                            }
-                        })
-                .alwaysCallMultiChoiceCallback()
-                .positiveText(android.R.string.ok)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .items(R.array.export_csv_dialog_list).itemsCallbackMultiChoice(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, new MaterialDialog.ListCallbackMultiChoice() {
+            @Override
+            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                if (which.length == 1) {
+                    Toast.makeText(mContext, R.string.export_csv_dialog_at_least_toast, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                return true;
+            }
+        }).positiveText(android.R.string.ok).onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
+                new MaterialDialog.Builder(mContext)
+                        .title(R.string.export_csv_caution_dialog_title).content(R.string.export_csv_caution_dialog_content)
+                        .positiveText(android.R.string.ok).onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull final MaterialDialog listDialog, @NonNull DialogAction which) {
-                        new MaterialDialog.Builder(getActivity())
-                                .title(R.string.export_csv_caution_dialog_title)
-                                .content(R.string.export_csv_caution_dialog_content)
-                                .positiveText(android.R.string.ok)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        String csvName = backupLocationPreference.getSummary() +
-                                                "/Bookshelf_CSV_" + BuildConfig.VERSION_CODE + "_"
-                                                + Calendar.getInstance().getTimeInMillis() + ".csv";
-                                        new ExportCSVTask(mContext, csvName).execute(listDialog.getSelectedIndices());
-                                        listDialog.dismiss();
-                                    }
-                                })
-                                .negativeText(android.R.string.cancel)
-                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        dialog.dismiss();
-                                        listDialog.dismiss();
-                                    }
-                                }).show();
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        String csvName = backupLocationPreference.getSummary() +
+                                "/Bookshelf_CSV_" + BuildConfig.VERSION_CODE + "_"
+                                + Calendar.getInstance().getTimeInMillis() + ".csv";
+                        new ExportCSVTask(mContext, csvName).execute(listDialog.getSelectedIndices());
+                        listDialog.dismiss();
                     }
-                }).negativeText(android.R.string.cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
+                        listDialog.dismiss();
                     }
-                }).autoDismiss(false).show();
+                }).show();
+            }
+        }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                dialog.dismiss();
+            }
+        }).alwaysCallMultiChoiceCallback().autoDismiss(false).show();
     }
 
     private void restoreBackup() {
@@ -247,68 +235,59 @@ public class SettingsFragment extends PreferenceFragment
             }
         }
         if (backups.size() != 0) {
-            new MaterialDialog.Builder(getActivity())
-                    .title(R.string.restore_dialog_title)
-                    .content(R.string.restore_dialog_content)
-                    .items(backups)
-                    .itemsCallback(new MaterialDialog.ListCallback() {
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.restore_dialog_title).content(R.string.restore_dialog_content)
+                    .items(backups).itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(final MaterialDialog listDialog, View itemView, int position, final CharSequence text) {
+                    new MaterialDialog.Builder(mContext)
+                            .title(R.string.restore_confirm_dialog_title).content(R.string.restore_confirm_dialog_content)
+                            .positiveText(android.R.string.ok).onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onSelection(final MaterialDialog listDialog, View itemView, int position, final CharSequence text) {
-                            new MaterialDialog.Builder(getActivity())
-                                    .title(R.string.restore_confirm_dialog_title)
-                                    .content(R.string.restore_confirm_dialog_content)
-                                    .positiveText(android.R.string.ok)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            String path = backupLocationPreference.getSummary().toString() + "/"
-                                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
-                                            new RestoreTask(mContext).execute(path);
-                                            listDialog.dismiss();
-                                        }
-                                    }).negativeText(android.R.string.cancel)
-                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            dialog.dismiss();
-                                            listDialog.dismiss();
-                                        }
-                                    }).show();
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            String path = backupLocationPreference.getSummary().toString() + "/"
+                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
+                            new RestoreTask(mContext).execute(path);
+                            listDialog.dismiss();
                         }
-                    })
-                    .itemsLongCallback(new MaterialDialog.ListLongCallback() {
+                    }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public boolean onLongSelection(final MaterialDialog dialogList, View itemView, final int position, final CharSequence text) {
-                            new MaterialDialog.Builder(getActivity())
-                                    .title(R.string.restore_delete_dialog_title)
-                                    .content(R.string.restore_delete_dialog_content)
-                                    .positiveText(android.R.string.ok)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            List<CharSequence> itemList = dialogList.getItems();
-                                            if (itemList == null) return;
-                                            String path = backupLocationPreference.getSummary().toString() + "/"
-                                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
-                                            File file = new File(path);
-                                            if (file.exists()) {
-                                                file.delete();
-                                            }
-                                            itemList.remove(position);
-                                            dialogList.notifyItemsChanged();
-                                        }
-                                    }).negativeText(android.R.string.cancel)
-                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            dialog.dismiss();
-                                        }
-                                    }).show();
-                            return false;
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                            listDialog.dismiss();
                         }
-                    }).autoDismiss(false).show();
+                    }).show();
+                }
+            }).itemsLongCallback(new MaterialDialog.ListLongCallback() {
+                @Override
+                public boolean onLongSelection(final MaterialDialog dialogList, View itemView, final int position, final CharSequence text) {
+                    new MaterialDialog.Builder(mContext)
+                            .title(R.string.restore_delete_dialog_title).content(R.string.restore_delete_dialog_content)
+                            .positiveText(android.R.string.ok).onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            List<CharSequence> itemList = dialogList.getItems();
+                            if (itemList == null) return;
+                            String path = backupLocationPreference.getSummary().toString() + "/"
+                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
+                            File file = new File(path);
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                            itemList.remove(position);
+                            dialogList.notifyItemsChanged();
+                        }
+                    }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+                    return false;
+                }
+            }).autoDismiss(false).show();
         } else {
-            Toast.makeText(getActivity(), getString(R.string.restore_no_backup_toast), Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, getString(R.string.restore_no_backup_toast), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -318,14 +297,14 @@ public class SettingsFragment extends PreferenceFragment
             case STORAGE_PERMISSION_LOCATION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast1), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, getString(R.string.storage_permission_toast1), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Storage Permission Denied 1");
                 }
                 break;
             case STORAGE_PERMISSION_BACKUP:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast2), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, getString(R.string.storage_permission_toast2), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Storage Permission Denied 2");
                 } else {
                     String backupLocation = backupLocationPreference.getSummary().toString();
@@ -335,7 +314,7 @@ public class SettingsFragment extends PreferenceFragment
             case STORAGE_PERMISSION_RESTORE:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast3), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, getString(R.string.storage_permission_toast3), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Storage Permission Denied 3");
                 } else {
                     restoreBackup();
@@ -344,11 +323,9 @@ public class SettingsFragment extends PreferenceFragment
             case STORAGE_PERMISSION_EXPORT_CSV:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast5), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, getString(R.string.storage_permission_toast5), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Storage Permission Denied 5");
-                } else {
-                    exportToCSV();
-                }
+                } else exportToCSV();
                 break;
         }
     }

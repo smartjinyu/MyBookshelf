@@ -467,19 +467,18 @@ public class MainActivity extends SimpleActivity
                     public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
                         // nothing to do here
                     }
-                })
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                        EditText etLabel = inputDialog.getInputEditText();
-                        if (etLabel == null) return;
-                        Label labelToAdd = new Label();
-                        labelToAdd.setTitle(etLabel.getText().toString());
-                        LabelLab.get(mContext).addLabel(labelToAdd);
-                        Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                        refreshLabelMenuItem();
-                    }
-                }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
+                }).onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                EditText etLabel = inputDialog.getInputEditText();
+                if (etLabel == null) return;
+                Label labelToAdd = new Label();
+                labelToAdd.setTitle(etLabel.getText().toString());
+                LabelLab.get(mContext).addLabel(labelToAdd);
+                Log.i(TAG, "New label created " + labelToAdd.getTitle());
+                refreshLabelMenuItem();
+            }
+        }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
                 inputDialog.dismiss();

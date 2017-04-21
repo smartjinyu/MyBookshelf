@@ -1,12 +1,9 @@
 TODO:
 2017/04/20 完成
-- BookUtil 提取
-- ReadStatus 提取（枚举类）
 - ~~判断书籍已经添加的逻辑放在二维码扫描结果回调中~~
 - ~~多选 Adapter 添加全选接口~~
 - ~~主 Activity 添加 Label 显示~~
 - ~~BookList 显示状态化（参照 TODO ）~~
-- MaterialDialog 功能提取
 - ~~打点逻辑功能提取~~
 - ~~书籍添加后，到 MainActivity 回调，刷新书籍列表显示~~
 

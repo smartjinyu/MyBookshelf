@@ -1,6 +1,7 @@
 package com.smartjinyu.mybookshelf.ui.book;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
 import com.smartjinyu.mybookshelf.R;
 import com.smartjinyu.mybookshelf.base.SimpleActivity;
 import com.smartjinyu.mybookshelf.model.BookLab;
@@ -102,6 +105,8 @@ public class BookEditActivity extends SimpleActivity {
 
     private String customPhotoName = null;
     private Book mBook;
+    // original book content
+    private String mOrigBook;
 
     @Override
     protected String getTag() {
@@ -120,6 +125,8 @@ public class BookEditActivity extends SimpleActivity {
         Intent i = getIntent();
 
         mBook = (Book) getIntent().getSerializableExtra(BOOK);
+        // save the original book
+        mOrigBook = new Gson().toJson(mBook, Book.class);
 
         setupToolbar(mBookeditToolbar, R.id.bookedit_toolbar);
         setBookInfo();
@@ -131,18 +138,8 @@ public class BookEditActivity extends SimpleActivity {
             CoverDownloader coverDownloader = new CoverDownloader(this, mBook, 0);
             String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
             coverDownloader.downloadAndSaveImg(i.getStringExtra(imageURL), path);
-        } else {
-            setBookCover();
-        }
+        } else setBookCover();
         setCoverChange();
-
-        if (mBook.getNotes() != null) {
-            mBookNotesEditText.setText(mBook.getNotes());
-        }
-
-        if (mBook.getWebsite() != null) {
-            mBookWebsiteEditText.setText(mBook.getWebsite());
-        }
     }
 
 
@@ -252,7 +249,9 @@ public class BookEditActivity extends SimpleActivity {
 
     @Override
     public void onBackPressed() {
-        dialogBeforeDiscard();
+        String changedBook = new Gson().toJson(mBook, Book.class);
+        if (changedBook.equals(mOrigBook)) finish();
+        else dialogBeforeDiscard();
     }
 
     private void dialogBeforeDiscard() {
@@ -390,16 +389,18 @@ public class BookEditActivity extends SimpleActivity {
         });
     }
 
+    @SuppressLint("DefaultLocale")
     private void setBookInfo() {
         mBookTitleEditText.setText(mBook.getTitle());
         String authors = mBook.getFormatAuthor();
-        if (authors != null) {
-            mBookAuthorEditText.setText(authors);
-        }
         String translators = mBook.getFormatTranslator();
-        if (translators != null) {
-            mBookTranslatorEditText.setText(translators);
-        }
+        String notes = mBook.getNotes();
+        String website = mBook.getWebsite();
+
+        if (TextUtils.isEmpty(authors)) mBookAuthorEditText.setText(authors);
+        if (TextUtils.isEmpty(translators)) mBookTranslatorEditText.setText(translators);
+        if (TextUtils.isEmpty(notes)) mBookNotesEditText.setText(notes);
+        if (TextUtils.isEmpty(website)) mBookWebsiteEditText.setText(website);
 
         mBookPublisherEditText.setText(mBook.getPublisher());
         if (mBook.getPubTime() != null) {
@@ -408,10 +409,7 @@ public class BookEditActivity extends SimpleActivity {
                 mBookPubyearEditText.setText(String.valueOf(year));
                 int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
                 StringBuilder month = new StringBuilder();
-                if (mon < 10) {
-                    month.append("0");
-                }
-                month.append(String.valueOf(mon));
+                month.append(String.format("%2d", mon));
                 mBookPubmonthEditText.setText(month);
             }
         }
@@ -499,10 +497,7 @@ public class BookEditActivity extends SimpleActivity {
 
             public void onNothingSelected(AdapterView<?> parent) {
             }
-
         });
-
-
     }
 
     private void setReadingStatus() {
@@ -521,17 +516,15 @@ public class BookEditActivity extends SimpleActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
 
     public void setBookCover() {
-        if (mBook.isHasCover()) {
-            String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
-            Bitmap bitmap1 = BitmapFactory.decodeFile(path);
-            mBookCoverImageView.setImageBitmap(bitmap1);
-        }
+        if (!mBook.isHasCover()) return;
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + mBook.getCoverPhotoFileName();
+        Bitmap bitmap1 = BitmapFactory.decodeFile(path);
+        mBookCoverImageView.setImageBitmap(bitmap1);
     }
 
     private void setCoverChange() {
@@ -549,8 +542,7 @@ public class BookEditActivity extends SimpleActivity {
                             AnswersUtil.logContentView(TAG, "Take New Picture", "2051", "Take New Picture", 1 + "");
                             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
                                     != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(mContext,
-                                        new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
+                                ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
                             } else takePictureIntent();
 
                         } else if (position == 1) {
@@ -565,7 +557,6 @@ public class BookEditActivity extends SimpleActivity {
                         }
                     }
                 }).show();
-
             }
         });
     }
@@ -606,9 +597,7 @@ public class BookEditActivity extends SimpleActivity {
             case CAMERA_PERMISSION:
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(mContext, getString(R.string.cover_change_camera_permission_denied), Toast.LENGTH_LONG).show();
-                } else {
-                    takePictureIntent();
-                }
+                } else takePictureIntent();
         }
     }
 
@@ -625,7 +614,6 @@ public class BookEditActivity extends SimpleActivity {
                 .compressToFile(imageFile);
         mBook.setHasCover(true);
         setBookCover();
-
     }
 
     @Override

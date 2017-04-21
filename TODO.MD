@@ -6,6 +6,8 @@ TODO:
 - ~~BookList 显示状态化（参照 TODO ）~~
 - ~~打点逻辑功能提取~~
 - ~~书籍添加后，到 MainActivity 回调，刷新书籍列表显示~~
+- ~~Back键的支持~~
+- ~~EditBook中添加内容是否被更改的判断~~
 
 发起 pull request
 

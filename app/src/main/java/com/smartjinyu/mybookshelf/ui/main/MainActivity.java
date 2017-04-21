@@ -208,23 +208,17 @@ public class MainActivity extends SimpleActivity
             @Override
             public boolean onClose() {
                 Log.d(TAG, "SearchView close");
-                if (mFabAddMenu != null) {
-                    Log.d(TAG, "Show FAM 2");
-                    mFabAddMenu.setVisibility(View.VISIBLE);
-                    mFabAddMenu.showMenuButton(true);
-                    mMainFragment.refreshFetch();
-                }
+                Log.d(TAG, "Show FAM 2");
+                showFabMenu();
+                mMainFragment.refreshFetch();
                 return true;
             }
 
             @Override
             public boolean onOpen() {
                 Log.d(TAG, "SearchView open");
-                if (mFabAddMenu != null) {
-                    Log.d(TAG, "Hide FAM 2");
-                    mFabAddMenu.setVisibility(View.GONE);
-                    mFabAddMenu.hideMenuButton(true);
-                }
+                Log.d(TAG, "Hide FAM 2");
+                hideFabMenu();
                 return false;
             }
         });
@@ -237,7 +231,7 @@ public class MainActivity extends SimpleActivity
                 Log.i(TAG, "fab menu item 1 clicked");
                 Intent i = new Intent(mContext, SingleAddActivity.class);
                 startActivity(i);
-                mFabAddMenu.close(true);
+                openFabMenu(false);
             }
         });
         mFabBatchAdd.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +240,7 @@ public class MainActivity extends SimpleActivity
                 Log.i(TAG, "fab menu item 2 clicked");
                 Intent i = new Intent(mContext, BatchAddActivity.class);
                 startActivity(i);
-                mFabAddMenu.close(true);
+                openFabMenu(false);
             }
         });
         mFabAddMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(this, R.anim.show_from_bottom));
@@ -283,6 +277,7 @@ public class MainActivity extends SimpleActivity
         Log.d(TAG, "ACTION_SEARCH = " + actionSearch);
         if (actionSearch) {
             openSearchView(true);
+            hideFabMenu();
             actionSearch = false;
         }
     }
@@ -295,8 +290,8 @@ public class MainActivity extends SimpleActivity
         boolean isFabMenuOpen = mFabAddMenu.isOpened();
         boolean isDrawerOpen = mDrawerLayout.isDrawerOpen(GravityCompat.START);
         if (isSearchViewOpen || isFabMenuOpen || isDrawerOpen) {
-            if (isSearchViewOpen) mSearchView.close(true);
-            if (isFabMenuOpen) mFabAddMenu.close(true);
+            if (isSearchViewOpen) openSearchView(false);
+            if (isFabMenuOpen) openFabMenu(false);
             if (isDrawerOpen) mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
@@ -507,8 +502,7 @@ public class MainActivity extends SimpleActivity
         if (!mSearchView.isSearchOpen() && state) {
             openFabMenu(false);
             mSearchView.open(true);
-        }
-        if (mSearchView.isSearchOpen() && !state)
+        } else if (mSearchView.isSearchOpen() && !state)
             mSearchView.close(true);
     }
 

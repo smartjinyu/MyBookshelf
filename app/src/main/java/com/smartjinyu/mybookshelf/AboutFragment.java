@@ -166,7 +166,7 @@ public class AboutFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 Intent mail = new Intent(Intent.ACTION_SENDTO);
                 mail.setData(Uri.parse("mailto:smartjinyu@gmail.com"));
-                mail.putExtra(Intent.EXTRA_SUBJECT, "MyBookshelf Feedback");
+                mail.putExtra(Intent.EXTRA_SUBJECT, "BookShelf Feedback");
                 String content = getEmailContent();
                 mail.putExtra(Intent.EXTRA_TEXT, content);
                 startActivity(mail);

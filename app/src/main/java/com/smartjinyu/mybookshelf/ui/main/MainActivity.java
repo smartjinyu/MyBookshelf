@@ -290,16 +290,18 @@ public class MainActivity extends SimpleActivity
     @Override
     public void onBackPressed() {
         // action menu (multi select) has been processed
-        // first close search view and fab menu
+        // first close search view , fab menu , drawer view
         boolean isSearchViewOpen = mSearchView.isSearchOpen();
         boolean isFabMenuOpen = mFabAddMenu.isOpened();
-        if (isSearchViewOpen || isFabMenuOpen) {
+        boolean isDrawerOpen = mDrawerLayout.isDrawerOpen(GravityCompat.START);
+        if (isSearchViewOpen || isFabMenuOpen || isDrawerOpen) {
             if (isSearchViewOpen) mSearchView.close(true);
             if (isFabMenuOpen) mFabAddMenu.close(true);
+            if (isDrawerOpen) mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
 
-        // if search view and fab menu are closed, then process others
+        // if search view ,drawer view and fab menu are closed, then process others
         int startTimes = SharedPrefUtil.getInstance().getInt(LAUNCH_TIMES, 1);
         Log.i(TAG, "startTimes = " + startTimes);
         SharedPrefUtil.getInstance().putInt(LAUNCH_TIMES, startTimes + 1);

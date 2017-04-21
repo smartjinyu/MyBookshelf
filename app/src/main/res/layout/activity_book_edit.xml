@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_bookedit" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/bookedit_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryDark"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -13,24 +21,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
-            <include layout="@layout/view_cover_and_info" />
+            <include layout="@layout/view_cover_and_info"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/book_edit_detail_bar_text_view"
+                    style="?android:listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="?android:listSeparatorTextViewStyle" />
+                    android:layout_height="wrap_content"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -43,23 +51,22 @@
                         android:id="@+id/book_edit_readingstatus_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:scaleType="center"
-                        android:contentDescription="@string/reading_status_image_view"
-                        android:src="@drawable/ic_reading_status"
+                        android:layout_marginBottom="12dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp" />
-
-
+                        android:contentDescription="@string/reading_status_image_view"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_reading_status"/>
+                    
                     <Spinner
                         android:id="@+id/reading_status_spinner"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:spinnerMode="dropdown"
-                        android:backgroundTint="@color/colorSecondaryText"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/book_edit_readingstatus_image_view" />
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@+id/book_edit_readingstatus_image_view"
+                        android:backgroundTint="@color/colorSecondaryText"
+                        android:spinnerMode="dropdown"/>
 
                 </RelativeLayout>
 
@@ -73,23 +80,23 @@
                         android:id="@+id/book_edit_bookshelf_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:scaleType="center"
-                        android:contentDescription="@string/book_shelf_image_view"
-                        android:src="@drawable/ic_bookshelf"
+                        android:layout_marginBottom="12dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp" />
+                        android:contentDescription="@string/book_shelf_image_view"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_bookshelf"/>
 
 
                     <Spinner
                         android:id="@+id/book_shelf_spinner"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:spinnerMode="dropdown"
-                        android:backgroundTint="@color/colorSecondaryText"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@id/book_edit_bookshelf_image_view" />
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/book_edit_bookshelf_image_view"
+                        android:backgroundTint="@color/colorSecondaryText"
+                        android:spinnerMode="dropdown"/>
 
                 </RelativeLayout>
 
@@ -103,24 +110,24 @@
                         android:id="@+id/book_edit_note_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:scaleType="center"
-                        android:contentDescription="@string/note_edit_text_hint"
-                        android:src="@drawable/ic_notes"
+                        android:layout_marginBottom="12dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp" />
+                        android:contentDescription="@string/note_edit_text_hint"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notes"/>
 
                     <EditText
                         android:id="@+id/book_notes_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="16dp"
-                        android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
-                        android:hint="@string/note_edit_text_hint"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@id/book_edit_note_image_view" />
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/book_edit_note_image_view"
+                        android:hint="@string/note_edit_text_hint"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:textSize="16sp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -133,25 +140,25 @@
                         android:id="@+id/book_edit_label_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:scaleType="center"
-                        android:contentDescription="@string/label_image_view"
-                        android:src="@drawable/ic_label"
+                        android:layout_marginBottom="12dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp" />
+                        android:contentDescription="@string/label_image_view"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_label"/>
 
                     <EditText
                         android:id="@+id/book_labels_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="16sp"
-                        android:layout_marginStart="16dp"
-                        android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
-                        android:hint="@string/label_edit_text_hint"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginStart="16dp"
                         android:layout_toEndOf="@id/book_edit_label_image_view"
-                        android:focusable="false" />
+                        android:focusable="false"
+                        android:hint="@string/label_edit_text_hint"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:textSize="16sp"/>
 
                 </RelativeLayout>
 
@@ -165,24 +172,24 @@
                         android:id="@+id/book_edit_website_image_view"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:scaleType="center"
-                        android:contentDescription="@string/website_edit_text_hint"
-                        android:src="@drawable/ic_website"
+                        android:layout_marginBottom="12dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp" />
+                        android:contentDescription="@string/website_edit_text_hint"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_website"/>
 
                     <EditText
                         android:id="@+id/book_website_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:textSize="16sp"
-                        android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
-                        android:hint="@string/website_edit_text_hint"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@id/book_edit_website_image_view" />
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/book_edit_website_image_view"
+                        android:hint="@string/website_edit_text_hint"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:textSize="16sp"/>
 
                 </RelativeLayout>
 

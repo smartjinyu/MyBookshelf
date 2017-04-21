@@ -1,0 +1,23 @@
+You must accept the following term of service to continue using BookShlef:
+
+### 1. Copyright
+
+- The copyright of the book information got from web services are reserved by these serives. BookShelf is not responsible for copyright issues. If you want to use these data, you should ask these services for permission.
+- You should not use BookShelf to do anything violating copyright rules。
+
+### 2. Information Collection
+
+BookShelf is an open-source,free app, we won't collect your personal information such as your book list, bookshelves, labels, etc. However, to make this app better, we will collect the following data:
+
+- Crash Report of BookShelf
+- The usage frequency of each function BookShelf provided
+- Basic information about your device (only include Android Version, Device Name etc, EXCLUDE any personal information like IMEI, MAC, Android ID etc)
+
+In fact, above are the functions provided by Fabric Answers and Crashlytics plugins, we promise that these data is only used to improve user experience, we won't and cannot use them to track back to any specific user. Also, we won't share these data with any third-party people or organizations.
+
+### 3. Others
+
+Other things not mentioned above are subject to relevant laws and rules. If you have any questions about that, you can [contact developers] or view BookShelf's source code on [GitHub].
+
+[contact developers]:mailto:smartjinyu@gmail.com
+[GitHub]:https://github.com/smartjinyu/MyBookshelf

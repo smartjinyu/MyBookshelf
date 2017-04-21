@@ -15,6 +15,7 @@
     <string name="batch_add_activity_discard_dialog_positive">舍弃</string>
     <string name="batch_add_activity_discard_dialog_title">舍弃书籍</string>
     <string name="batch_add_added_snack_bar">\"%1$s\" 添加成功</string>
+    <string name="batch_add_book_existed_in_added_list">\"%1$s\" 在待添加列表中已存在！</string>
     <string name="batch_add_delete_book_dialog_content">确认要把此书从列表中删除吗？</string>
     <string name="batch_add_delete_book_dialog_positive">删除</string>
     <string name="batch_add_delete_book_dialog_title">删除书籍</string>
@@ -23,6 +24,7 @@
     <string name="batch_add_tab_title_0">扫描</string>
     <string name="batch_add_tab_title_1">已添加(%1$d)</string>
     <string name="batch_add_title">批量添加</string>
+    <string name="batch_add_no_books">无待添加的书籍</string>
     <string name="book_author_edit_text_hint">多个请用逗号隔开</string>
     <string name="book_author_text_view">作者：</string>
     <string name="book_cover_image_view_hint">书籍封面</string>
@@ -229,6 +231,9 @@
     <string name="new_version_find_dialog_title">发现新版本</string>
     <string name="settings_export_to_csv_summary">导出为.csv文件以便管理</string>
     <string name="settings_export_to_csv_title">导出为.csv文件</string>
+    <string name="settings_general">General</string>
+    <string name="settings_check_update_title">启动时检查更新</string>
+
     <string name="shortcut_name_add">添加书籍</string>
     <string name="shortcut_name_search">搜索</string>
     <string name="storage_permission_toast5">请授予存储空间权限以导出您的书籍！</string>
@@ -253,4 +258,8 @@
     <string name="cover_change_no_choose_picture_app">没有找到支持的图片选择工具！</string>
 
 
+    <string name="no_books">无书籍！</string>
+    <string name="no_books_in_bookshelf">书架『%1$s』为空！</string>
+    <string name="no_books_in_label">无标签为『%1$s』的书籍！</string>
+    <string name="no_books_in_bookshelf_and_label">书架『%1$s』下，无标签为『%2$s』的书籍！</string>
 </resources>

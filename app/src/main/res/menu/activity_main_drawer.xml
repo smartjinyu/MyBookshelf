@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_item_bookshelf"
+            android:icon="@drawable/ic_bookshelf"
+            android:title="@string/drawer_item_books"/>
+        <item
+            android:id="@+id/drawer_item_search"
+            android:icon="@drawable/ic_search"
+            android:title="@string/drawer_item_search"/>
+    </group>
+    <group>
+        <item
+            android:id="@+id/drawer_item_added_labels"
+            android:checkable="true"
+            android:title="@string/drawer_section_label">
+            <menu></menu>
+        </item>
+        <item
+            android:id="@+id/drawer_item_add_label"
+            android:checkable="false"
+            android:icon="@drawable/ic_add"
+            android:title="@string/drawer_item_create_new_label"/>
+    </group>
+    <group
+        android:id="@+id/ad"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_item_donate"
+            android:icon="@drawable/ic_donate"
+            android:title="@string/drawer_item_donate"/>
+        <item
+            android:id="@+id/drawer_item_setting"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/drawer_item_settings"/>
+        <item
+            android:id="@+id/drawer_item_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/drawer_item_about"/>
+    </group>
+</menu>

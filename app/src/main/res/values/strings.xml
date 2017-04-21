@@ -74,7 +74,10 @@
     <string name="accept_term_of_service_dialog_positive">Accept</string>
     <string name="accept_term_of_service_dialog_negative">Deny</string>
     <string name="accept_term_of_service_dialog_deny_toast">You must accept the term of service to continue!</string>
-    <string name="set_reading_status_title">Set Reading Status</string>
+    <string name="no_books">No Books</string>
+    <string name="no_books_in_bookshelf">No Books in BookShelf『%1$s』</string>
+    <string name="no_books_in_label">No Books in Label『%1$s』</string>
+    <string name="no_books_in_bookshelf_and_label">No Books in BookShelf『%1$s』and Label『%2$s』</string>
 
     <!--SingleAddActivity-->
     <string name="single_scan_toolbar">Scan Barcode of Book</string>
@@ -296,11 +299,14 @@
     <string name="batch_add_delete_book_dialog_title">Delete Book</string>
     <string name="batch_add_delete_book_dialog_content">Are you sure to delete the book from your list?</string>
     <string name="batch_add_delete_book_dialog_positive">Delete</string>
+    <string name="batch_add_book_existed_in_added_list">\"%1$s\" exists in to-add list!</string>
     <string name="batch_add_menu_item_save">Save</string>
+    <string name="batch_add_no_books">No Books to be added</string>
 
     <!--App shortcuts-->
     <string name="shortcut_name_add">Add Book</string>
     <string name="shortcut_name_search">Search</string>
 
-
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

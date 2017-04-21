@@ -282,7 +282,7 @@ public class MainActivity extends SimpleActivity
         }
         Log.d(TAG, "ACTION_SEARCH = " + actionSearch);
         if (actionSearch) {
-            mSearchView.open(true);
+            openSearchView(true);
             actionSearch = false;
         }
     }

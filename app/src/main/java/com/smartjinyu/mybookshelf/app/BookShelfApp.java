@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.smartjinyu.mybookshelf.di.component.AppComponent;
 import com.smartjinyu.mybookshelf.di.component.DaggerAppComponent;
 import com.smartjinyu.mybookshelf.di.module.AppModule;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * 作者：Neil on 2017/4/13 23:36.
@@ -32,6 +35,7 @@ public class BookShelfApp extends Application {
         super.onCreate();
         mInstance = this;
         AppContext = getApplicationContext();
+        Fabric.with(this, new Crashlytics());
     }
 
     public static AppComponent getAppComponent() {

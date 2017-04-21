@@ -54,13 +54,11 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     @Override
     public void onResume() {
         super.onResume();
-        resumeCamera();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        stopScannerView();
+        mScannerView.setAutoFocus(true);
+        mScannerView.setFlash(mFlash);
+        mScannerView.setResultHandler(this);
+        mScannerView.startCamera();
+        mViewGroup.addView(mScannerView);
     }
 
     @Override
@@ -76,10 +74,6 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
     @Override
     protected void initEventAndData() {
         mScannerView = new ZXingScannerView(getActivity());
-        mScannerView.setAutoFocus(true);
-        mScannerView.setFlash(mFlash);
-        mScannerView.setResultHandler(this);
-        mViewGroup.addView(mScannerView);
     }
 
     @Override
@@ -139,7 +133,7 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mScannerView.resumeCameraPreview(BookScanFragment.this);
+                resumeCameraPreview();
             }
         }, 2000);
         // Note:
@@ -203,18 +197,14 @@ public class BookScanFragment extends BaseFragment<BookFetchPresenter>
         mOnBookFetchedListener = onBookFetchedListener;
     }
 
-    public void resumeCamera() {
-        //mScannerView.resumeCameraPreview(SingleAddActivity.this);
-        mScannerView.setResultHandler(this);
-        mScannerView.setAutoFocus(true);
-        mScannerView.setFlash(mFlash);
-        mScannerView.startCamera();
+    public void resumeCameraPreview() {
+        if (mScannerView != null) mScannerView.resumeCameraPreview(this);
     }
 
-    public void stopScannerView() {
-        if (mScannerView != null) {
-            mScannerView.stopCamera();
-        }
+    // when exit and start this fragment cause "E/Camera: Error 2"
+    // same as: http://stackoverflow.com/questions/37834961/camera-error-2-android-6-0
+    public void stopCameraPreview() {
+        if (mScannerView != null) mScannerView.stopCameraPreview();
     }
 
     public void reverseScannerViewFlash() {

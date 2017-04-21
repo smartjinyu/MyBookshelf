@@ -98,7 +98,7 @@ public class MainActivity extends SimpleActivity
     @Override
     protected int getLayoutId() {
         // Fabric init here
-        AnswersUtil.init(this);
+//        AnswersUtil.init(this);
         return R.layout.activity_main;
     }
 
@@ -117,7 +117,7 @@ public class MainActivity extends SimpleActivity
         setupBookShelfSpinner();
         setSearchView();
 
-        if (getIntent().getAction().equals(ACTION_SEARCH)) {
+        if (getIntent().getAction() != null && getIntent().getAction().equals(ACTION_SEARCH)) {
             actionSearch = true;
         }
 

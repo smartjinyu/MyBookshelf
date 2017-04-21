@@ -25,6 +25,7 @@ import com.smartjinyu.mybookshelf.model.BookLab;
 import com.smartjinyu.mybookshelf.model.bean.Book;
 import com.smartjinyu.mybookshelf.support.CoverDownloader;
 import com.smartjinyu.mybookshelf.ui.book.BookEditActivity;
+import com.smartjinyu.mybookshelf.ui.main.MainActivity;
 
 import butterknife.BindView;
 
@@ -38,6 +39,8 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
 
     @BindView(R.id.singleScanToolbar)
     Toolbar mToolbar;
+
+    private boolean mEnterInShortcut;
 
     private BookScanFragment mBookScanFragment;
 
@@ -63,6 +66,9 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.singleScanFrame, mBookScanFragment).commit();
         mBookScanFragment.setOnBookFetchedListener(this);
+        if (getIntent().getAction() != null &&
+                getIntent().getAction().equals("android.intent.action.VIEW"))
+            mEnterInShortcut = true;
     }
 
     @Override
@@ -81,19 +87,9 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-//        mBookScanFragment.resumeCamera();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-//        mBookScanFragment.stopScannerView();
-    }
-
-    @Override
     public void onBackPressed() {
+        if (mEnterInShortcut)
+            startActivity(new Intent(SingleAddActivity.this, MainActivity.class));
         this.finish();
     }
 
@@ -111,7 +107,7 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
                 }
                 break;
             case R.id.menu_simple_add_manually:
-                mBookScanFragment.stopScannerView();
+                mBookScanFragment.stopCameraPreview();
                 new MaterialDialog.Builder(this)
                         .title(R.string.input_isbn_manually_title).content(R.string.input_isbn_manually_content)
                         .positiveText(R.string.input_isbn_manually_positive).onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -124,7 +120,7 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
                 }).negativeText(android.R.string.cancel).onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        mBookScanFragment.resumeCamera();
+                        mBookScanFragment.resumeCameraPreview();
                     }
                 }).alwaysCallInputCallback().inputType(InputType.TYPE_CLASS_NUMBER).input(R.string.input_isbn_manually_edit_text, 0, new MaterialDialog.InputCallback() {
                     @Override
@@ -140,7 +136,7 @@ public class SingleAddActivity extends SimpleActivity implements OnBookFetchedLi
                 break;
 
             case R.id.menu_simple_add_totally_manual:
-                mBookScanFragment.stopScannerView();
+                mBookScanFragment.stopCameraPreview();
                 Book mBook = new Book();
                 Intent i = new Intent(SingleAddActivity.this, BookEditActivity.class);
                 i.putExtra(BookEditActivity.BOOK, mBook);

@@ -31,10 +31,12 @@
         </activity>
         <activity
             android:name=".ui.addbook.SingleAddActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:launchMode="singleTask"
             android:theme="@style/AppOverlayTheme">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -43,11 +45,13 @@
         <activity
             android:name=".ui.book.BookDetailActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity=""
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Sliding.Light"/>
         <activity android:name=".ui.about.AboutActivity"/>
         <activity android:name=".ui.setting.SettingsActivity"/>
-        <activity android:name=".ui.addbook.BatchAddActivity"/>
+        <activity
+            android:name=".ui.addbook.BatchAddActivity"
+            android:parentActivityName=".ui.main.MainActivity"/>
 
         <activity
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"

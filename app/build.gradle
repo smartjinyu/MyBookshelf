@@ -71,15 +71,15 @@ dependencies {
 
     // ui
     compile 'com.github.clans:fab:1.6.4'
-    compile 'com.afollestad.material-dialogs:core:0.9.4.2'
+    compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'com.klinkerapps:sliding-activity:1.4.4'
     compile('com.mikepenz:materialdrawer:5.9.0@aar') {
         transitive = true
     }
 
     // network
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile('com.squareup.retrofit2:converter-simplexml:2.2.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
@@ -87,7 +87,7 @@ dependencies {
     }
 
     // others
-    compile 'me.dm7.barcodescanner:zxing:1.9'
+    compile 'me.dm7.barcodescanner:zxing:1.9.3'
     compile 'com.nononsenseapps:filepicker:4.0.0'
     compile 'com.github.promeg:tinypinyin:2.0.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
@@ -99,10 +99,10 @@ dependencies {
     compile files('libs/opencsv-3.9.jar')
 
     // di
-    compile 'com.google.dagger:dagger:2.10'
-    provided 'com.google.dagger:dagger-compiler:2.10'
+    compile 'com.google.dagger:dagger:2.11'
+    provided 'com.google.dagger:dagger-compiler:2.11'
     provided 'org.glassfish:javax.annotation:10.0-b28'
-    compile 'com.jakewharton:butterknife:8.5.1'
-    apt 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.jakewharton:butterknife:8.6.0'
+    apt 'com.jakewharton:butterknife-compiler:8.6.0'
 
 }

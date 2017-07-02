@@ -75,7 +75,7 @@
         </provider>
 
 
-        <meta-data
+    <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_api_key}"/>
     </application>

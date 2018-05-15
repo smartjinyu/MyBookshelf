@@ -40,6 +40,7 @@ public class AboutFragment extends PreferenceFragment {
     private Preference feedbackPreference;
     private Preference licensePreference;
     private Preference termOfServicePreference;
+    private Preference privacyPolicyPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -183,6 +184,46 @@ public class AboutFragment extends PreferenceFragment {
 
                 WebView wv = new WebView(getActivity());
                 wv.loadUrl("file:///android_asset/license.html");
+                wv.setWebViewClient(new WebViewClient() {
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        view.loadUrl(url);
+                        return true;
+                    }
+
+                    @TargetApi(Build.VERSION_CODES.N)
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                        final Uri uri = request.getUrl();
+                        view.loadUrl(uri.toString());
+                        return true;
+                    }
+
+                });
+
+                alert.setView(wv);
+                alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+
+                return true;
+            }
+        });
+
+        privacyPolicyPreference = findPreference("about_pref_privacy_policy");
+        privacyPolicyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle(getString(R.string.about_preference_privacy_policy));
+
+                WebView wv = new WebView(getActivity());
+                wv.loadUrl("file:///android_asset/privacy_policy.html");
                 wv.setWebViewClient(new WebViewClient() {
                     @SuppressWarnings("deprecation")
                     @Override

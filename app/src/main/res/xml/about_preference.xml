@@ -36,6 +36,9 @@
             android:title="@string/about_preference_license"
             android:key="about_pref_license" />
         <Preference
+            android:title="@string/about_preference_privacy_policy"
+            android:key="about_pref_privacy_policy"/>
+        <Preference
             android:title="@string/about_preference_term_of_service"
             android:key="about_pref_term_of_service"/>
 

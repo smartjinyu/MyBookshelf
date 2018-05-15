@@ -210,6 +210,7 @@
     <string name="about_preference_feedback_summary">Contact me if any suggestions or complaints</string>
     <string name="about_preference_license">License</string>
     <string name="about_preference_license_dialog">Open Source License</string>
+    <string name="about_preference_privacy_policy">Privacy Policy</string>
     <string name="about_preference_term_of_service">Term of Service</string>
 
     <!--Settings-->

@@ -234,7 +234,7 @@
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
     <string name="backup_progress_dialog_title">Backing Up BookShelf</string>
     <string name="backup_progress_dialog_content">Please wait…</string>
-    <string name="restore_progress_dialog_title">Backing Up BookShelf</string>
+    <string name="restore_progress_dialog_title">Restoring BookShelf</string>
     <string name="choose_folder_dialog_choose">Choose</string>
     <string name="restore_succeed_toast">Restore Succeeded, and App will restart in 2 seconds…</string>
     <string name="restore_fail_toast">Restore Failed! Please check logs and contact the developer!</string>

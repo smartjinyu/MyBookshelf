@@ -180,7 +180,7 @@
     <string name="restore_dialog_title">备份文件</string>
     <string name="restore_fail_toast">恢复失败！请您保留日志文件并联系开发者！</string>
     <string name="restore_no_backup_toast">看上去在备份目录下没有任何备份文件…</string>
-    <string name="restore_progress_dialog_title">正在备份应用</string>
+    <string name="restore_progress_dialog_title">正在恢复应用</string>
     <string name="restore_succeed_toast">恢复成功！应用将在2秒钟后自动重启…</string>
     <string name="choose_folder_dialog_choose">选择</string>
     <string name="backup_fail_toast">备份失败！请保存日志文件并联系开发者！</string>

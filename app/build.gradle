@@ -24,12 +24,12 @@ def static getApiKey() {
 
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion project.CompileSdkVersion
+    buildToolsVersion project.BuildToolsVersion
     defaultConfig {
         applicationId "com.smartjinyu.mybookshelf"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion project.TargetSdkVersion
         versionCode 7
         versionName "1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

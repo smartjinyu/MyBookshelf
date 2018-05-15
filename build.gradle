@@ -16,6 +16,12 @@ allprojects {
     repositories {
         jcenter()
     }
+    project.ext{
+        CompileSdkVersion = 27
+        BuildToolsVersion = "27.0.3"
+        TargetSdkVersion = 27
+    }
+
 }
 
 task clean(type: Delete) {

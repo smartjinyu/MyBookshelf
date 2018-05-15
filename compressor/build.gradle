@@ -38,12 +38,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion project.CompileSdkVersion
+    buildToolsVersion project.BuildToolsVersion
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 25
+        targetSdkVersion project.TargetSdkVersion
         versionCode 5
         versionName "1.0.5"
     }

@@ -76,7 +76,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
-import moe.feng.alipay.zerosdk.AlipayZeroSdk;
+// import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
                                 Intent i = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(i);
                             } else if (drawerItem.getIdentifier() == 6) {
-                                showDonateDialog();
+                                //showDonateDialog();
                             }
                         }
                         return false;
@@ -550,6 +550,7 @@ public class MainActivity extends AppCompatActivity {
         //.withSavedInstance(savedInstanceState) do not use this
         // because we will add items after .build()
         // donate
+        /*
         boolean isDonateShow = defaultSharedPreferences.getBoolean("isDonateDrawerItemShow", true);
         if (isDonateShow) {
             IDrawerItem drawerItem = new PrimaryDrawerItem()
@@ -559,6 +560,8 @@ public class MainActivity extends AppCompatActivity {
                     .withSelectable(false);
             mDrawer.addItemAtPosition(drawerItem, 6);
         }
+        */
+
         /**
          * About position
          * begin at 1
@@ -1308,7 +1311,7 @@ public class MainActivity extends AppCompatActivity {
                     showRatingDialog();
                 } else if (isDonateItemShow &&
                         startTimes % getResources().getInteger(R.integer.donate_after_start_times) == 0) {
-                    showDonateDialog();
+                    // showDonateDialog();
                 } else {
                     super.onBackPressed();
                 }
@@ -1374,7 +1377,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
 
     }
-
+    /*
     private void showDonateDialog() {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(TAG)
@@ -1489,6 +1492,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    */
 
     private void checkTermOfService() {
         boolean isAccepted = defaultSharedPreferences.getBoolean("isAcceptTermOfService", false);

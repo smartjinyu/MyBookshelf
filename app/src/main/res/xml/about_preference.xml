@@ -16,11 +16,12 @@
                 android:action="android.intent.action.VIEW"
                 android:data="market://details?id=com.smartjinyu.mybookshelf" />
         </Preference>
-
+        <!--
         <Preference
             android:title="@string/about_preference_donate_title"
             android:summary="@string/about_preference_donate_summary"
             android:key="about_pref_donate" />
+         -->
         <Preference
             android:title="@string/about_preference_github_repository"
             android:summary="https://github.com/smartjinyu/MyBookshelf">

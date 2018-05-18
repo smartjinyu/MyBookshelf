@@ -25,7 +25,7 @@ import com.crashlytics.android.answers.ContentViewEvent;
 
 import java.util.Locale;
 
-import moe.feng.alipay.zerosdk.AlipayZeroSdk;
+// import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 /**
  * about fragment
@@ -36,7 +36,7 @@ public class AboutFragment extends PreferenceFragment {
     private static final String TAG = "AboutFragment";
 
     private Preference namePreference;
-    private Preference donatePreference;
+    // private Preference donatePreference;
     private Preference feedbackPreference;
     private Preference licensePreference;
     private Preference termOfServicePreference;
@@ -50,6 +50,7 @@ public class AboutFragment extends PreferenceFragment {
         namePreference = findPreference("about_pref_name");
         namePreference.setSummary(BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")");
 
+        /*
         donatePreference = findPreference("about_pref_donate");
         donatePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -116,7 +117,7 @@ public class AboutFragment extends PreferenceFragment {
                             .show();
                 } else {
                     new MaterialDialog.Builder(getActivity())
-                            .title(R.string.about_preference_rate_title)
+                            .title(R.string.about_preference_donate_title)
                             .content(R.string.about_donate_dialog_content)
                             .positiveText(R.string.about_donate_dialog_negative0)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -160,6 +161,7 @@ public class AboutFragment extends PreferenceFragment {
                 return true;
             }
         });
+        */
 
         feedbackPreference = findPreference("about_pref_feedback");
         feedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

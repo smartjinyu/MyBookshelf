@@ -79,7 +79,7 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true
     }
-    implementation project(':AlipayZeroSdk')
+    // implementation project(':AlipayZeroSdk')
     implementation project(':compressor')
     implementation('com.squareup.retrofit2:converter-simplexml:2.2.0') {
         exclude group: 'xpp3', module: 'xpp3'

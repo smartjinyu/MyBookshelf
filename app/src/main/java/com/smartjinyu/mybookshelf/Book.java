@@ -1,7 +1,6 @@
 package com.smartjinyu.mybookshelf;
 
-import android.support.annotation.Nullable;
-import android.support.v4.net.TrafficStatsCompat;
+import androidx.annotation.Nullable;
 
 import com.github.promeg.pinyinhelper.Pinyin;
 

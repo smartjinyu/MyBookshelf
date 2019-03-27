@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
@@ -61,5 +61,5 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation 'io.reactivex:rxjava:1.1.6'
+    implementation 'io.reactivex:rxjava:1.3.0'
 }

@@ -576,6 +576,10 @@ public class SettingsFragment extends PreferenceFragment {
                 if (file.equals(BookBaseHelper.DATABASE_NAME)) {
                     String src = unZipDir + "/" + BookBaseHelper.DATABASE_NAME;
                     String dest = getActivity().getDatabasePath(BookBaseHelper.DATABASE_NAME).getAbsolutePath();
+                    File tempFile = new File(dest + "-shm");
+                    if(tempFile.exists()) tempFile.delete();
+                    tempFile = new File(dest + "-wal");
+                    if(tempFile.exists()) tempFile.delete();
                     copyFile(new File(src), new File(dest));
                 }
             }

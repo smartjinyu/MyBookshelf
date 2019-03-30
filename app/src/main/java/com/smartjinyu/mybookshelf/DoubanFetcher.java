@@ -3,8 +3,10 @@ package com.smartjinyu.mybookshelf;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by smartjinyu on 2017/1/20.
@@ -35,7 +38,9 @@ public class DoubanFetcher extends BookFetcher {
                 .build();
         DB_API api = mRetrofit.create(DB_API.class);
         //create an instance of douban api
-        Call<DouBanJson> call = api.getDBResult(isbn);
+        byte[] data = Base64.decode(BuildConfig.doubanApiKey, Base64.DEFAULT);
+        data[0] -= 1; data[1] += 2;
+        Call<DouBanJson> call = api.getDBResult(isbn, new String(data, StandardCharsets.UTF_8).replace("\"",""));
 
         call.enqueue(new Callback<DouBanJson>() {
             @Override
@@ -127,7 +132,7 @@ public class DoubanFetcher extends BookFetcher {
 
     private interface DB_API {
         @GET("isbn/{isbn}")
-        Call<DouBanJson> getDBResult(@Path("isbn") String isbn);
+        Call<DouBanJson> getDBResult(@Path("isbn") String isbn, @Query("apikey") String apikey);
     }
 
 }

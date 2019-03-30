@@ -10,4 +10,5 @@
 /icon
 *.apk
 fabric.properties
+apiKeys.properties
 .idea

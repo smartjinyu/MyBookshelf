@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -16,12 +17,21 @@ repositories {
 }
 
 
-def static getApiKey() {
+def static getFabricApiKey() {
     def Properties props = new Properties()
-    props.load(new FileInputStream(new File('fabric.properties')))
-    return props['apiKey']
+    props.load(new FileInputStream(new File('apiKeys.properties')))
+    return props['fabricApiKey']
 }
 
+def static getDoubanApiKey() {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(new File('apiKeys.properties')))
+    byte[] data = props['doubanApiKey'].getBytes("UTF-8")
+    data[0] = data[0] + 1
+    data[1] = data[1] - 2 // just for obfuscation
+    String base64 = Base64.getEncoder().encodeToString(data)
+    return base64
+}
 
 android {
     compileSdkVersion project.CompileSdkVersion
@@ -30,19 +40,20 @@ android {
         applicationId "com.smartjinyu.mybookshelf"
         minSdkVersion 21
         targetSdkVersion project.TargetSdkVersion
-        versionCode 7
-        versionName "1.4"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode 8
+        versionName "1.5"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [fabric_api_key: getApiKey()]
+            manifestPlaceholders = [fabric_api_key: getFabricApiKey(), douban_api_key: getDoubanApiKey()]
+            buildConfigField 'String', "doubanApiKey", "\"" + getDoubanApiKey() + "\""
         }
         debug {
-            manifestPlaceholders = [fabric_api_key: getApiKey()]
+            manifestPlaceholders = [fabric_api_key: getFabricApiKey(), douban_api_key: getDoubanApiKey()]
+            buildConfigField 'String', "doubanApiKey", "\"" + getDoubanApiKey() + "\""
         }
     }
     lintOptions {

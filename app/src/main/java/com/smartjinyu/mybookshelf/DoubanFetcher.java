@@ -40,7 +40,7 @@ public class DoubanFetcher extends BookFetcher {
         //create an instance of douban api
         byte[] data = Base64.decode(BuildConfig.doubanApiKey, Base64.DEFAULT);
         data[0] -= 1; data[1] += 2;
-        Call<DouBanJson> call = api.getDBResult(isbn, new String(data, StandardCharsets.UTF_8).replace("\"",""));
+        Call<DouBanJson> call = api.getDBResult(isbn, new String(data, StandardCharsets.UTF_8));
 
         call.enqueue(new Callback<DouBanJson>() {
             @Override

@@ -59,6 +59,10 @@ android {
     lintOptions {
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
 
 }
@@ -74,19 +78,19 @@ dependencies {
     implementation 'androidx.palette:palette:1.0.0-beta01'
     testImplementation 'junit:junit:4.12'
     implementation 'com.google.android.material:material:1.0.0-beta01'
-    implementation 'com.github.clans:fab:1.6.4'
-    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    implementation 'com.nononsenseapps:filepicker:4.0.0'
+    implementation 'com.github.clans:fab:1.6.4' // discontinued project
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // 3.3.0
+    implementation 'com.nononsenseapps:filepicker:4.0.0' // replace it with built in document UI
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.klinkerapps:sliding-activity:1.5.2'
     implementation 'com.mikepenz:materialdrawer:6.1.2'
     implementation 'com.github.promeg:tinypinyin:2.0.3'
     // implementation project(':searchview')
     implementation 'com.lapism:searchview:3.8'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') { // replace it later
         transitive = true
     }
     // implementation project(':AlipayZeroSdk')

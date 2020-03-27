@@ -26,9 +26,9 @@ allprojects {
         }
     }
     project.ext{
-        CompileSdkVersion = 28
-        BuildToolsVersion = "28.0.3"
-        TargetSdkVersion = 28
+        CompileSdkVersion = 29
+        BuildToolsVersion = "29.0.2"
+        TargetSdkVersion = 29
     }
 
 }

@@ -13,18 +13,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.speech.RecognizerIntent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -52,7 +52,6 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.lapism.searchview.SearchView;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -70,9 +69,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.Logger;
 // import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 
@@ -90,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionMenu mActionAddButton;
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
-    private SearchView mSearchView;
+    //private SearchView mSearchView;
+    private MenuItem searchItem;
+    private SearchView searchView;
     private CoordinatorLayout mCoordinatorLayout;
 
     private BookAdapter mRecyclerViewAdapter;
@@ -104,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean showLabelMenuItem = false;
     private int sortMethod;
     private SharedPreferences defaultSharedPreferences;
-    private boolean actionSearch = false;
 
 
     @Override
@@ -134,10 +136,7 @@ public class MainActivity extends AppCompatActivity {
             drawerSelection = savedInstanceState.getLong(drawerSelected, -1);
         }
         setDrawer(drawerSelection);
-        setSearchView();
-        if (getIntent().getAction().equals(ACTION_SEARCH)) {
-            actionSearch = true;
-        }
+        // setSearchView();
 
         if(defaultSharedPreferences.getBoolean("settings_pref_check_update",true)){
             Handler handler = new Handler();
@@ -150,10 +149,62 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu()");
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_main_search);
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Log.d(TAG, "searchItem expand");
+                if (mActionAddButton != null) {
+                    Log.d(TAG, "Hide FAM 2");
+                    mActionAddButton.setVisibility(View.GONE);
+                    mActionAddButton.hideMenuButton(true);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.d(TAG, "searchItem collapse");
+                if (mActionAddButton != null) {
+                    Log.d(TAG, "Show FAM 2");
+                    mActionAddButton.setVisibility(View.VISIBLE);
+                    mActionAddButton.showMenuButton(true);
+                }
+                updateUI(true, null);
+
+                return true;
+            }
+        });
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setIconifiedByDefault(true);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "Search " + query);
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(TAG)
+                        .putContentType("Activity")
+                        .putContentId("1002")
+                        .putCustomAttribute("Search", "Search Text Submitted"));
+
+                //mSearchView.hideKeyboard();
+                updateUI(true, query);
+                return false;
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // updateUI(true, newText);
+
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -164,7 +215,8 @@ public class MainActivity extends AppCompatActivity {
         MenuItem deleteLabelItem = menu.findItem(R.id.menu_main_delete_label);
         MenuItem renameBookshelfItem = menu.findItem(R.id.menu_main_rename_bookshelf);
         MenuItem deleteBookshelfItem = menu.findItem(R.id.menu_main_delete_bookshelf);
-        MenuItem searchItem = menu.findItem(R.id.menu_main_search);
+        searchItem = menu.findItem(R.id.menu_main_search);
+
 
         renameLabelItem.setVisible(showLabelMenuItem);
         deleteLabelItem.setVisible(showLabelMenuItem);
@@ -256,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-
                 break;
             case R.id.menu_main_rename_label:
                 if (mDrawer != null) {
@@ -355,58 +406,60 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.menu_main_search:
-                mSearchView.open(true, item);
+                //mSearchView.open(true, item);
+                // searchView.setIconified(false);
+
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void setSearchView() {
-        mSearchView = (SearchView) findViewById(R.id.searchView);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "Search " + query);
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Activity")
-                        .putContentId("1002")
-                        .putCustomAttribute("Search", "Search Text Submitted"));
-                mSearchView.hideKeyboard();
-                updateUI(true, query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
-            @Override
-            public void onClose() {
-                Log.d(TAG, "SearchView close");
-                if (mActionAddButton != null) {
-                    Log.d(TAG, "Show FAM 2");
-                    mActionAddButton.setVisibility(View.VISIBLE);
-                    mActionAddButton.showMenuButton(true);
-                }
-                updateUI(true, null);
-            }
-
-            @Override
-            public void onOpen() {
-                Log.d(TAG, "SearchView open");
-                if (mActionAddButton != null) {
-                    Log.d(TAG, "Hide FAM 2");
-                    mActionAddButton.setVisibility(View.GONE);
-                    mActionAddButton.hideMenuButton(true);
-                }
-            }
-        });
-    }
+//
+//    private void setSearchView() {
+//        // mSearchView = (SearchView) findViewById(R.id.searchView);
+//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Log.i(TAG, "Search " + query);
+//                Answers.getInstance().logContentView(new ContentViewEvent()
+//                        .putContentName(TAG)
+//                        .putContentType("Activity")
+//                        .putContentId("1002")
+//                        .putCustomAttribute("Search", "Search Text Submitted"));
+//                mSearchView.hideKeyboard();
+//                updateUI(true, query);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//        mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+//            @Override
+//            public void onClose() {
+//                Log.d(TAG, "SearchView close");
+//                if (mActionAddButton != null) {
+//                    Log.d(TAG, "Show FAM 2");
+//                    mActionAddButton.setVisibility(View.VISIBLE);
+//                    mActionAddButton.showMenuButton(true);
+//                }
+//                updateUI(true, null);
+//            }
+//
+//            @Override
+//            public void onOpen() {
+//                Log.d(TAG, "SearchView open");
+//                if (mActionAddButton != null) {
+//                    Log.d(TAG, "Hide FAM 2");
+//                    mActionAddButton.setVisibility(View.GONE);
+//                    mActionAddButton.hideMenuButton(true);
+//                }
+//            }
+//        });
+//    }
 
     private void setDrawer(long selectionIdentifier) {
         final List<Label> labels = LabelLab.get(this).getLabels();
@@ -475,11 +528,14 @@ public class MainActivity extends AppCompatActivity {
                                 // study drawerLayout and try to lock the drawer in the future
                             }
                             if (drawerItem.getIdentifier() == 1) {
-                                if (mSearchView != null) {
-                                    if (mSearchView.isSearchOpen()) {
-                                        mSearchView.close(true);
-                                    }
-                                }
+//                                if (mSearchView != null) {
+//                                    if (mSearchView.isSearchOpen()) {
+//                                        mSearchView.close(true);
+//                                    }
+//                                }
+//                                if(searchView != null && !searchView.isIconified()){
+//                                    searchView.setIconified(true);
+//                                }
                                 updateUI(true, null);
                             } else if (drawerItem.getIdentifier() == 3) {
                                 new MaterialDialog.Builder(MainActivity.this)
@@ -513,20 +569,27 @@ public class MainActivity extends AppCompatActivity {
                                         })
                                         .show();
                             } else if (drawerItem.getIdentifier() >= 10 && drawerItem.getIdentifier() < 10 + labels.size()) {
-                                if (mSearchView != null) {
-                                    if (mSearchView.isSearchOpen()) {
-                                        mSearchView.close(true);
-                                    }
+//                                if (mSearchView != null) {
+//                                    if (mSearchView.isSearchOpen()) {
+//                                        mSearchView.close(true);
+//                                    }
+//                                }
+                                if(searchView != null && !searchView.isIconified()){
+                                    searchView.setIconified(true);
                                 }
                                 updateUI(true, null);
                             } else if (drawerItem.getIdentifier() == 2) {
                                 mDrawer.setSelection(1);
                                 updateUI(true, null);
-                                if (mSearchView != null) {
-                                    if (!mSearchView.isSearchOpen()) {
-                                        mSearchView.open(true);
-                                    }
+//                                if (mSearchView != null) {
+//                                    if (!mSearchView.isSearchOpen()) {
+//                                        mSearchView.open(true);
+//                                    }
+//                                }
+                                if(searchItem != null){
+                                    searchItem.expandActionView();
                                 }
+
                             } else if (drawerItem.getIdentifier() == 4) {
                                 Intent i = new Intent(MainActivity.this, SettingsActivity.class);
                                 startActivity(i);
@@ -759,10 +822,11 @@ public class MainActivity extends AppCompatActivity {
         private static final int TYPE_HEADER = 0;
         private static final int TYPE_ITEM = 1;
 
-        public BookAdapter(List<Book> books) {
+        BookAdapter(List<Book> books) {
             mBooks = books;
         }
 
+        @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
@@ -778,7 +842,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof BookHolder) {
                 Book book = mBooks.get(position - 1); // remember to -1 because of the header
                 ((BookHolder) holder).bindBook(book);
@@ -812,6 +876,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setBookShelfSpinner(int selection) {
         mSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
+        if(mSpinner == null){
+            // for example, if searchView is expanded, mSpinner is null
+            return;
+        }
         List<BookShelf> bookShelves = BookShelfLab.get(this).getBookShelves();
         BookShelf allBookShelf = new BookShelf();
         allBookShelf.setTitle(getResources().getString(R.string.spinner_all_bookshelf)); // never save to disk
@@ -887,14 +955,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        if (mSearchView != null && mSearchView.isSearchOpen()) {
+//        if (mSearchView != null && mSearchView.isSearchOpen()) {
+//            // in search mode, only support search in specified bookshelf currently
+//            mBooks = bookLab.searchBook(keyword, bookshelfID);
+//        } else {
+//            mBooks = bookLab.getBooks(bookshelfID, labelID);
+//        }
+        if(searchView != null && !searchView.isIconified()){
             // in search mode, only support search in specified bookshelf currently
             mBooks = bookLab.searchBook(keyword, bookshelfID);
-        } else {
+        }else{
             mBooks = bookLab.getBooks(bookshelfID, labelID);
         }
         setToolbarColor(toolbarMode);
-        invalidateOptionsMenu();// call onPrepareOptionsMenu()
+        // invalidateOptionsMenu();// call onPrepareOptionsMenu() //TODO
 
     }
 
@@ -941,7 +1015,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
+        //Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
+        if(searchView == null){
+            Log.d(TAG, "onResume, SearchView is null");
+        }else{
+            Log.d(TAG, "onResume, SearchView open = " + !searchView.isIconified());
+        }
+
         if (mSpinner != null) {
             // user may create new bookshelf in edit or creating new book
             setBookShelfSpinner(mSpinner.getSelectedItemPosition());
@@ -956,11 +1036,11 @@ public class MainActivity extends AppCompatActivity {
 //        }else{
 //            updateUI(true,null);
 //        }
-        updateUI(true, null);
-        Log.d(TAG, "ACTION_SEARCH = " + actionSearch);
-        if (actionSearch) {
-            mSearchView.open(true);
-            actionSearch = false;
+        if(searchView != null && !searchView.isIconified()){
+            // searchView open
+            updateUI(true, searchView.getQuery().toString());
+        }else{
+            updateUI(true,null);
         }
 
 
@@ -1269,8 +1349,12 @@ public class MainActivity extends AppCompatActivity {
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
-            if (mSearchView != null && mSearchView.isSearchOpen()) {
-                mSearchView.close(false);
+//            if (mSearchView != null && mSearchView.isSearchOpen()) {
+//                mSearchView.close(false);
+//            }
+            if(searchView != null && !searchView.isIconified()){
+                searchView.setIconified(true);
+                // TODO is this needed?
             }
             mRecyclerViewAdapter.notifyDataSetChanged();
         }
@@ -1548,23 +1632,6 @@ public class MainActivity extends AppCompatActivity {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (results != null && results.size() > 0) {
-                String searchWrd = results.get(0);
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    if (mSearchView != null) {
-                        mSearchView.setQuery(searchWrd);
-                    }
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
 

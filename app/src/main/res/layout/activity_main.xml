@@ -39,7 +39,7 @@
             app:search_clear_on_open="true"
             app:search_clear_on_close="true"
             app:search_shadow="false" />
-    -->
+
     <com.lapism.searchview.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
@@ -51,4 +51,5 @@
         app:search_hint="@string/search_view_hint"
         app:search_shadow="false" />
 
+-->
 </androidx.drawerlayout.widget.DrawerLayout>

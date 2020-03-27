@@ -73,11 +73,11 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0-beta01'
-    implementation 'androidx.palette:palette:1.0.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.palette:palette:1.0.0'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.github.clans:fab:1.6.4' // discontinued project
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
@@ -88,8 +88,7 @@ dependencies {
     implementation 'com.klinkerapps:sliding-activity:1.5.2'
     implementation 'com.mikepenz:materialdrawer:6.1.2'
     implementation 'com.github.promeg:tinypinyin:2.0.3'
-    // implementation project(':searchview')
-    implementation 'com.lapism:searchview:3.8'
+    // implementation 'com.lapism:searchview:3.8'
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') { // replace it later
         transitive = true
     }

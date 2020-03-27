@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionMenu mActionAddButton;
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
-    //private SearchView mSearchView;
     private MenuItem searchItem;
     private SearchView searchView;
     private CoordinatorLayout mCoordinatorLayout;
@@ -188,16 +187,13 @@ public class MainActivity extends AppCompatActivity {
                         .putContentId("1002")
                         .putCustomAttribute("Search", "Search Text Submitted"));
 
-                //mSearchView.hideKeyboard();
                 updateUI(true, query);
                 return false;
-
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 // updateUI(true, newText);
-
                 return false;
             }
         });
@@ -403,60 +399,12 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.menu_main_search:
-                //mSearchView.open(true, item);
-                // searchView.setIconified(false);
-
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-//
-//    private void setSearchView() {
-//        // mSearchView = (SearchView) findViewById(R.id.searchView);
-//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                Log.i(TAG, "Search " + query);
-//                Answers.getInstance().logContentView(new ContentViewEvent()
-//                        .putContentName(TAG)
-//                        .putContentType("Activity")
-//                        .putContentId("1002")
-//                        .putCustomAttribute("Search", "Search Text Submitted"));
-//                mSearchView.hideKeyboard();
-//                updateUI(true, query);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//        mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
-//            @Override
-//            public void onClose() {
-//                Log.d(TAG, "SearchView close");
-//                if (mActionAddButton != null) {
-//                    Log.d(TAG, "Show FAM 2");
-//                    mActionAddButton.setVisibility(View.VISIBLE);
-//                    mActionAddButton.showMenuButton(true);
-//                }
-//                updateUI(true, null);
-//            }
-//
-//            @Override
-//            public void onOpen() {
-//                Log.d(TAG, "SearchView open");
-//                if (mActionAddButton != null) {
-//                    Log.d(TAG, "Hide FAM 2");
-//                    mActionAddButton.setVisibility(View.GONE);
-//                    mActionAddButton.hideMenuButton(true);
-//                }
-//            }
-//        });
-//    }
 
     private void setDrawer(long selectionIdentifier) {
         final List<Label> labels = LabelLab.get(this).getLabels();
@@ -525,14 +473,7 @@ public class MainActivity extends AppCompatActivity {
                                 // study drawerLayout and try to lock the drawer in the future
                             }
                             if (drawerItem.getIdentifier() == 1) {
-//                                if (mSearchView != null) {
-//                                    if (mSearchView.isSearchOpen()) {
-//                                        mSearchView.close(true);
-//                                    }
-//                                }
-//                                if(searchView != null && !searchView.isIconified()){
-//                                    searchView.setIconified(true);
-//                                }
+                                // nothing need to do with searchView
                                 updateUI(true, null);
                             } else if (drawerItem.getIdentifier() == 3) {
                                 new MaterialDialog.Builder(MainActivity.this)
@@ -566,11 +507,6 @@ public class MainActivity extends AppCompatActivity {
                                         })
                                         .show();
                             } else if (drawerItem.getIdentifier() >= 10 && drawerItem.getIdentifier() < 10 + labels.size()) {
-//                                if (mSearchView != null) {
-//                                    if (mSearchView.isSearchOpen()) {
-//                                        mSearchView.close(true);
-//                                    }
-//                                }
                                 if(searchView != null && !searchView.isIconified()){
                                     searchView.setIconified(true);
                                 }
@@ -578,11 +514,6 @@ public class MainActivity extends AppCompatActivity {
                             } else if (drawerItem.getIdentifier() == 2) {
                                 mDrawer.setSelection(1);
                                 updateUI(true, null);
-//                                if (mSearchView != null) {
-//                                    if (!mSearchView.isSearchOpen()) {
-//                                        mSearchView.open(true);
-//                                    }
-//                                }
                                 if(searchItem != null){
                                     searchItem.expandActionView();
                                 }
@@ -952,12 +883,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-//        if (mSearchView != null && mSearchView.isSearchOpen()) {
-//            // in search mode, only support search in specified bookshelf currently
-//            mBooks = bookLab.searchBook(keyword, bookshelfID);
-//        } else {
-//            mBooks = bookLab.getBooks(bookshelfID, labelID);
-//        }
+
         if(searchView != null && !searchView.isIconified()){
             // in search mode, only support search in specified bookshelf currently
             mBooks = bookLab.searchBook(keyword, bookshelfID);
@@ -1012,7 +938,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //Log.d(TAG, "onResume, mSearchView open = " + mSearchView.isSearchOpen());
         if(searchView == null){
             Log.d(TAG, "onResume, SearchView is null");
         }else{
@@ -1027,12 +952,6 @@ public class MainActivity extends AppCompatActivity {
             setDrawer(mDrawer.getCurrentSelection());
         }
 
-
-//        if(mSearchView!=null && mSearchView.isSearchOpen()){
-//            updateUI(true,mSearchView.getQuery().toString());
-//        }else{
-//            updateUI(true,null);
-//        }
         if(searchView != null && !searchView.isIconified()){
             // searchView open
             updateUI(true, searchView.getQuery().toString());
@@ -1346,9 +1265,6 @@ public class MainActivity extends AppCompatActivity {
                 mActionAddButton.setVisibility(View.VISIBLE);
                 mActionAddButton.showMenuButton(true);
             }
-//            if (mSearchView != null && mSearchView.isSearchOpen()) {
-//                mSearchView.close(false);
-//            }
             if(searchView != null && !searchView.isIconified()){
                 searchView.setIconified(true);
                 // TODO is this needed?

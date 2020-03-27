@@ -45,7 +45,7 @@ If you have any advice or complaints, feel free to open an issue. PR is welcomed
 
 ### License
 
-    Copyright (C) 2017  smartjinyu
+    Copyright (C) 2017 - 2020  smartjinyu
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

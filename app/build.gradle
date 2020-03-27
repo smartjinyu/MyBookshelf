@@ -82,7 +82,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
-    implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // 3.3.0
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // 3.3.0 // original 0.9.6.0
     implementation 'com.nononsenseapps:filepicker:4.0.0' // replace it with built in document UI
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.klinkerapps:sliding-activity:1.5.2'

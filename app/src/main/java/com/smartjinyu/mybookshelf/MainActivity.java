@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
             drawerSelection = savedInstanceState.getLong(drawerSelected, -1);
         }
         setDrawer(drawerSelection);
-        // setSearchView();
 
         if(defaultSharedPreferences.getBoolean("settings_pref_check_update",true)){
             Handler handler = new Handler();
@@ -171,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
                     mActionAddButton.showMenuButton(true);
                 }
                 updateUI(true, null);
-
                 return true;
             }
         });
@@ -193,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // updateUI(true, newText);
+                updateUI(true, newText);
                 return false;
             }
         });
@@ -432,11 +430,11 @@ public class MainActivity extends AppCompatActivity {
                                 .withIcon(R.drawable.ic_bookshelf)
                                 .withIdentifier(1)
                                 .withSelectable(true),
-                        new PrimaryDrawerItem()
-                                .withName(R.string.drawer_item_search)
-                                .withIcon(R.drawable.ic_search)
-                                .withIdentifier(2)
-                                .withSelectable(false),
+//                        new PrimaryDrawerItem()
+//                                .withName(R.string.drawer_item_search)
+//                                .withIcon(R.drawable.ic_search)
+//                                .withIdentifier(2)
+//                                .withSelectable(false),
                         new SectionDrawerItem()
                                 .withName(R.string.drawer_section_label),
                         new PrimaryDrawerItem()
@@ -456,80 +454,76 @@ public class MainActivity extends AppCompatActivity {
                                 .withIdentifier(5)
                                 .withSelectable(false)
                 )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        //check if the drawerItem is set.
-                        //there are different reasons for the drawerItem to be null
-                        //--> click on the header
-                        //--> click on the footer
-                        //those items don't contain a drawerItem
+                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
+                    //check if the drawerItem is set.
+                    //there are different reasons for the drawerItem to be null
+                    //--> click on the header
+                    //--> click on the footer
+                    //those items don't contain a drawerItem
 
-                        if (drawerItem != null) {
-                            Log.i(TAG, "Select drawer item at position " + position);
-                            // Identifier between 10 and 9 + labels.size() are labels
-                            if (mActionMode != null) {
-                                mActionMode.finish();
-                                // study drawerLayout and try to lock the drawer in the future
-                            }
-                            if (drawerItem.getIdentifier() == 1) {
-                                // nothing need to do with searchView
-                                updateUI(true, null);
-                            } else if (drawerItem.getIdentifier() == 3) {
-                                new MaterialDialog.Builder(MainActivity.this)
-                                        .title(R.string.label_add_new_dialog_title)
-                                        .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
-                                        .input(
-                                                R.string.label_add_new_dialog_edit_text,
-                                                0,
-                                                new MaterialDialog.InputCallback() {
-                                                    @Override
-                                                    public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
-                                                        // nothing to do here
-                                                    }
-                                                })
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                                                Label labelToAdd = new Label();
-                                                labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
-                                                LabelLab.get(MainActivity.this).addLabel(labelToAdd);
-                                                Log.i(TAG, "New label created " + labelToAdd.getTitle());
-                                                setDrawer(mDrawer.getCurrentSelection());
-                                            }
-                                        })
-                                        .negativeText(android.R.string.cancel)
-                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
-                                                inputDialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            } else if (drawerItem.getIdentifier() >= 10 && drawerItem.getIdentifier() < 10 + labels.size()) {
-                                if(searchView != null && !searchView.isIconified()){
-                                    searchView.setIconified(true);
-                                }
-                                updateUI(true, null);
-                            } else if (drawerItem.getIdentifier() == 2) {
-                                mDrawer.setSelection(1);
-                                updateUI(true, null);
-                                if(searchItem != null){
-                                    searchItem.expandActionView();
-                                }
-
-                            } else if (drawerItem.getIdentifier() == 4) {
-                                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
-                                startActivity(i);
-                            } else if (drawerItem.getIdentifier() == 5) {
-                                Intent i = new Intent(MainActivity.this, AboutActivity.class);
-                                startActivity(i);
-                            } else if (drawerItem.getIdentifier() == 6) {
-                                //showDonateDialog();
-                            }
+                    if (drawerItem != null) {
+                        Log.i(TAG, "Select drawer item at position " + position);
+                        // Identifier between 10 and 9 + labels.size() are labels
+                        if (mActionMode != null) {
+                            mActionMode.finish();
+                            // study drawerLayout and try to lock the drawer in the future
                         }
-                        return false;
+                        if (drawerItem.getIdentifier() == 1) {
+                            // nothing need to do with searchView
+                            updateUI(true, null);
+                        } else if (drawerItem.getIdentifier() == 3) {
+                            new MaterialDialog.Builder(MainActivity.this)
+                                    .title(R.string.label_add_new_dialog_title)
+                                    .inputRange(1, getResources().getInteger(R.integer.label_name_max_length))
+                                    .input(
+                                            R.string.label_add_new_dialog_edit_text,
+                                            0,
+                                            new MaterialDialog.InputCallback() {
+                                                @Override
+                                                public void onInput(@NonNull MaterialDialog dialog1, CharSequence input) {
+                                                    // nothing to do here
+                                                }
+                                            })
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                            Label labelToAdd = new Label();
+                                            labelToAdd.setTitle(inputDialog.getInputEditText().getText().toString());
+                                            LabelLab.get(MainActivity.this).addLabel(labelToAdd);
+                                            Log.i(TAG, "New label created " + labelToAdd.getTitle());
+                                            setDrawer(mDrawer.getCurrentSelection());
+                                        }
+                                    })
+                                    .negativeText(android.R.string.cancel)
+                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog inputDialog, @NonNull DialogAction which) {
+                                            inputDialog.dismiss();
+                                        }
+                                    })
+                                    .show();
+                        } else if (drawerItem.getIdentifier() >= 10 && drawerItem.getIdentifier() < 10 + labels.size()) {
+                            if(searchView != null && !searchView.isIconified()){
+                                searchView.setIconified(true);
+                            }
+                            updateUI(true, null);
+                        } else if (drawerItem.getIdentifier() == 2) {
+                            if(searchItem != null){
+                                searchItem.expandActionView();
+                            }
+                            mDrawer.setSelection(1);
+                            updateUI(true, null);
+                        } else if (drawerItem.getIdentifier() == 4) {
+                            Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+                            startActivity(i);
+                        } else if (drawerItem.getIdentifier() == 5) {
+                            Intent i = new Intent(MainActivity.this, AboutActivity.class);
+                            startActivity(i);
+                        } else if (drawerItem.getIdentifier() == 6) {
+                            //showDonateDialog();
+                        }
                     }
+                    return false;
                 })
                 .build();
 
@@ -560,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
                     .withIcon(R.drawable.ic_label)
                     .withIdentifier(i + 10)// identifier begin from 10
                     .withSelectable(true);
-            mDrawer.addItemAtPosition(drawerItem, i + 4);
+            mDrawer.addItemAtPosition(drawerItem, i + 3); // i + 3 if there is a search item
         }
 
         if (selectionIdentifier != -1) {
@@ -870,8 +864,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        long drawerSelection = mDrawer.getCurrentSelection();
+
         if (mDrawer != null) {
+            long drawerSelection = mDrawer.getCurrentSelection();
             if (drawerSelection < 10 || drawerSelection >= 10 + labels.size()) {
                 // not select label
                 showLabelMenuItem = false;
@@ -880,18 +875,19 @@ public class MainActivity extends AppCompatActivity {
                 toolbarMode = 1;
                 labelID = labels.get((int) drawerSelection - 10).getId();
                 showLabelMenuItem = true;
-
             }
         }
 
-        if(searchView != null && !searchView.isIconified()){
+        if(searchView != null && (!searchView.isIconified() || searchItem.isActionViewExpanded())){
             // in search mode, only support search in specified bookshelf currently
             mBooks = bookLab.searchBook(keyword, bookshelfID);
         }else{
+            Log.d(TAG, "setBooksAndUI(), not in search mode");
+            invalidateOptionsMenu();
             mBooks = bookLab.getBooks(bookshelfID, labelID);
         }
         setToolbarColor(toolbarMode);
-        // invalidateOptionsMenu();// call onPrepareOptionsMenu() //TODO
+        // invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
     }
 

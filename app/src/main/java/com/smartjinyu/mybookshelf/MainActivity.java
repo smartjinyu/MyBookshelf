@@ -46,11 +46,11 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -66,11 +66,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
-import io.fabric.sdk.android.Fabric;
 // import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String drawerSelected = "drawerSelected";
     private static final String SORT_METHOD = "SORT_METHOD";
-    private static final String ACTION_SEARCH = "com.smartjinyu.mybookshelf.ACTION_SEARCH";
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
@@ -108,20 +108,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1001")
-                .putCustomAttribute("onCreate", "onCreate"));
+        AppCenter.start(getApplication(), BuildConfig.appcenterApiKey,
+                Analytics.class, Crashes.class);
 
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Activity", TAG);
+        Analytics.trackEvent("onCreate", logEvents);
+
+        logEvents.clear();
+        logEvents.put("Name", "onCreate");
+        Analytics.trackEvent(TAG, logEvents);
 
         defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortMethod = defaultSharedPreferences.getInt(SORT_METHOD, 0);
 
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.book_list_fragment_coordinator_layout);
+        mCoordinatorLayout = findViewById(R.id.book_list_fragment_coordinator_layout);
         checkTermOfService();
         setRecyclerView();
         setFloatingActionButton();
@@ -153,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 Log.d(TAG, "searchItem expand");
+                Map<String, String> logEvents = new HashMap<>();
+                logEvents.put("Search", "SearchItem Expanded");
+                Analytics.trackEvent(TAG, logEvents);
                 if (mActionAddButton != null) {
                     Log.d(TAG, "Hide FAM 2");
                     mActionAddButton.setVisibility(View.GONE);
@@ -179,12 +185,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "Search " + query);
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Activity")
-                        .putContentId("1002")
-                        .putCustomAttribute("Search", "Search Text Submitted"));
-
                 updateUI(true, query);
                 return false;
             }
@@ -391,6 +391,11 @@ public class MainActivity extends AppCompatActivity {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                Map<String, String> logEvents = new HashMap<>();
+                                logEvents.put("Sort", "Select Sort Method = " + sortMethod);
+                                Analytics.trackEvent(TAG, logEvents);
+
                                 updateUI(false, null);
                             }
                         })
@@ -893,6 +898,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sortBooks() {
         Comparator<Book> comparator;
+
         switch (sortMethod) {
             case 0:
                 comparator = new Book.titleComparator();
@@ -1310,11 +1316,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRatingDialog() {
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Rating")
-                .putContentId("2100")
-                .putCustomAttribute("Rating Dialog show", 1));
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Rating", "Rating Dialog show");
+        Analytics.trackEvent(TAG, logEvents);
 
         new MaterialDialog.Builder(this)
                 .title(R.string.rating_dialog_title)
@@ -1327,11 +1331,10 @@ public class MainActivity extends AppCompatActivity {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("market://details?id=com.smartjinyu.mybookshelf"));
                         startActivity(i);
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2101")
-                                .putCustomAttribute("Go to Store", 1));
+
+                        logEvents.clear();
+                        logEvents.put("Rating", "Rating Dialog Go to Store");
+                        Analytics.trackEvent(TAG, logEvents);
 
                         MainActivity.super.onBackPressed();
                     }
@@ -1340,11 +1343,11 @@ public class MainActivity extends AppCompatActivity {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2102")
-                                .putCustomAttribute("Cancel Rating", 1));
+
+                        logEvents.clear();
+                        logEvents.put("Rating", "Rating Dialog Cancel");
+                        Analytics.trackEvent(TAG, logEvents);
+
                         MainActivity.super.onBackPressed();
                     }
                 })
@@ -1353,11 +1356,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         defaultSharedPreferences.edit().putBoolean("muteRatings", true).apply();
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("Rating")
-                                .putContentId("2102")
-                                .putCustomAttribute("Mute Rating", 1));
+
+                        logEvents.clear();
+                        logEvents.put("Rating", "Mute");
+                        Analytics.trackEvent(TAG, logEvents);
+
                         MainActivity.super.onBackPressed();
                     }
                 })
@@ -1494,6 +1497,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 wv.loadUrl("file:///android_asset/termOfService_en.html");
             }
+            // TODO update it
             wv.setWebViewClient(new WebViewClient() {
                 @SuppressWarnings("deprecation")
                 @Override

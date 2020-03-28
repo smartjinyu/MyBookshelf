@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
+import com.microsoft.appcenter.analytics.Analytics;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * settings activity
@@ -20,11 +22,14 @@ public class SettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1006")
-                .putCustomAttribute("onCreate", "onCreate"));
+
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Activity", TAG);
+        Analytics.trackEvent("onCreate", logEvents);
+
+        logEvents.clear();
+        logEvents.put("Name", "onCreate");
+        Analytics.trackEvent(TAG, logEvents);
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(mToolbar);

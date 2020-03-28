@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<full-backup-content>
+<full-backup-content xmlns:tools="http://schemas.android.com/tools">
     <include
         domain="sharedpref"
         path="labels.xml" />
@@ -13,6 +13,9 @@
         domain="database"
         path="bookList.db" />
     <include domain="external" />
-
-
+    <exclude domain="sharedpref" path="AppCenter.xml"/>
+    <exclude domain="database" path="com.microsoft.appcenter.persistence"/>
+    <exclude domain="database" path="com.microsoft.appcenter.persistence-journal"/>
+    <exclude domain="file" path="error" tools:ignore="FullBackupContent"/>
+    <exclude domain="file" path="appcenter" tools:ignore="FullBackupContent"/>
 </full-backup-content>

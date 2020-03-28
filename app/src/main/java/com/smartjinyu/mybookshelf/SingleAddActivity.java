@@ -24,14 +24,15 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.Result;
+import com.microsoft.appcenter.analytics.Analytics;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -66,11 +67,14 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
         }
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1003")
-                .putCustomAttribute("onCreate", "onCreate"));
+
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Activity", TAG);
+        Analytics.trackEvent("onCreate", logEvents);
+
+        logEvents.clear();
+        logEvents.put("Name", "onCreate");
+        Analytics.trackEvent(TAG, logEvents);
 
 
         if (savedInstanceState != null) {
@@ -304,11 +308,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
 
     public void fetchSucceed(final Book mBook, final String imageURL) {
 
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("ADD")
-                .putContentId("1201")
-                .putCustomAttribute("ADD Succeeded", 1));
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Fetch", "Fetch succeed");
+        Analytics.trackEvent(TAG, logEvents);
 
         Handler mHandler = new Handler(Looper.getMainLooper());
         mHandler.post(new Runnable() {//on the main thread
@@ -335,12 +337,9 @@ public class SingleAddActivity extends AppCompatActivity implements ZXingScanner
          * event = 0, unexpected response code
          * event = 1, request failed
          */
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Fetcher")
-                .putContentId("1101")
-                .putCustomAttribute("fetchFailed event = ", event));
-
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Fetch", "Fetch failed, event = " + event);
+        Analytics.trackEvent(TAG, logEvents);
 
         indexOfServiceTested += 1;
         if (indexOfServiceTested < selectedServices.length) {

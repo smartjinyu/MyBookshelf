@@ -25,14 +25,15 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.appcenter.analytics.Analytics;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -61,11 +62,13 @@ public class BatchAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_batch_add);
 
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1004")
-                .putCustomAttribute("onCreate", "onCreate"));
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Activity", TAG);
+        Analytics.trackEvent("onCreate", logEvents);
+
+        logEvents.clear();
+        logEvents.put("Name", "onCreate");
+        Analytics.trackEvent(TAG, logEvents);
 
 
         mBooks = new ArrayList<>();
@@ -227,12 +230,6 @@ public class BatchAddActivity extends AppCompatActivity {
                         }
                         dialog.dismiss();
                         BookLab.get(BatchAddActivity.this).addBooks(mBooks);
-                        Answers.getInstance().logContentView(new ContentViewEvent()
-                                .putContentName(TAG)
-                                .putContentType("ADD")
-                                .putContentId("1202")
-                                .putCustomAttribute("ADD Succeeded", mBooks.size()));
-
                         finish();
                         return true;
 

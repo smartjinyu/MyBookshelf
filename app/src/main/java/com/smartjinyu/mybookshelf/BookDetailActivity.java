@@ -92,8 +92,6 @@ public class BookDetailActivity extends SlidingActivity {
         setHeader();
         setBookInfo();
         setBookDetails();
-
-
     }
 
     private void setHeader() {

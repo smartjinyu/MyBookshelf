@@ -1,26 +1,14 @@
-
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
 
-def static getFabricApiKey() {
+def static getAppCenterApiKey() {
     def Properties props = new Properties()
     props.load(new FileInputStream(new File('apiKeys.properties')))
-    return props['fabricApiKey']
+    return props['appcenterApiKey']
 }
 
 def static getDoubanApiKey() {
@@ -48,12 +36,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [fabric_api_key: getFabricApiKey(), douban_api_key: getDoubanApiKey()]
+            //manifestPlaceholders = [appcenter_api_key: getAppCenterApiKey(), douban_api_key: getDoubanApiKey()]
             buildConfigField 'String', "doubanApiKey", "\"" + getDoubanApiKey() + "\""
+            buildConfigField 'String', "appcenterApiKey", "\"" + getAppCenterApiKey() + "\""
         }
         debug {
-            manifestPlaceholders = [fabric_api_key: getFabricApiKey(), douban_api_key: getDoubanApiKey()]
+            //manifestPlaceholders = [appcenter_api_key: getAppCenterApiKey(), douban_api_key: getDoubanApiKey()]
             buildConfigField 'String', "doubanApiKey", "\"" + getDoubanApiKey() + "\""
+            buildConfigField 'String', "appcenterApiKey", "\"" + getAppCenterApiKey() + "\""
         }
     }
     lintOptions {
@@ -89,9 +79,6 @@ dependencies {
     implementation 'com.mikepenz:materialdrawer:6.1.2'
     implementation 'com.github.promeg:tinypinyin:2.0.3'
     // implementation 'com.lapism:searchview:3.8'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') { // replace it later
-        transitive = true
-    }
     // implementation project(':AlipayZeroSdk')
     implementation project(':compressor')
     // implementation 'id.zelory:compressor:2.1.0'
@@ -101,6 +88,8 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
     implementation files('libs/opencsv-3.9.jar')
+    implementation "com.microsoft.appcenter:appcenter-analytics:3.1.0"
+    implementation "com.microsoft.appcenter:appcenter-crashes:3.1.0"
 
 
 }

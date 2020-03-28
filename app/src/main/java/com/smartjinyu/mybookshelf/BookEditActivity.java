@@ -34,15 +34,16 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
+import com.microsoft.appcenter.analytics.Analytics;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import id.zelory.compressor.Compressor;
@@ -92,12 +93,13 @@ public class BookEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_edit);
 
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(TAG)
-                .putContentType("Activity")
-                .putContentId("1007")
-                .putCustomAttribute("onCreate", "onCreate"));
+        Map<String, String> logEvents = new HashMap<>();
+        logEvents.put("Activity", TAG);
+        Analytics.trackEvent("onCreate", logEvents);
 
+        logEvents.clear();
+        logEvents.put("Name", "onCreate");
+        Analytics.trackEvent(TAG, logEvents);
 
         Intent i = getIntent();
 
@@ -574,11 +576,9 @@ public class BookEditActivity extends AppCompatActivity {
         coverImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Change Cover")
-                        .putContentId("2050")
-                        .putCustomAttribute("Change Cover", 1));
+                Map<String, String> logEvents = new HashMap<>();
+                logEvents.put("Cover", "Change Cover Manually");
+                Analytics.trackEvent(TAG, logEvents);
 
                 new MaterialDialog.Builder(BookEditActivity.this)
                         .title(R.string.cover_change_dialog_title)
@@ -587,11 +587,11 @@ public class BookEditActivity extends AppCompatActivity {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                                 if (position == 0) {
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName(TAG)
-                                            .putContentType("Take New Picture")
-                                            .putContentId("2051")
-                                            .putCustomAttribute("Take New Picture", 1));
+
+                                    Map<String, String> logEvents = new HashMap<>();
+                                    logEvents.put("Cover", "Choose Take New Picture");
+                                    Analytics.trackEvent(TAG, logEvents);
+
                                     if (ContextCompat.checkSelfPermission(BookEditActivity.this, Manifest.permission.CAMERA)
                                             != PackageManager.PERMISSION_GRANTED) {
                                         ActivityCompat.requestPermissions(BookEditActivity.this,
@@ -702,6 +702,7 @@ public class BookEditActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (customPhotoName == null) {
                 Log.e(TAG, "Error when taking a new picture");

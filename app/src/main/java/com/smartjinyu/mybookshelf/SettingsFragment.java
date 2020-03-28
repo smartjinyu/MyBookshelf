@@ -22,10 +22,9 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.appcenter.analytics.Analytics;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.opencsv.CSVWriter;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
@@ -44,8 +43,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -88,11 +89,11 @@ public class SettingsFragment extends PreferenceFragment {
         exportCSVPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Export CSV")
-                        .putContentId("2030")
-                        .putCustomAttribute("Click Export to csv", 1));
+
+                Map<String, String> logEvents = new HashMap<>();
+                logEvents.put("Export CSV", "Click Export to csv");
+                Analytics.trackEvent(TAG, logEvents);
+
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     FragmentCompat.requestPermissions(SettingsFragment.this,
@@ -218,11 +219,11 @@ public class SettingsFragment extends PreferenceFragment {
         backupLocationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Backup Location")
-                        .putContentId("2005")
-                        .putCustomAttribute("Click Backup Location", 1));
+//                Answers.getInstance().logContentView(new ContentViewEvent()
+//                        .putContentName(TAG)
+//                        .putContentType("Backup Location")
+//                        .putContentId("2005")
+//                        .putCustomAttribute("Click Backup Location", 1));
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -245,11 +246,9 @@ public class SettingsFragment extends PreferenceFragment {
         backupPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Backup")
-                        .putContentId("2006")
-                        .putCustomAttribute("Click Backup", 1));
+                Map<String, String> logEvents = new HashMap<>();
+                logEvents.put("Backup", "Click Backup");
+                Analytics.trackEvent(TAG, logEvents);
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -263,24 +262,19 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         restorePreference = findPreference("settings_pref_restore");
-        restorePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(TAG)
-                        .putContentType("Restore")
-                        .putContentId("2007")
-                        .putCustomAttribute("Click Restore", 1));
+        restorePreference.setOnPreferenceClickListener(preference -> {
+            Map<String, String> logEvents = new HashMap<>();
+            logEvents.put("Restore", "Click Restore");
+            Analytics.trackEvent(TAG, logEvents);
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    FragmentCompat.requestPermissions(SettingsFragment.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_RESTORE);
-                } else {
-                    restoreBackup();
-                }
-                return false;
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                FragmentCompat.requestPermissions(SettingsFragment.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_RESTORE);
+            } else {
+                restoreBackup();
             }
+            return false;
         });
 
     }
@@ -428,11 +422,9 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         protected void onPostExecute(Boolean isSucceed) {
             mDialog.dismiss();
-            Answers.getInstance().logContentView(new ContentViewEvent()
-                    .putContentName(TAG)
-                    .putContentType("Backup")
-                    .putContentId("2011")
-                    .putCustomAttribute("Backup Result = ", isSucceed.toString()));
+            Map<String, String> logEvents = new HashMap<>();
+            logEvents.put("Backup", "Backup Result = " + isSucceed.toString());
+            Analytics.trackEvent(TAG, logEvents);
 
             if (isSucceed) {
                 String content = String.format(getString(R.string.backup_succeed_toast), zipFile);
@@ -594,11 +586,10 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         protected void onPostExecute(Boolean isSucceed) {
             mDialog.dismiss();
-            Answers.getInstance().logContentView(new ContentViewEvent()
-                    .putContentName(TAG)
-                    .putContentType("Restore")
-                    .putContentId("2010")
-                    .putCustomAttribute("Restore Result = ", isSucceed.toString()));
+            Map<String, String> logEvents = new HashMap<>();
+            logEvents.put("Restore", "Restore Result = " + isSucceed.toString());
+            Analytics.trackEvent(TAG, logEvents);
+
             if (isSucceed) {
                 Toast.makeText(getActivity(), getString(R.string.restore_succeed_toast), Toast.LENGTH_LONG).show();
                 Handler handler = new Handler();
@@ -868,11 +859,10 @@ public class SettingsFragment extends PreferenceFragment {
 
         @Override
         protected void onPostExecute(Boolean isSucceed) {
-            Answers.getInstance().logContentView(new ContentViewEvent()
-                    .putContentName(TAG)
-                    .putContentType("Export CSV")
-                    .putContentId("2031")
-                    .putCustomAttribute("Export Result = ", isSucceed.toString()));
+            Map<String, String> logEvents = new HashMap<>();
+            logEvents.put("Export CSV", "Export Result = " + isSucceed.toString());
+            Analytics.trackEvent(TAG, logEvents);
+
             mDialog.dismiss();
             if (isSucceed) {
                 String toastText = String.format(getString(R.string.export_csv_export_succeed_toast), csvName);

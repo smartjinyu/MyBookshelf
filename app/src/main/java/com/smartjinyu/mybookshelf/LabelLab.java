@@ -94,8 +94,8 @@ public class LabelLab {
             List<Book> books = BookLab.get(mContext).getBooks(null, id);
             for (Book book : books) {
                 book.removeLabel(id);
-                BookLab.get(mContext).updateBook(book);
             }
+            BookLab.get(mContext).updateBooks(books);
         }
         for (Label label : sLabel) {
             if (label.getId().equals(id)) {

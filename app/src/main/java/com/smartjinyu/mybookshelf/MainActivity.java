@@ -808,8 +808,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         List<BookShelf> bookShelves = BookShelfLab.get(this).getBookShelves();
+        // BookShelfLab.get(this).calculateBookCnt(mBooks);
         BookShelf allBookShelf = new BookShelf();
         allBookShelf.setTitle(getResources().getString(R.string.spinner_all_bookshelf)); // never save to disk
+        int totalBooks = 0;
+        for(BookShelf bookShelf : bookShelves){
+            totalBooks += bookShelf.getCnt();
+        }
+        allBookShelf.setCnt(totalBooks);
         bookShelves.add(0, allBookShelf);
         ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<>(
                 this, R.layout.spinner_item_white, bookShelves);
@@ -869,7 +875,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         if (mDrawer != null) {
             long drawerSelection = mDrawer.getCurrentSelection();
             if (drawerSelection < 10 || drawerSelection >= 10 + labels.size()) {
@@ -892,6 +897,7 @@ public class MainActivity extends AppCompatActivity {
             mBooks = bookLab.getBooks(bookshelfID, labelID);
         }
         setToolbarColor(toolbarMode);
+
         // invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
     }
@@ -1078,7 +1084,7 @@ public class MainActivity extends AppCompatActivity {
                                                 // selected label
                                                 for (Book book : multiSelectList) {
                                                     book.addLabel(label);
-                                                    BookLab.get(MainActivity.this).updateBook(book);
+                                                    BookLab.get(MainActivity.this).updateBook(book, false);
                                                 }
                                                 break;
                                             }
@@ -1152,8 +1158,8 @@ public class MainActivity extends AppCompatActivity {
                                             // selected bookshelf
                                             for (Book book : multiSelectList) {
                                                 book.setBookshelfID(bookShelf.getId());
-                                                BookLab.get(MainActivity.this).updateBook(book);
                                             }
+                                            BookLab.get(MainActivity.this).updateBooks(multiSelectList);
                                             break;
                                         }
                                     }
@@ -1232,7 +1238,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.i(TAG,"Set multi reading status = " + which);
                                     for(Book book: multiSelectList){
                                         book.setReadingStatus(which + 1);
-                                        BookLab.get(MainActivity.this).updateBook(book);
+                                        BookLab.get(MainActivity.this).updateBook(book, false);
                                         // must call this to update the database
                                     }
                                     updateUI(true, null);

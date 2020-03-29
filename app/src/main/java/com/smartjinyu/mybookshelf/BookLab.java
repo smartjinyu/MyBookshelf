@@ -243,7 +243,11 @@ public class BookLab {
     }
 
 
-    public void addBook(Book book) {
+    public void addBook(Book book){
+        addBook(book, true);
+    }
+
+    public void addBook(Book book, boolean refreshBookShelfCnt) {
         ContentValues values = getContentValues(book);
         if (isBookExists(book)) {
             //book still exists, update it
@@ -257,14 +261,18 @@ public class BookLab {
             //add a new book
             mDatabase.insert(BookDBSchema.BookTable.NAME, null, values);
         }
+        if(refreshBookShelfCnt){
+            BookShelfLab.get(mContext).refreshBookCnt();
+        }
     }
 
     public void addBooks(List<Book> books) {
         if (books != null) {
             for (Book book : books) {
-                addBook(book);
+                addBook(book, false);
             }
         }
+        BookShelfLab.get(mContext).refreshBookCnt();
     }
 
 
@@ -281,10 +289,14 @@ public class BookLab {
                 BookDBSchema.BookTable.Cols.UUID + " = ?",
                 new String[]{uuidString}
         );
+        BookShelfLab.get(mContext).refreshBookCnt();
     }
 
+    public void updateBook(Book book){
+        updateBook(book, true);
+    }
 
-    public void updateBook(Book book) {
+    public void updateBook(Book book, boolean refreshBookShelfCnt) {
         ContentValues values = getContentValues(book);
         String uuidString = book.getId().toString();
         mDatabase.update(
@@ -293,6 +305,19 @@ public class BookLab {
                 BookDBSchema.BookTable.Cols.UUID + "= ?",
                 new String[]{uuidString}
         );
+        if(refreshBookShelfCnt){
+            BookShelfLab.get(mContext).refreshBookCnt();
+        }
+    }
+
+    public void updateBooks(List<Book> books){
+        if (books != null) {
+            for (Book book : books) {
+                updateBook(book, false);
+            }
+        }
+        BookShelfLab.get(mContext).refreshBookCnt();
+
     }
 
 

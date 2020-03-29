@@ -9,7 +9,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -26,6 +28,7 @@ public class BookShelfLab {
     private static BookShelfLab sBookShelfLab;
     private SharedPreferences BookShelfPreference;
     private Context mContext;
+    private List<BookShelf> sBookShelf;
 
     public static BookShelfLab get(Context context) {
         if (sBookShelfLab == null) {
@@ -34,13 +37,18 @@ public class BookShelfLab {
         return sBookShelfLab;
     }
 
+    public static BookShelfLab get() {
+        return sBookShelfLab;
+    }
+
     public BookShelfLab(Context context) {
         mContext = context.getApplicationContext();
         BookShelfPreference = mContext.getSharedPreferences(PreferenceName, 0);
+        loadBookShelf();
     }
 
-    private List<BookShelf> loadBookShelf() {
-        List<BookShelf> sBookShelf = new ArrayList<>();
+    private void loadBookShelf() {
+        sBookShelf = new ArrayList<>();
         Type type = new TypeToken<List<BookShelf>>() {
         }.getType();
         Gson gson = new Gson();
@@ -55,17 +63,56 @@ public class BookShelfLab {
             );
             bookShelf.setTitle(mContext.getResources().getString(R.string.default_book_shelf_name));
             sBookShelf.add(bookShelf);
-            saveBookShelf(sBookShelf);
+            saveBookShelf();
         }
-        return sBookShelf;
+        refreshBookCnt();
     }
 
+    public final void refreshBookCnt(){
+        // refresh # of books in each bookshelf
+        if(true){
+            // disabled currently
+            // the number displayed at spinner is calculated based on calculateBookCnt()
+            // the actual book cnt is properly maintained if this function is enabled
+            BookLab bookLab = BookLab.get(mContext);
+            for(BookShelf bookShelf : sBookShelf){
+                //if(bookShelf.getCnt() == 0){
+                // recalculate in every load, prevent data inconsistency
+                bookShelf.setCnt(bookLab.getBooks(bookShelf.getId(), null).size());
+                //}
+            }
+        }
+    }
+//    public final void calculateBookCnt(List<Book> books){
+//        // calculate book cnt in each bookshelf from books
+//        if(books != null){
+//            Map<UUID, Integer> bookCnt = new HashMap<>();
+//            // Map.putIfAbsent needs API >= N
+//            for(Book book : books){
+//                if(book.getBookshelfID() != null){
+//                    bookCnt.put(book.getBookshelfID(), 0);
+//                }
+//            }
+//            for(Book book : books){
+//                if(book.getBookshelfID() != null){
+//                    bookCnt.put(book.getBookshelfID(), bookCnt.get(book.getBookshelfID()) + 1);
+//                }
+//            }
+//            for(Map.Entry<UUID, Integer> entry : bookCnt.entrySet()){
+//                BookShelf shelf = getBookShelf(entry.getKey());
+//                if(shelf != null){
+//                    shelf.setCnt(entry.getValue());
+//                }
+//            }
+//        }
+//    }
+
     public final List<BookShelf> getBookShelves() {
-        return loadBookShelf();
+        refreshBookCnt();
+        return new ArrayList<>(sBookShelf);
     }
 
     public final BookShelf getBookShelf(UUID id) {
-        List<BookShelf> sBookShelf = loadBookShelf();
         for (BookShelf bookShelf : sBookShelf) {
             if (bookShelf.getId().equals(id)) {
                 return bookShelf;
@@ -76,12 +123,11 @@ public class BookShelfLab {
 
 
     public void addBookShelf(BookShelf bookShelf) {
-        List<BookShelf> sBookShelf = loadBookShelf();
         sBookShelf.add(bookShelf);
-        saveBookShelf(sBookShelf);
+        saveBookShelf();
     }
 
-    private void saveBookShelf(List<BookShelf> sBookShelf) {
+    private void saveBookShelf() {
         Gson gson = new Gson();
         String toSave = gson.toJson(sBookShelf);
         Log.i(TAG, "JSON to Save = " + toSave);
@@ -91,15 +137,13 @@ public class BookShelfLab {
     }
 
     public void renameBookShelf(UUID id, String newName) {
-        List<BookShelf> bookShelves = loadBookShelf();
-        for (BookShelf bookShelf : bookShelves) {
+        for (BookShelf bookShelf : sBookShelf) {
             if (bookShelf.getId().equals(id)) {
                 bookShelf.setTitle(newName);
                 break;
             }
         }
-        saveBookShelf(bookShelves);
-
+        saveBookShelf();
     }
 
     /***
@@ -108,15 +152,13 @@ public class BookShelfLab {
      * @param removeFromBooks whether move books on this bookshelf to default bookshelf
      */
     public void deleteBookShelf(UUID id, boolean removeFromBooks) {
-        List<BookShelf> sBookShelf = loadBookShelf();
         if (removeFromBooks) {
             // move to default bookshelf
             List<Book> books = BookLab.get(mContext).getBooks(id, null);
             for (Book book : books) {
                 book.setBookshelfID(UUID.fromString(mContext.getString(R.string.default_book_shelf_uuid)));
-                BookLab.get(mContext).updateBook(book);
-
             }
+            BookLab.get(mContext).updateBooks(books);
         }
 
         for (BookShelf bookShelf : sBookShelf) {
@@ -125,9 +167,7 @@ public class BookShelfLab {
                 break;
             }
         }
-
-        saveBookShelf(sBookShelf);
+        saveBookShelf();
     }
-
 
 }

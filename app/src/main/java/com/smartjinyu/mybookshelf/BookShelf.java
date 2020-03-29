@@ -13,6 +13,8 @@ public class BookShelf {
     private UUID id;
     private String title;
     private int cnt; // # of books on this bookshelf
+    // Note that this number isn't the real number of db
+    // It is the number under current condition (label), used to show on spinner
 
     public BookShelf() {
         id = UUID.randomUUID();

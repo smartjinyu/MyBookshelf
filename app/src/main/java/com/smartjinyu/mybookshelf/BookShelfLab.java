@@ -70,7 +70,9 @@ public class BookShelfLab {
 
     public final void refreshBookCnt(){
         // refresh # of books in each bookshelf
-        if(true){
+        // this function calculates the real # of books in each bookshelf stored in db
+        // currently we only need the number to show on spinner, use calculateBookCnt() instead
+        if(false){
             // disabled currently
             // the number displayed at spinner is calculated based on calculateBookCnt()
             // the actual book cnt is properly maintained if this function is enabled
@@ -83,29 +85,33 @@ public class BookShelfLab {
             }
         }
     }
-//    public final void calculateBookCnt(List<Book> books){
-//        // calculate book cnt in each bookshelf from books
-//        if(books != null){
-//            Map<UUID, Integer> bookCnt = new HashMap<>();
-//            // Map.putIfAbsent needs API >= N
-//            for(Book book : books){
-//                if(book.getBookshelfID() != null){
-//                    bookCnt.put(book.getBookshelfID(), 0);
-//                }
-//            }
-//            for(Book book : books){
-//                if(book.getBookshelfID() != null){
-//                    bookCnt.put(book.getBookshelfID(), bookCnt.get(book.getBookshelfID()) + 1);
-//                }
-//            }
-//            for(Map.Entry<UUID, Integer> entry : bookCnt.entrySet()){
-//                BookShelf shelf = getBookShelf(entry.getKey());
-//                if(shelf != null){
-//                    shelf.setCnt(entry.getValue());
-//                }
-//            }
-//        }
-//    }
+
+    public final void calculateBookCnt(List<Book> books){
+        // calculate book cnt in each bookshelf from books
+        if(books != null){
+            for(BookShelf bookShelf : sBookShelf){
+                bookShelf.setCnt(0);
+            }
+            Map<UUID, Integer> bookCnt = new HashMap<>();
+            // Map.putIfAbsent needs API >= N
+            for(Book book : books){
+                if(book.getBookshelfID() != null){
+                    bookCnt.put(book.getBookshelfID(), 0);
+                }
+            }
+            for(Book book : books){
+                if(book.getBookshelfID() != null){
+                    bookCnt.put(book.getBookshelfID(), bookCnt.get(book.getBookshelfID()) + 1);
+                }
+            }
+            for(Map.Entry<UUID, Integer> entry : bookCnt.entrySet()){
+                BookShelf shelf = getBookShelf(entry.getKey());
+                if(shelf != null){
+                    shelf.setCnt(entry.getValue());
+                }
+            }
+        }
+    }
 
     public final List<BookShelf> getBookShelves() {
         refreshBookCnt();

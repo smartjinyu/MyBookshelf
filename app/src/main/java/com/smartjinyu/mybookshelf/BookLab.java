@@ -317,7 +317,6 @@ public class BookLab {
             }
         }
         BookShelfLab.get(mContext).refreshBookCnt();
-
     }
 
 

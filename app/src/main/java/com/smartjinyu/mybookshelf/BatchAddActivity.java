@@ -146,7 +146,7 @@ public class BatchAddActivity extends AppCompatActivity {
                     public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                         List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
                         for (BookShelf bookShelf : bookShelves) {
-                            if (bookShelf.getTitle().equals(text)) {
+                            if (bookShelf.toString().equals(text)) {
                                 // selected bookshelf
                                 for (Book book : mBooks) {
                                     book.setBookshelfID(bookShelf.getId());
@@ -184,7 +184,7 @@ public class BatchAddActivity extends AppCompatActivity {
                                         bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
                                         bookShelfLab.addBookShelf(bookShelfToAdd);
                                         Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
-                                        listdialog.getItems().add(bookShelfToAdd.getTitle());
+                                        listdialog.getItems().add(bookShelfToAdd.toString());
                                         listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
                                     }
                                 })

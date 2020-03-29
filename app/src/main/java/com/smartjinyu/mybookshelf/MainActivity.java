@@ -286,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                             BookShelfLab.get(MainActivity.this).deleteBookShelf(selectedBS.getId(), true);
                                             setBookShelfSpinner(0);
+                                            updateUI(true, null);
+                                            setBookShelfSpinner(0);
                                         }
                                     })
                                     .negativeText(android.R.string.cancel)
@@ -476,6 +478,10 @@ public class MainActivity extends AppCompatActivity {
                         if (drawerItem.getIdentifier() == 1) {
                             // nothing need to do with searchView
                             updateUI(true, null);
+                            if(mSpinner != null){
+                                setBookShelfSpinner(mSpinner.getSelectedItemPosition());
+                            }
+
                         } else if (drawerItem.getIdentifier() == 3) {
                             new MaterialDialog.Builder(MainActivity.this)
                                     .title(R.string.label_add_new_dialog_title)
@@ -512,6 +518,9 @@ public class MainActivity extends AppCompatActivity {
                                 searchView.setIconified(true);
                             }
                             updateUI(true, null);
+                            if(mSpinner != null){
+                                setBookShelfSpinner(mSpinner.getSelectedItemPosition());
+                            }
                         } else if (drawerItem.getIdentifier() == 2) {
                             if(searchItem != null){
                                 searchItem.expandActionView();
@@ -802,13 +811,13 @@ public class MainActivity extends AppCompatActivity {
      * @param selection default selection position
      */
     private void setBookShelfSpinner(int selection) {
-        mSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
+        mSpinner = findViewById(R.id.toolbar_spinner);
         if(mSpinner == null){
             // for example, if searchView is expanded, mSpinner is null
             return;
         }
+        //if(mBooks != null) BookShelfLab.get(this).calculateBookCnt(mBooks);
         List<BookShelf> bookShelves = BookShelfLab.get(this).getBookShelves();
-        // BookShelfLab.get(this).calculateBookCnt(mBooks);
         BookShelf allBookShelf = new BookShelf();
         allBookShelf.setTitle(getResources().getString(R.string.spinner_all_bookshelf)); // never save to disk
         int totalBooks = 0;
@@ -827,12 +836,12 @@ public class MainActivity extends AppCompatActivity {
                 updateUI(true, null);
             }
 
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
+
         if (selection >= 0 && selection < bookShelves.size()) {
             mSpinner.setSelection(selection);
         }
@@ -896,8 +905,8 @@ public class MainActivity extends AppCompatActivity {
             invalidateOptionsMenu();
             mBooks = bookLab.getBooks(bookshelfID, labelID);
         }
+        BookShelfLab.get(this).calculateBookCnt(bookLab.getBooks(null, labelID));
         setToolbarColor(toolbarMode);
-
         // invalidateOptionsMenu();// call onPrepareOptionsMenu()
 
     }
@@ -952,10 +961,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onResume, SearchView open = " + !searchView.isIconified());
         }
 
-        if (mSpinner != null) {
-            // user may create new bookshelf in edit or creating new book
-            setBookShelfSpinner(mSpinner.getSelectedItemPosition());
-        }
         if (mDrawer != null) {
             setDrawer(mDrawer.getCurrentSelection());
         }
@@ -965,6 +970,11 @@ public class MainActivity extends AppCompatActivity {
             updateUI(true, searchView.getQuery().toString());
         }else{
             updateUI(true,null);
+        }
+
+        if (mSpinner != null) {
+            // user may create new bookshelf in edit or creating new book
+            setBookShelfSpinner(mSpinner.getSelectedItemPosition());
         }
 
 
@@ -1049,6 +1059,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 UndoBooks = new ArrayList<>();
                                 updateUI(true, null);
+                                if(mSpinner != null) setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                             }
                         });
                         snackbar.addCallback(new Snackbar.Callback() {
@@ -1064,6 +1075,7 @@ public class MainActivity extends AppCompatActivity {
                         updateUI(true, null);
                         snackbar.show();
                         mActionMode.finish();
+                        if(mSpinner != null) setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                     }
                     break;
                 case R.id.menu_multi_select_add_label:
@@ -1154,8 +1166,9 @@ public class MainActivity extends AppCompatActivity {
                                 public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                                     List<BookShelf> bookShelves = bookShelfLab.getBookShelves();
                                     for (BookShelf bookShelf : bookShelves) {
-                                        if (bookShelf.getTitle().equals(text)) {
+                                        if (bookShelf.toString().contentEquals(text)) {
                                             // selected bookshelf
+                                            Log.d(TAG, "bookshelf title = " + bookShelf.getTitle());
                                             for (Book book : multiSelectList) {
                                                 book.setBookshelfID(bookShelf.getId());
                                             }
@@ -1163,13 +1176,14 @@ public class MainActivity extends AppCompatActivity {
                                             break;
                                         }
                                     }
+
                                     if (mActionMode != null) {
                                         mActionMode.finish();
                                     }
+                                    updateUI(true, null);
                                     if (mSpinner != null) {
                                         setBookShelfSpinner(mSpinner.getSelectedItemPosition());
                                     }
-                                    updateUI(true, null);
                                     dialog.dismiss();
                                 }
                             })
@@ -1205,7 +1219,7 @@ public class MainActivity extends AppCompatActivity {
                                                     bookShelfToAdd.setTitle(dialog.getInputEditText().getText().toString());
                                                     bookShelfLab.addBookShelf(bookShelfToAdd);
                                                     Log.i(TAG, "New bookshelf created " + bookShelfToAdd.getTitle());
-                                                    listdialog.getItems().add(bookShelfToAdd.getTitle());
+                                                    listdialog.getItems().add(bookShelfToAdd.toString());
                                                     listdialog.notifyItemInserted(listdialog.getItems().size() - 1);
                                                 }
                                             })
@@ -1213,6 +1227,9 @@ public class MainActivity extends AppCompatActivity {
                                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                                 @Override
                                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    if (mSpinner != null) {
+                                                        setBookShelfSpinner(mSpinner.getSelectedItemPosition());
+                                                    }
                                                     dialog.dismiss();
                                                 }
                                             })
@@ -1223,6 +1240,7 @@ public class MainActivity extends AppCompatActivity {
                             .autoDismiss(false)
                             // if autoDismiss = false, the list dialog will dismiss when a new bookshelf is added
                             .show();
+
                     break;
                 case R.id.menu_multi_select_set_reading_status:
                     int initialReadingStatus = multiSelectList.get(0).getReadingStatus();

@@ -24,7 +24,7 @@ public class LabelLab {
     private static LabelLab sLabelLab;
     private SharedPreferences LabelPreference;
     private Context mContext;
-
+    private List<Label> sLabel;
 
     public static LabelLab get(Context context) {
         if (sLabelLab == null) {
@@ -36,29 +36,27 @@ public class LabelLab {
     public LabelLab(Context context) {
         mContext = context.getApplicationContext();
         LabelPreference = mContext.getSharedPreferences(PreferenceName, 0);
+        loadLabel();
     }
 
-    private List<Label> loadLabel() {
-        List<Label> labels = new ArrayList<>();
+    private void loadLabel() {
+        sLabel = new ArrayList<>();
         Type type = new TypeToken<List<Label>>() {
         }.getType();
         Gson gson = new Gson();
         String toLoad = LabelPreference.getString(PreferenceName, null);
         if (toLoad != null) {
-            labels = gson.fromJson(toLoad, type);
+            sLabel = gson.fromJson(toLoad, type);
             Log.i(TAG, "JSON to Load = " + toLoad);
         }
-        return labels;
-
     }
 
     public final List<Label> getLabels() {
-        return loadLabel();
+        return sLabel;
     }
 
     public final Label getLabel(UUID id) {
-        List<Label> labels = loadLabel();
-        for (Label label : labels) {
+        for (Label label : sLabel) {
             if (label.getId().equals(id)) {
                 return label;
             }
@@ -68,12 +66,11 @@ public class LabelLab {
 
 
     public void addLabel(Label label) {
-        List<Label> sLabel = loadLabel();
         sLabel.add(label);
-        saveLabel(sLabel);
+        saveLabel();
     }
 
-    private void saveLabel(List<Label> sLabel) {
+    private void saveLabel() {
         Gson gson = new Gson();
         String toSave = gson.toJson(sLabel);
         Log.i(TAG, "JSON to Save = " + toSave);
@@ -89,7 +86,6 @@ public class LabelLab {
      * @param removeFromBooks true to remove the label from all the books
      */
     public void deleteLabel(UUID id, boolean removeFromBooks) {
-        List<Label> sLabel = loadLabel();
         if (removeFromBooks) {
             List<Book> books = BookLab.get(mContext).getBooks(null, id);
             for (Book book : books) {
@@ -103,19 +99,17 @@ public class LabelLab {
                 break;
             }
         }
-        saveLabel(sLabel);
+        saveLabel();
     }
 
     public void renameLabel(UUID id, String newName) {
-        List<Label> labels = loadLabel();
-        for (Label label : labels) {
+        for (Label label : sLabel) {
             if (label.getId().equals(id)) {
                 label.setTitle(newName);
                 break;
             }
         }
-        saveLabel(labels);
-
+        saveLabel();
     }
 
 

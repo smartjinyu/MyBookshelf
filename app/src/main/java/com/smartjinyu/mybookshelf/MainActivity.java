@@ -1036,7 +1036,7 @@ public class MainActivity extends AppCompatActivity {
                         final BookLab bookLab = BookLab.get(MainActivity.this);
                         UndoBooks = new ArrayList<>();
                         for (Book book : multiSelectList) {
-                            bookLab.deleteBook(book);
+                            bookLab.deleteBook(book, false);
                             UndoBooks.add(book);
                         }
                         Snackbar snackbar;
@@ -1068,6 +1068,10 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "Show FAM 4");
                                 mActionAddButton.setVisibility(View.VISIBLE);
                                 mActionAddButton.showMenuButton(true);
+                                for (Book book : UndoBooks) {
+                                    bookLab.deleteBook(book, true);
+                                }
+
                             }
                         });
                         showFAM = false;

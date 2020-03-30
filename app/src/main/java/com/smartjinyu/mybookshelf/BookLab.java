@@ -277,8 +277,12 @@ public class BookLab {
 
 
     public void deleteBook(Book book) {
+        deleteBook(book, false);
+    }
+
+    public void deleteBook(Book book, boolean deleteCover){
         String uuidString = book.getId().toString();
-        if (book.isHasCover()) {
+        if (book.isHasCover() && deleteCover) {
             // delete cover file
             File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + book.getCoverPhotoFileName());
             boolean succeeded = file.delete();

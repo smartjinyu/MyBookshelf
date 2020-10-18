@@ -300,7 +300,7 @@ public class SettingsFragment extends PreferenceFragment {
             zipFileUri = params[0];
             List<String> fileName = new ArrayList<>();
             File covers = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            String coverZipFileName = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/Covers.zip"; // backupLocationPreference.getSummary() + "/Covers.zip";
+            String coverZipFileName = getActivity().getCacheDir() + "/Covers.zip"; // backupLocationPreference.getSummary() + "/Covers.zip";
             if (covers != null) {
                 try {
                     zipFiles(covers.listFiles(), Uri.fromFile(new File(coverZipFileName)));
@@ -402,7 +402,7 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         protected Boolean doInBackground(Uri... params) {
             Uri backupFileUri = params[0];
-            String unZipDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/restoreTemp";
+            String unZipDir = getActivity().getCacheDir() + "/restoreTemp";
             try {
                 unzip(backupFileUri, unZipDir);
             } catch (IOException e) {

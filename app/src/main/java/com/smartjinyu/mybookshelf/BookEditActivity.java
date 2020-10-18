@@ -11,12 +11,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -182,8 +184,8 @@ public class BookEditActivity extends AppCompatActivity {
         } else {
             mBook.setTitle(titleEditText.getText().toString());
             // authors
-            String authors = authorEditText.getText().toString().replace("\n","");
-            if(authors.trim().length()!=0){
+            String authors = authorEditText.getText().toString().replace("\n", "");
+            if (authors.trim().length() != 0) {
                 String[] authorArray;
                 if (authors.contains("、")) {
                     authorArray = authors.split("、");
@@ -199,8 +201,8 @@ public class BookEditActivity extends AppCompatActivity {
             }
             //
             //translators
-            String translators = translatorEditText.getText().toString().replace("\n","");
-            if(translators.trim().length()!=0){
+            String translators = translatorEditText.getText().toString().replace("\n", "");
+            if (translators.trim().length() != 0) {
                 String[] translatorArray;
                 if (translators.contains("、")) {
                     translatorArray = translators.split("、");
@@ -424,18 +426,18 @@ public class BookEditActivity extends AppCompatActivity {
 
         titleEditText.setText(mBook.getTitle());
         String authors = mBook.getFormatAuthor();
-        if(authors!=null){
+        if (authors != null) {
             authorEditText.setText(authors);
         }
         String translators = mBook.getFormatTranslator();
-        if(translators!=null){
+        if (translators != null) {
             translatorEditText.setText(translators);
         }
 
         publisherEditText.setText(mBook.getPublisher());
         if (mBook.getPubTime() != null) {
             int year = mBook.getPubTime().get(Calendar.YEAR);
-            if(year!=9999){
+            if (year != 9999) {
                 pubyearEditText.setText(String.valueOf(year));
                 int mon = mBook.getPubTime().get(Calendar.MONTH) + 1;
                 StringBuilder month = new StringBuilder();
@@ -451,7 +453,7 @@ public class BookEditActivity extends AppCompatActivity {
 
         isbnEditText.setText(mBook.getIsbn());
 
-        String detailBarText = String.format(getString(R.string.book_info_title),mBook.getDataSource());
+        String detailBarText = String.format(getString(R.string.book_info_title), mBook.getDataSource());
         detailBarTextView.setText(detailBarText);
     }
 
@@ -601,6 +603,10 @@ public class BookEditActivity extends AppCompatActivity {
                                     }
 
                                 } else if (position == 1) {
+                                    Map<String, String> logEvents = new HashMap<>();
+                                    logEvents.put("Cover", "Choose Existing Image");
+                                    Analytics.trackEvent(TAG, logEvents);
+
                                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                                     i.setType("image/*");
                                     if (i.resolveActivity(getPackageManager()) != null) {
@@ -734,6 +740,4 @@ public class BookEditActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

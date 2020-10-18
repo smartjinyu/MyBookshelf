@@ -224,14 +224,9 @@
     <string name="settings_web_services_min_toast">You have to choose at least one service!</string>
     <string name="settings_auto_complete_website_title">Auto Complete Website Field</string>
     <string name="settings_backup_category">Backup</string>
-    <string name="settings_backup_location_title">Backup Location</string>
     <string name="settings_backup_title">Backup BookShelf</string>
     <string name="settings_restore_title">Restore BookShelf</string>
-    <string name="storage_permission_toast1">You have to grant STORAGE permission so that you can choose backup location!</string>
-    <string name="storage_permission_toast2">You have to grant STORAGE permission so that we can backup your books!</string>
-    <string name="storage_permission_toast3">You have to grant STORAGE permission so that we can restore your books!</string>
-    <string name="storage_permission_toast5">You have to grant STORAGE permission so that we can export your books!</string>
-    <string name="backup_succeed_toast">Backup Succeeded! File Path: %1$s</string>
+    <string name="backup_succeed_toast">Backup Succeeded!</string>
     <string name="backup_fail_toast">Backup Failed! Please check logs and contact the developer!</string>
     <string name="backup_progress_dialog_title">Backing Up BookShelf</string>
     <string name="backup_progress_dialog_content">Please wait…</string>
@@ -239,11 +234,6 @@
     <string name="choose_folder_dialog_choose">Choose</string>
     <string name="restore_succeed_toast">Restore Succeeded, and App will restart in 2 seconds…</string>
     <string name="restore_fail_toast">Restore Failed! Please check logs and contact the developer!</string>
-    <string name="restore_dialog_title">Backups</string>
-    <string name="restore_dialog_content">Choose backups to restore:</string>
-    <string name="restore_delete_dialog_title">Delete Backup</string>
-    <string name="restore_delete_dialog_content">Are you sure to delete this backup?</string>
-    <string name="restore_no_backup_toast">It seems that there are not any backups in your folder…</string>
     <string name="restore_confirm_dialog_title">Caution</string>
     <string name="restore_confirm_dialog_content">Restore this backup will OVERWRITE all your books and settings in BookShelf currently. You CANNOT recover them after this action. Are you sure to continue to restore?</string>
     <string name="settings_export_to_csv_title">Export to .csv file</string>
@@ -269,13 +259,14 @@
     <string name="export_csv_file_end">Exported from BookShelf (https://play.google.com/store/apps/details?id=com.smartjinyu.mybookshelf)</string>
     <string name="export_csv_file_copyright">"Copyright of the above data is reserved by the corresponding web services, you must follow requirement of these services to use data. BookShelf is not responsible for copyright issues. "</string>
     <string name="export_csv_dialog_at_least_toast">You have to choose at least ONE item!</string>
-    <string name="export_csv_export_succeed_toast">Export Succeeded! File Path: %1$s</string>
+    <string name="export_csv_export_succeed_toast">"Export Succeeded! "</string>
     <string name="export_csv_export_fail_toast">Export Failed! Please check logs and contact the developer!</string>
     <string name="export_csv_caution_dialog_title">Caution</string>
     <string name="export_csv_caution_dialog_content">This function is used for further management of your books.\nYou CANNOT import the .csv file to BookShelf.
         If you want to restore later, please use backup/restore function. </string>
     <string name="settings_general">General</string>
     <string name="settings_check_update_title">Check Updates on Startup</string>
+    <string name="settings_no_document_provider_toast">No available document provider on your device!</string>
 
 
     <!--BatchAddActivity-->

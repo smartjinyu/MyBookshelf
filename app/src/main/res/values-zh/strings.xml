@@ -164,29 +164,20 @@
         <item>DouBan.com</item>
         <item>OpenLibrary.org</item>
     </string-array>
-    <string name="storage_permission_toast1">请授予存储空间权限以便更改您的备份目录！</string>
-    <string name="storage_permission_toast2">请授予存储空间权限以便保存您的备份！</string>
-    <string name="storage_permission_toast3">请授予存储空间权限以便恢复您的备份！</string>
     <string name="title_empty">标题不能为空！</string>
     <string name="settings_backup_category">备份</string>
-    <string name="settings_backup_location_title">备份位置</string>
     <string name="settings_backup_title">备份应用</string>
     <string name="settings_restore_title">恢复应用</string>
     <string name="restore_confirm_dialog_content">恢复此备份将会覆盖您目前所有的书籍和设置，此操作不能被还原！你确定要继续恢复备份吗？</string>
     <string name="restore_confirm_dialog_title">注意</string>
-    <string name="restore_delete_dialog_content">你确定要删除此备份吗？</string>
-    <string name="restore_delete_dialog_title">删除备份</string>
-    <string name="restore_dialog_content">选择您要恢复的备份：</string>
-    <string name="restore_dialog_title">备份文件</string>
     <string name="restore_fail_toast">恢复失败！请您保留日志文件并联系开发者！</string>
-    <string name="restore_no_backup_toast">看上去在备份目录下没有任何备份文件…</string>
     <string name="restore_progress_dialog_title">正在恢复应用</string>
     <string name="restore_succeed_toast">恢复成功！应用将在2秒钟后自动重启…</string>
     <string name="choose_folder_dialog_choose">选择</string>
     <string name="backup_fail_toast">备份失败！请保存日志文件并联系开发者！</string>
     <string name="backup_progress_dialog_content">请稍候…</string>
     <string name="backup_progress_dialog_title">正在备份应用</string>
-    <string name="backup_succeed_toast">备份成功！备份文件：%1$s</string>
+    <string name="backup_succeed_toast">备份成功！</string>
     <string name="rating_dialog_content">如果您觉得此 APP 对您有所帮助，请为我们在应用市场评分。感谢您的支持！</string>
     <string name="rating_dialog_negative">退出</string>
     <string name="rating_dialog_neutral">不再提醒</string>
@@ -215,7 +206,7 @@
     <string name="export_csv_dialog_at_least_toast">请至少选择一项！</string>
     <string name="export_csv_dialog_title">选择需要导出的项目</string>
     <string name="export_csv_export_fail_toast">导出失败！请查看日志并联系作者！</string>
-    <string name="export_csv_export_succeed_toast">导出成功！文件路径：%1$s</string>
+    <string name="export_csv_export_succeed_toast">导出成功！</string>
     <string name="export_csv_file_copyright">以上数据的版权由书籍信息提供网站保留，请按照它们的版权要求使用这些数据，本软件不对此负责。</string>
     <string name="export_csv_file_end">从 BookShelf 导出(http://coolapk.com/apk/com.smartjinyu.mybookshelf)</string>
     <string name="export_csv_file_order">编号</string>
@@ -231,7 +222,6 @@
     <string name="settings_export_to_csv_title">导出为.csv文件</string>
     <string name="shortcut_name_add">添加书籍</string>
     <string name="shortcut_name_search">搜索</string>
-    <string name="storage_permission_toast5">请授予存储空间权限以导出您的书籍！</string>
     <string-array name="cover_change_dialog_list">
         <item>拍摄新图片</item>
         <item>从相册选择图片</item>
@@ -253,6 +243,10 @@
     <string name="cover_change_no_choose_picture_app">没有找到支持的图片选择工具！</string>
     <string name="menu_multi_select_item_set_reading_status">设置阅读状态</string>
     <string name="about_preference_privacy_policy">隐私政策</string>
+    <string name="settings_general">通用</string>
+    <string name="settings_check_update_title">启动时检查更新</string>
+    <string name="set_reading_status_title">设置阅读状态</string>
+    <string name="settings_no_document_provider_toast">无法在您的设备上找到 Document Provider！</string>
 
 
 </resources>

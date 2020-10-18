@@ -134,7 +134,19 @@ public class SettingsFragment extends PreferenceFragment {
                                         backupFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
                                         backupFileIntent.setType("text/csv");
                                         backupFileIntent.putExtra(Intent.EXTRA_TITLE, filename);
-                                        startActivityForResult(backupFileIntent, EXPORT_CSV_FILE_CODE);
+
+                                        if (backupFileIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            startActivityForResult(backupFileIntent, EXPORT_CSV_FILE_CODE);
+                                        } else {
+                                            Log.e(TAG, "No Document Provider Available");
+                                            Map<String, String> logEvents = new HashMap<>();
+                                            logEvents.put("Export CSV", "No Document Provider Available");
+                                            Analytics.trackEvent(TAG, logEvents);
+
+                                            Toast.makeText(getActivity(), R.string.settings_no_document_provider_toast, Toast.LENGTH_LONG)
+                                                    .show();
+                                        }
+
                                         listDialog.dismiss();
                                     }
                                 })
@@ -218,7 +230,6 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 Map<String, String> logEvents = new HashMap<>();
                 logEvents.put("Backup", "Click Backup");
-                Analytics.trackEvent(TAG, logEvents);
 
                 String filename = "Bookshelf_backup_" + BuildConfig.VERSION_CODE + "_"
                         + Calendar.getInstance().getTimeInMillis() + ".zip";
@@ -226,7 +237,16 @@ public class SettingsFragment extends PreferenceFragment {
                 backupFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
                 backupFileIntent.setType("application/zip");
                 backupFileIntent.putExtra(Intent.EXTRA_TITLE, filename);
-                startActivityForResult(backupFileIntent, CREATE_BACKUP_FILE_CODE);
+                if (backupFileIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(backupFileIntent, CREATE_BACKUP_FILE_CODE);
+                } else {
+                    Log.e(TAG, "No Document Provider Available");
+                    logEvents.put("Backup", "No Document Provider Available");
+
+                    Toast.makeText(getActivity(), R.string.settings_no_document_provider_toast, Toast.LENGTH_LONG)
+                            .show();
+                }
+                Analytics.trackEvent(TAG, logEvents);
                 return false;
             }
         });
@@ -242,6 +262,16 @@ public class SettingsFragment extends PreferenceFragment {
             restoreFileIntent.setType("application/zip");
             // restoreFileIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri); // requires >= API 26
             startActivityForResult(restoreFileIntent, OPEN_BACKUP_FILE_CODE);
+            if (restoreFileIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivityForResult(restoreFileIntent, OPEN_BACKUP_FILE_CODE);
+            } else {
+                Log.e(TAG, "No Document Provider Available");
+                logEvents.put("Restore", "No Document Provider Available");
+
+                Toast.makeText(getActivity(), R.string.settings_no_document_provider_toast, Toast.LENGTH_LONG)
+                        .show();
+            }
+            Analytics.trackEvent(TAG, logEvents);
             return false;
         });
 

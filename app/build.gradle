@@ -53,18 +53,18 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0-alpha01', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
-    testImplementation 'junit:junit:4.13'
-    implementation 'com.google.android.material:material:1.1.0'
+    testImplementation 'junit:junit:4.13.1'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.github.clans:fab:1.6.4' // discontinued project
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // newest 3.3.0 // original 0.9.6.0
     implementation 'com.nononsenseapps:filepicker:4.0.0' // replace it with built in document UI
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -75,7 +75,7 @@ dependencies {
     // implementation project(':AlipayZeroSdk')
     implementation project(':compressor')
     // implementation 'id.zelory:compressor:2.1.0'
-    implementation('com.squareup.retrofit2:converter-simplexml:2.8.1') {
+    implementation('com.squareup.retrofit2:converter-simplexml:2.9.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'

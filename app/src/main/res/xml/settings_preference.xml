@@ -12,9 +12,6 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_backup_category">
         <Preference
-            android:title="@string/settings_backup_location_title"
-            android:key="settings_pref_backup_location" />
-        <Preference
             android:title="@string/settings_backup_title"
             android:key="settings_pref_backup" />
         <Preference

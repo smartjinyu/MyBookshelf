@@ -1,10 +1,8 @@
 package com.smartjinyu.mybookshelf;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,11 +11,10 @@ import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
-import androidx.legacy.app.FragmentCompat;
-import androidx.core.content.ContextCompat;
+
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -25,7 +22,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.appcenter.analytics.Analytics;
-import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.opencsv.CSVWriter;
 import com.smartjinyu.mybookshelf.database.BookBaseHelper;
 
@@ -35,17 +31,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -60,19 +57,19 @@ import java.util.zip.ZipOutputStream;
 public class SettingsFragment extends PreferenceFragment {
     private static final String TAG = "SettingsFragment";
 
-    private static final int STORAGE_PERMISSION_LOACTION = 1;
-    private static final int STORAGE_PERMISSION_BACKUP = 2;
-    private static final int STORAGE_PERMISSION_RESTORE = 3;
-    private static final int FOLDER_CHOOSER = 4;
-    private static final int STORAGE_PERMISSION_EXPORT_CSV = 5;
+    private static final int CREATE_BACKUP_FILE_CODE = 6;
+    private static final int OPEN_BACKUP_FILE_CODE = 7;
+    private static final int EXPORT_CSV_FILE_CODE = 8;
 
-    private Preference backupLocationPreference;
+
     private Preference backupPreference;
     private Preference restorePreference;
     private Preference webServicesPreference;
     private Preference exportCSVPreference;
 
     private SharedPreferences sharedPreferences;
+
+    private List<Integer> exportCSVList = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,13 +91,7 @@ public class SettingsFragment extends PreferenceFragment {
                 logEvents.put("Export CSV", "Click Export to csv");
                 Analytics.trackEvent(TAG, logEvents);
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    FragmentCompat.requestPermissions(SettingsFragment.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_EXPORT_CSV);
-                } else {
-                    exportToCSV();
-                }
+                exportToCSV();
                 return false;
             }
         });
@@ -134,7 +125,16 @@ public class SettingsFragment extends PreferenceFragment {
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        new exportCSVTask().execute(listDialog.getSelectedIndices());
+                                        if (listDialog.getSelectedIndices() != null) {
+                                            exportCSVList = Arrays.asList(listDialog.getSelectedIndices());
+                                        }
+                                        String filename = "Bookshelf_CSV_" + BuildConfig.VERSION_CODE + "_"
+                                                + Calendar.getInstance().getTimeInMillis() + ".csv";
+                                        Intent backupFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                                        backupFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        backupFileIntent.setType("text/csv");
+                                        backupFileIntent.putExtra(Intent.EXTRA_TITLE, filename);
+                                        startActivityForResult(backupFileIntent, EXPORT_CSV_FILE_CODE);
                                         listDialog.dismiss();
                                     }
                                 })
@@ -212,36 +212,6 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void setBackupCategory() {
-        backupLocationPreference = findPreference("settings_pref_backup_location");
-        final String path = sharedPreferences.getString("settings_pref_backup_location",
-                Environment.getExternalStorageDirectory().getAbsolutePath() + "/backups");
-        backupLocationPreference.setSummary(path);
-        backupLocationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-//                Answers.getInstance().logContentView(new ContentViewEvent()
-//                        .putContentName(TAG)
-//                        .putContentType("Backup Location")
-//                        .putContentId("2005")
-//                        .putCustomAttribute("Click Backup Location", 1));
-
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    FragmentCompat.requestPermissions(SettingsFragment.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_LOACTION);
-                    return false;
-                } else {
-                    Intent i = new Intent(getActivity(), FilePickerActivity.class);
-                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, path);
-                    startActivityForResult(i, FOLDER_CHOOSER);
-                    return true;
-                }
-            }
-        });
-
-
         backupPreference = findPreference("settings_pref_backup");
         backupPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -250,13 +220,13 @@ public class SettingsFragment extends PreferenceFragment {
                 logEvents.put("Backup", "Click Backup");
                 Analytics.trackEvent(TAG, logEvents);
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    FragmentCompat.requestPermissions(SettingsFragment.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_BACKUP);
-                } else {
-                    new backupTask().execute();
-                }
+                String filename = "Bookshelf_backup_" + BuildConfig.VERSION_CODE + "_"
+                        + Calendar.getInstance().getTimeInMillis() + ".zip";
+                Intent backupFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                backupFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                backupFileIntent.setType("application/zip");
+                backupFileIntent.putExtra(Intent.EXTRA_TITLE, filename);
+                startActivityForResult(backupFileIntent, CREATE_BACKUP_FILE_CODE);
                 return false;
             }
         });
@@ -267,110 +237,22 @@ public class SettingsFragment extends PreferenceFragment {
             logEvents.put("Restore", "Click Restore");
             Analytics.trackEvent(TAG, logEvents);
 
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                FragmentCompat.requestPermissions(SettingsFragment.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_RESTORE);
-            } else {
-                restoreBackup();
-            }
+            Intent restoreFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            restoreFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            restoreFileIntent.setType("application/zip");
+            // restoreFileIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri); // requires >= API 26
+            startActivityForResult(restoreFileIntent, OPEN_BACKUP_FILE_CODE);
             return false;
         });
 
     }
 
-    private void restoreBackup() {
-        File backupFolder = new File(backupLocationPreference.getSummary().toString());
-        final String[] files = backupFolder.list();
-        List<String> backups = new ArrayList<>();
-        for (String name : files) {
-            if (name.contains("Bookshelf_backup_") && name.contains(".zip")) {
-                long timeInMills = Long.parseLong(name.substring(name.lastIndexOf("_") + 1, name.lastIndexOf(".")));
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(timeInMills);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                String time = format.format(calendar.getTime());
-                backups.add(name + "(" + time + ")");
-            }
-        }
-        if (backups.size() != 0) {
-            new MaterialDialog.Builder(getActivity())
-                    .title(R.string.restore_dialog_title)
-                    .content(R.string.restore_dialog_content)
-                    .items(backups)
-                    .itemsCallback(new MaterialDialog.ListCallback() {
-                        @Override
-                        public void onSelection(final MaterialDialog listDialog, View itemView, int position, final CharSequence text) {
-                            new MaterialDialog.Builder(getActivity())
-                                    .title(R.string.restore_confirm_dialog_title)
-                                    .content(R.string.restore_confirm_dialog_content)
-                                    .positiveText(android.R.string.ok)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            String path = backupLocationPreference.getSummary().toString() + "/"
-                                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
-                                            new restoreTask().execute(path);
-                                            listDialog.dismiss();
-                                        }
-                                    })
-                                    .negativeText(android.R.string.cancel)
-                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            dialog.dismiss();
-                                            listDialog.dismiss();
-                                        }
-                                    })
-                                    .show();
-                        }
-                    })
-                    .itemsLongCallback(new MaterialDialog.ListLongCallback() {
-                        @Override
-                        public boolean onLongSelection(final MaterialDialog dialogList, View itemView, final int position, final CharSequence text) {
-                            new MaterialDialog.Builder(getActivity())
-                                    .title(R.string.restore_delete_dialog_title)
-                                    .content(R.string.restore_delete_dialog_content)
-                                    .positiveText(android.R.string.ok)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            String path = backupLocationPreference.getSummary().toString() + "/"
-                                                    + text.toString().substring(0, text.toString().lastIndexOf(".zip") + 4);
-                                            File file = new File(path);
-                                            if (file.exists()) {
-                                                file.delete();
-                                            }
-                                            dialogList.getItems().remove(position);
-                                            dialogList.notifyItemsChanged();
-                                        }
-                                    })
-                                    .negativeText(android.R.string.cancel)
-                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .show();
-
-                            return false;
-                        }
-                    })
-                    .autoDismiss(false)
-                    .show();
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.restore_no_backup_toast), Toast.LENGTH_LONG)
-                    .show();
-        }
-
-    }
-
-
-    private class backupTask extends AsyncTask<Void, Void, Boolean> {
+    /**
+     * Uri - uri to the backup file, get from storage access framework
+     */
+    private class backupTask extends AsyncTask<Uri, Void, Boolean> {
         private MaterialDialog mDialog;
-        private String zipFile;
-
+        private Uri zipFileUri;
 
         @Override
         protected void onPreExecute() {
@@ -384,13 +266,14 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Uri... params) {
+            zipFileUri = params[0];
             List<String> fileName = new ArrayList<>();
             File covers = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            String coverZipFileName = backupLocationPreference.getSummary() + "/Covers.zip";
+            String coverZipFileName = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/Covers.zip"; // backupLocationPreference.getSummary() + "/Covers.zip";
             if (covers != null) {
                 try {
-                    zipFiles(covers.listFiles(), coverZipFileName);
+                    zipFiles(covers.listFiles(), Uri.fromFile(new File(coverZipFileName)));
                     fileName.add(coverZipFileName);
                     Log.i(TAG, "Cover temp zip created " + coverZipFileName);
                 } catch (IOException e) {
@@ -401,11 +284,9 @@ public class SettingsFragment extends PreferenceFragment {
                 fileName.add(getActivity().getFilesDir().getParent() + "/shared_prefs/" + BookShelfLab.PreferenceName + ".xml");
                 fileName.add(getActivity().getFilesDir().getParent() + "/shared_prefs/" + LabelLab.PreferenceName + ".xml");
                 fileName.add(getActivity().getFilesDir().getParent() + "/shared_prefs/" + getActivity().getPackageName() + "_preferences.xml");
-                zipFile = backupLocationPreference.getSummary() + "/Bookshelf_backup_" + BuildConfig.VERSION_CODE + "_"
-                        + Calendar.getInstance().getTimeInMillis() + ".zip";
                 try {
-                    zipFiles(fileName.toArray(new String[0]), zipFile);
-                    Log.i(TAG, "Backup created " + zipFile);
+                    zipFiles(fileName.toArray(new String[0]), zipFileUri);
+                    Log.i(TAG, "Backup created " + zipFileUri);
                 } catch (IOException e) {
                     Log.e(TAG, "IOException when zipFiles = " + e.toString());
                     return false;
@@ -413,6 +294,7 @@ public class SettingsFragment extends PreferenceFragment {
                 File coverZipFile = new File(coverZipFileName);
                 boolean deleted = coverZipFile.delete();
                 Log.i(TAG, "Cover.zip name = " + coverZipFileName + ", delete result = " + deleted);
+
                 return true;
             } else {
                 return false;
@@ -427,7 +309,7 @@ public class SettingsFragment extends PreferenceFragment {
             Analytics.trackEvent(TAG, logEvents);
 
             if (isSucceed) {
-                String content = String.format(getString(R.string.backup_succeed_toast), zipFile);
+                String content = getString(R.string.backup_succeed_toast);
                 Toast.makeText(getActivity(), content, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getActivity(), getString(R.string.backup_fail_toast), Toast.LENGTH_LONG).show();
@@ -435,42 +317,10 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         //zip and unzip code is referenced to http://stackoverflow.com/questions/7485114/how-to-zip-and-unzip-the-files
-        private void zipFiles(String[] files, String zipFile) throws IOException {
+        private void zipFiles(File[] files, Uri zipFileUri) throws IOException {
             if (files.length != 0) {
                 int BUFFER_SIZE = 2048;
-                File folder = new File(zipFile.substring(0, zipFile.lastIndexOf("/")));// the folder
-                if (!folder.isDirectory()) {
-                    boolean result = folder.mkdirs();
-                }
-                try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)))) {
-                    byte data[] = new byte[BUFFER_SIZE]; // buffer size
-                    for (String fileName : files) {
-                        File file = new File(fileName);
-                        if (file.exists()) {
-                            FileInputStream fi = new FileInputStream(fileName);
-                            try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER_SIZE)) {
-                                ZipEntry entry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
-                                out.putNextEntry(entry);
-                                int count;
-                                while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
-                                    out.write(data, 0, count);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void zipFiles(File[] files, String zipFile) throws IOException {
-            if (files.length != 0) {
-                int BUFFER_SIZE = 2048;
-                File folder = new File(zipFile.substring(0, zipFile.lastIndexOf("/")));// the folder
-                if (!folder.isDirectory()) {
-                    boolean result = folder.mkdirs();
-                }
-
-                try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)))) {
+                try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(getActivity().getContentResolver().openOutputStream(zipFileUri)))) {
                     byte data[] = new byte[BUFFER_SIZE]; // buffer size
                     for (File file : files) {
                         if (file.exists()) {
@@ -490,12 +340,21 @@ public class SettingsFragment extends PreferenceFragment {
             }
         }
 
+        private void zipFiles(String[] fileNames, Uri zipFileUri) throws IOException {
+            File[] files = new File[fileNames.length];
+            for (int i = 0; i < fileNames.length; i++) {
+                files[i] = new File(fileNames[i]);
+            }
+            zipFiles(files, zipFileUri);
+        }
+
+
     }
 
     /**
-     * String - path of backup zip
+     * Uri - uri to the backup file, get from storage access framework
      */
-    private class restoreTask extends AsyncTask<String, Void, Boolean> {
+    private class restoreTask extends AsyncTask<Uri, Void, Boolean> {
         private MaterialDialog mDialog;
 
         @Override
@@ -511,11 +370,11 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
-            String backupFile = params[0];
-            String unZipDir = backupFile.substring(0, backupFile.lastIndexOf("."));
+        protected Boolean doInBackground(Uri... params) {
+            Uri backupFileUri = params[0];
+            String unZipDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/restoreTemp";
             try {
-                unzip(backupFile, unZipDir);
+                unzip(backupFileUri, unZipDir);
             } catch (IOException e) {
                 Log.e(TAG, "Unzip failed 1, ioe = " + e.toString());
                 return false;
@@ -526,7 +385,7 @@ public class SettingsFragment extends PreferenceFragment {
                 // restore files
                 if (file.equals("Covers.zip")) {
                     try {
-                        unzip(unZipDir + "/Covers.zip", unZipDir + "/Covers");
+                        unzip(Uri.fromFile(new File(unZipDir + "/Covers.zip")), unZipDir + "/Covers");
                         File srcCoverFolder = new File(unZipDir + "/Covers");
                         File[] covers = srcCoverFolder.listFiles();
                         if (getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) != null) {
@@ -569,9 +428,9 @@ public class SettingsFragment extends PreferenceFragment {
                     String src = unZipDir + "/" + BookBaseHelper.DATABASE_NAME;
                     String dest = getActivity().getDatabasePath(BookBaseHelper.DATABASE_NAME).getAbsolutePath();
                     File tempFile = new File(dest + "-shm");
-                    if(tempFile.exists()) tempFile.delete();
+                    if (tempFile.exists()) tempFile.delete();
                     tempFile = new File(dest + "-wal");
-                    if(tempFile.exists()) tempFile.delete();
+                    if (tempFile.exists()) tempFile.delete();
                     copyFile(new File(src), new File(dest));
                 }
             }
@@ -606,7 +465,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         //zip and unzip code is referenced to http://stackoverflow.com/questions/7485114/how-to-zip-and-unzip-the-files
-        private void unzip(String zipFile, String location) throws IOException {
+        private void unzip(Uri zipFileUri, String location) throws IOException {
             int size;
             int BUFFER_SIZE = 2048;
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -617,7 +476,7 @@ public class SettingsFragment extends PreferenceFragment {
             if (!file.isDirectory()) {
                 boolean result = file.mkdirs();
             }
-            try (ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)))) {
+            try (ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(getActivity().getContentResolver().openInputStream(zipFileUri)))) {
                 ZipEntry ze = null;
                 while ((ze = zipInputStream.getNextEntry()) != null) {
                     String path = location + ze.getName();
@@ -679,22 +538,27 @@ public class SettingsFragment extends PreferenceFragment {
 
         //delete folder
         void deleteRecursive(File fileOrDirectory) {
-            if (fileOrDirectory.isDirectory())
-                for (File child : fileOrDirectory.listFiles())
-                    deleteRecursive(child);
-
-            fileOrDirectory.delete();
+            try {
+                if (fileOrDirectory.isDirectory()) {
+                    for (File child : fileOrDirectory.listFiles()) {
+                        deleteRecursive(child);
+                    }
+                }
+                fileOrDirectory.delete();
+            } catch (Exception e) {
+                Log.e(TAG, "Exception when deleting restore unzip folder: " + e);
+            }
         }
 
 
     }
 
     /**
-     * Integer[] Items to export, which is corresponding to the order of items in string-array
+     * Uri - uri to the CSV file, get from storage access framework
      */
-    private class exportCSVTask extends AsyncTask<Integer[], Void, Boolean> {
+    private class exportCSVTask extends AsyncTask<Uri, Void, Boolean> {
         private MaterialDialog mDialog;
-        private String csvName;
+        private Uri csvFileUri;
 
         @Override
         protected void onPreExecute() {
@@ -708,13 +572,10 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         @Override
-        protected Boolean doInBackground(Integer[]... selectedItems) {
+        protected Boolean doInBackground(Uri... params) {
             Calendar mCalendar = Calendar.getInstance();
-            csvName = backupLocationPreference.getSummary() +
-                    "/Bookshelf_CSV_" + BuildConfig.VERSION_CODE + "_"
-                    + mCalendar.getTimeInMillis() + ".csv";
-
-            try (FileOutputStream outputStream = new FileOutputStream(csvName)) {
+            csvFileUri = params[0];
+            try (OutputStream outputStream = getActivity().getContentResolver().openOutputStream(csvFileUri)) {
                 List<Book> mBooks = BookLab.get(getActivity()).getBooks();
                 // sort Books
                 int sortMethod = sharedPreferences.getInt("SORT_METHOD", 0);
@@ -738,8 +599,10 @@ public class SettingsFragment extends PreferenceFragment {
                 Collections.sort(mBooks, comparator);
 
                 int[] items = new int[11];
-                for (int i = 0; i < selectedItems[0].length; i++) {
-                    items[selectedItems[0][i]] = 1;
+                if (exportCSVList != null) {
+                    for (int i : exportCSVList) {
+                        items[i] = 1;
+                    }
                 }
                 // items is like [1,0,0,0,0,0,1,1,1,1,1], if one item needs to export, item[i] is 1
                 outputStream.write(0xef);
@@ -768,18 +631,18 @@ public class SettingsFragment extends PreferenceFragment {
                     if (items[1] == 1) {
                         // authors
                         String authors = mBook.getFormatAuthor();
-                        if(authors!=null){
+                        if (authors != null) {
                             entry.add(authors);
-                        }else {
+                        } else {
                             entry.add("");
                         }
                     }
                     if (items[2] == 1) {
                         // translators
                         String translators = mBook.getFormatTranslator();
-                        if(translators!=null){
+                        if (translators != null) {
                             entry.add(translators);
-                        }else{
+                        } else {
                             entry.add("");
                         }
                     }
@@ -795,11 +658,10 @@ public class SettingsFragment extends PreferenceFragment {
                             entry.add("");
                         } else {
                             int month = calendar.get(Calendar.MONTH) + 1;
-                            StringBuilder pubtime = new StringBuilder();
-                            pubtime.append(year);
-                            pubtime.append(" - ");
-                            pubtime.append(month);
-                            entry.add(pubtime.toString());
+                            String pubTime = year +
+                                    " - " +
+                                    month;
+                            entry.add(pubTime);
                         }
                     }
                     if (items[5] == 1) {
@@ -850,8 +712,8 @@ public class SettingsFragment extends PreferenceFragment {
                 csvWriter.writeNext(new String[]{getString(R.string.export_csv_file_copyright)});
                 csvWriter.close();
 
-            } catch (IOException ioe) {
-                Log.e(TAG, "csvName = " + csvName + ", ioe = " + ioe);
+            } catch (Exception e) {
+                Log.e(TAG, "csvFileUri = " + csvFileUri + ", exception = " + e);
                 return false;
             }
             return true;
@@ -865,7 +727,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             mDialog.dismiss();
             if (isSucceed) {
-                String toastText = String.format(getString(R.string.export_csv_export_succeed_toast), csvName);
+                String toastText = getString(R.string.export_csv_export_succeed_toast);
                 Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getActivity(), getString(R.string.export_csv_export_fail_toast), Toast.LENGTH_LONG).show();
@@ -884,68 +746,17 @@ public class SettingsFragment extends PreferenceFragment {
 
 
     @Override
-    public void onRequestPermissionsResult(
-            int RequestCode,
-            @NonNull String permissions[],
-            @NonNull int[] grantResults) {
-
-        switch (RequestCode) {
-            case STORAGE_PERMISSION_LOACTION:
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast1), Toast.LENGTH_SHORT)
-                            .show();
-                    Log.e(TAG, "Storage Permission Denied 1");
-                }
-                break;
-
-            case STORAGE_PERMISSION_BACKUP:
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast2), Toast.LENGTH_SHORT)
-                            .show();
-                    Log.e(TAG, "Storage Permission Denied 2");
-                } else {
-                    new backupTask().execute();
-                }
-                break;
-            case STORAGE_PERMISSION_RESTORE:
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast3), Toast.LENGTH_SHORT)
-                            .show();
-                    Log.e(TAG, "Storage Permission Denied 3");
-                } else {
-                    restoreBackup();
-                }
-                break;
-            case STORAGE_PERMISSION_EXPORT_CSV:
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission not granted
-                    Toast.makeText(getActivity(), getString(R.string.storage_permission_toast5), Toast.LENGTH_SHORT)
-                            .show();
-                    Log.e(TAG, "Storage Permission Denied 5");
-                } else {
-                    exportToCSV();
-                }
-                break;
-
-
-        }
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == FOLDER_CHOOSER && resultCode == Activity.RESULT_OK) {
-            Uri uri = intent.getData();
-            File file = com.nononsenseapps.filepicker.Utils.getFileForUri(uri);
-            if (backupLocationPreference != null) {
-                String path = file.getAbsolutePath();
-                backupLocationPreference.setSummary(path);
-                sharedPreferences.edit().putString("settings_pref_backup_location", path).apply();
-                Log.i(TAG, "Change backup path to " + path);
-            }
+        if (requestCode == CREATE_BACKUP_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            new backupTask().execute(intent.getData());
         }
+        if (requestCode == OPEN_BACKUP_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            new restoreTask().execute(intent.getData());
+        }
+        if (requestCode == EXPORT_CSV_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            new exportCSVTask().execute(intent.getData());
+        }
+
         super.onActivityResult(requestCode, resultCode, intent);
     }
 }

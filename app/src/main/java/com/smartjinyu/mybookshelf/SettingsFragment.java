@@ -261,7 +261,6 @@ public class SettingsFragment extends PreferenceFragment {
             restoreFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
             restoreFileIntent.setType("application/zip");
             // restoreFileIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri); // requires >= API 26
-            startActivityForResult(restoreFileIntent, OPEN_BACKUP_FILE_CODE);
             if (restoreFileIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivityForResult(restoreFileIntent, OPEN_BACKUP_FILE_CODE);
             } else {
@@ -771,19 +770,44 @@ public class SettingsFragment extends PreferenceFragment {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         Runtime.getRuntime().exit(0);
-
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == CREATE_BACKUP_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            Log.i(TAG, "Create backup file, uri = " + intent.getData());
             new backupTask().execute(intent.getData());
         }
         if (requestCode == OPEN_BACKUP_FILE_CODE && resultCode == Activity.RESULT_OK) {
-            new restoreTask().execute(intent.getData());
+            Log.i(TAG, "Restore backup file, uri = " + intent.getData());
+            new MaterialDialog.Builder(getActivity())
+                    .title(R.string.restore_confirm_dialog_title)
+                    .content(R.string.restore_confirm_dialog_content)
+                    .positiveText(android.R.string.ok)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Map<String, String> logEvents = new HashMap<>();
+                            logEvents.put("Restore", "Confirm Restore");
+                            Analytics.trackEvent(TAG, logEvents);
+                            new restoreTask().execute(intent.getData());
+                        }
+                    })
+                    .negativeText(android.R.string.cancel)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Map<String, String> logEvents = new HashMap<>();
+                            logEvents.put("Restore", "Give up Restore");
+                            Analytics.trackEvent(TAG, logEvents);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
         if (requestCode == EXPORT_CSV_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            Log.i(TAG, "Export CSV file, uri = " + intent.getData());
             new exportCSVTask().execute(intent.getData());
         }
 

@@ -247,6 +247,7 @@
     <string name="settings_check_update_title">启动时检查更新</string>
     <string name="set_reading_status_title">设置阅读状态</string>
     <string name="settings_no_document_provider_toast">无法在您的设备上找到 Document Provider！</string>
+    <string name="about_preference_no_email_client_toast">没有找到可用的邮件客户端！请发送反馈到 %1$s.</string>
 
 
 </resources>

@@ -212,6 +212,8 @@
     <string name="about_preference_license_dialog">Open Source License</string>
     <string name="about_preference_privacy_policy">Privacy Policy</string>
     <string name="about_preference_term_of_service">Term of Service</string>
+    <string name="about_preference_feedback_email_address" translatable="false">smartjinyu@gmail.com</string>
+    <string name="about_preference_no_email_client_toast">No email client available on your device! Please send your feedback to %1$s.</string>
 
     <!--Settings-->
     <string name="settings_settings">Settings</string>

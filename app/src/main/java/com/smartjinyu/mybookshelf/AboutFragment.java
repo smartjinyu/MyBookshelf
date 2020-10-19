@@ -10,9 +10,11 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import androidx.appcompat.app.AlertDialog;
+
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -158,12 +160,20 @@ public class AboutFragment extends PreferenceFragment {
         feedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent mail = new Intent(Intent.ACTION_SENDTO);
-                mail.setData(Uri.parse("mailto:smartjinyu@gmail.com"));
-                mail.putExtra(Intent.EXTRA_SUBJECT, "MyBookshelf Feedback");
-                String content = getEmailContent();
-                mail.putExtra(Intent.EXTRA_TEXT, content);
-                startActivity(mail);
+                Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
+                mailIntent.setData(Uri.parse("mailto:" + getString(R.string.about_preference_feedback_email_address)));
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bookshelf Feedback");
+                mailIntent.putExtra(Intent.EXTRA_TEXT, getEmailContent());
+                if (mailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(mailIntent);
+                } else {
+                    Toast.makeText(getActivity(),
+                            String.format(
+                                    getString(R.string.about_preference_no_email_client_toast),
+                                    getString(R.string.about_preference_feedback_email_address)),
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
                 return true;
             }
         });

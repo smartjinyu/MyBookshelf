@@ -62,7 +62,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.github.clans:fab:1.6.4' // discontinued project
-    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13' // discontinued project
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // newest 3.3.0 // original 0.9.6.0
@@ -80,8 +80,8 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
     implementation files('libs/opencsv-3.9.jar')
-    implementation "com.microsoft.appcenter:appcenter-analytics:3.1.0"
-    implementation "com.microsoft.appcenter:appcenter-crashes:3.1.0"
+    implementation "com.microsoft.appcenter:appcenter-analytics:3.3.1"
+    implementation "com.microsoft.appcenter:appcenter-crashes:3.3.1"
 
 
 }

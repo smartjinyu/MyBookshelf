@@ -4,9 +4,9 @@
 
 [这里]:https://smartjinyu.com/android/2017/02/09/mybookshelf.html
 
-### Update September 2020
+<!-- ### Update September 2020
 
-Due to the changes on Douban API recently , cururently Bookshelf cannot retrieve data from douban.com. Sorry for the inconvenience. 
+Due to the changes on Douban API recently , cururently Bookshelf cannot retrieve data from douban.com. Sorry for the inconvenience.  -->
 
 ### Screenshots
 See [My Blog] for screenshots

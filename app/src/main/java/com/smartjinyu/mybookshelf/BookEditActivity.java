@@ -466,10 +466,11 @@ public class BookEditActivity extends AppCompatActivity {
         final ArrayAdapter<BookShelf> arrayAdapter = new ArrayAdapter<BookShelf>(
                 this, R.layout.spinner_item, bookShelves);
         //overload toString method in BookShelf
-        BookShelf customShelf = new BookShelf();
-        customShelf.setTitle(getResources().getString(R.string.custom_spinner_item));
-        //customShelf is only used to add an item to spinner, it will never add to bookshelfList
-        arrayAdapter.add(customShelf);
+        BookShelf addNewShelf = new BookShelf();
+        addNewShelf.setTitle(getResources().getString(R.string.custom_spinner_item));
+        addNewShelf.setInternalBookShelf(true);
+        //addNewShelf is only used to add an item to spinner, it will never add to bookshelfList
+        arrayAdapter.add(addNewShelf);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bookshelfSpinner.setAdapter(arrayAdapter);
 
